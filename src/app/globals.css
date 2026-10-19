@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+/* צבעי מותג – להחליף כאן אם יש צבעי מותג [למלא] */
+@theme {
+  --color-cream: #fffaf3;
+  --color-sand: #f8eee2;
+  --color-line: #ead9c6;
+  --color-ink: #2b1d14;
+  --color-muted: #5c4a3d;
+  --color-accent: #b4491f;
+  --color-accent-dark: #8f3612;
+  --color-accent-soft: #fbe3d3;
+  --color-whatsapp: #0f7a40;
+  --color-whatsapp-dark: #0b5e31;
+  --font-sans: var(--font-heebo), system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--color-ink);
+  font-size: 1.125rem;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
