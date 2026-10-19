@@ -64,7 +64,9 @@ export function Footer() {
               </a>
             </li>
             <li>
-              <Fill value={business.email} />
+              <a href={`mailto:${business.email}`} className="link" dir="ltr">
+                {business.email}
+              </a>
             </li>
           </ul>
           <ul>
