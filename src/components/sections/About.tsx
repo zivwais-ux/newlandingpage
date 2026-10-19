@@ -1,31 +1,35 @@
-import { about } from "@/content/site";
+import { about, primaryAction } from "@/content/site";
 import { Fill } from "../Fill";
+import { WhatsAppButton } from "../WhatsAppButton";
 
 export function About() {
   return (
-    <section id="about" aria-labelledby="about-title" className="px-4 py-16 sm:px-6 sm:py-24">
-      <div className="mx-auto grid max-w-5xl items-center gap-10 md:grid-cols-[280px_1fr]">
-        <div className="mx-auto aspect-square w-56 overflow-hidden rounded-full bg-accent-soft ring-8 ring-white shadow-lg md:w-full">
+    <section id="about" className="about" aria-labelledby="about-title">
+      <div className="about__side">
+        <h2 id="about-title" data-reveal>
+          {about.title}
+        </h2>
+        <div className="about__portrait" data-reveal>
           {about.photoSrc ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={about.photoSrc} alt={about.photoAlt} loading="lazy" className="h-full w-full object-cover" />
+            <img src={about.photoSrc} alt={about.photoAlt} loading="lazy" />
           ) : (
-            <div className="flex h-full w-full items-center justify-center p-6 text-center">
-              <Fill value="[למלא – תמונה אמיתית של זיו]" />
-            </div>
+            <Fill value="[למלא – תמונה אמיתית של זיו]" />
           )}
         </div>
-        <div>
-          <h2 id="about-title" className="text-3xl font-extrabold text-ink sm:text-4xl">
-            {about.title}
-          </h2>
-          <div className="mt-6 space-y-4 text-lg leading-relaxed text-ink sm:text-xl">
-            {about.paragraphs.map((p) => (
-              <p key={p}>
-                <Fill value={p} />
-              </p>
-            ))}
+      </div>
+      <div className="about__blocks">
+        {about.blocks.map((b, i) => (
+          <div key={b.title} data-reveal style={{ "--d": i } as React.CSSProperties}>
+            <h3>{b.title}</h3>
+            <p>{b.text}</p>
           </div>
+        ))}
+        <p data-reveal>
+          <Fill value={about.personal} />
+        </p>
+        <div data-reveal>
+          <WhatsAppButton label={primaryAction} location="about" />
         </div>
       </div>
     </section>

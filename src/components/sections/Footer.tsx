@@ -1,22 +1,57 @@
 import Link from "next/link";
-import { business, footer } from "@/content/site";
+import { business, footer, nav, primaryAction } from "@/content/site";
 import { Fill } from "../Fill";
+import { WhatsAppButton } from "../WhatsAppButton";
 
 export function Footer() {
   return (
-    <footer className="bg-ink px-4 pb-24 pt-8 text-cream/90 sm:px-6 md:pb-10">
-      <div className="mx-auto flex max-w-6xl flex-col items-center gap-4 border-t border-cream/20 pt-8 text-center text-base md:flex-row md:justify-between md:text-right">
-        <p className="space-x-2 space-x-reverse">
-          <Fill value={business.name} /> · <Fill value={business.phoneDisplay} /> · <Fill value={business.email} />
-        </p>
-        <nav aria-label="מידע משפטי" className="flex gap-6">
-          <Link href="/accessibility" className="underline underline-offset-4 hover:text-white">
-            {footer.accessibility}
-          </Link>
-          <Link href="/privacy" className="underline underline-offset-4 hover:text-white">
-            {footer.privacy}
-          </Link>
-        </nav>
+    <footer className="footer">
+      <div className="wrap">
+        <div className="mark">
+          {[...nav.wordmark].map((ch, i) => (
+            <div key={i}>
+              <span aria-hidden="true">{ch}</span>
+              <small>{nav.markLines[i]}</small>
+            </div>
+          ))}
+        </div>
+        <div className="footer__row">
+          <ul>
+            <li>{nav.tagline}</li>
+            <li>
+              <Fill value={business.name} />
+            </li>
+            <li>
+              <Fill value={business.area} />
+            </li>
+          </ul>
+          <ul>
+            <li>
+              <Fill value={business.phoneDisplay} />
+            </li>
+            <li>
+              <Fill value={business.email} />
+            </li>
+          </ul>
+          <ul>
+            <li>
+              <Link href="/accessibility" className="link">
+                {footer.accessibility}
+              </Link>
+            </li>
+            <li>
+              <Link href="/privacy" className="link">
+                {footer.privacy}
+              </Link>
+            </li>
+          </ul>
+        </div>
+        <div className="footer__bottom">
+          <span>
+            © {new Date().getFullYear()} {nav.wordmark}
+          </span>
+          <WhatsAppButton label={primaryAction} location="footer" small />
+        </div>
       </div>
     </footer>
   );

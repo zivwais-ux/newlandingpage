@@ -1,22 +1,26 @@
 import { pain } from "@/content/site";
-import { Section } from "../Section";
 
 export function Pain() {
   return (
-    <Section id="pain" title={pain.title} className="bg-sand">
-      <ul className="mx-auto grid max-w-4xl gap-4 sm:grid-cols-2">
-        {pain.items.map((item) => (
-          <li
-            key={item}
-            className="rounded-2xl border-r-4 border-accent bg-white p-6 text-lg leading-relaxed text-ink shadow-sm"
-          >
-            {item}
-          </li>
-        ))}
-      </ul>
-      <p className="mx-auto mt-10 max-w-2xl text-center text-xl font-semibold text-ink sm:text-2xl">
-        {pain.bridge}
-      </p>
-    </Section>
+    <section className="pain" aria-labelledby="pain-title">
+      <div className="wrap pain__grid">
+        <div>
+          <h2 id="pain-title" data-reveal>
+            {pain.title}
+          </h2>
+          <p className="pain__answer" data-reveal style={{ "--d": 1 } as React.CSSProperties}>
+            {pain.answer}
+          </p>
+        </div>
+        <ul className="pain__list">
+          {pain.items.map((item, i) => (
+            <li key={item} data-reveal style={{ "--d": i + 1 } as React.CSSProperties}>
+              <span className="dot" aria-hidden="true" />
+              {item}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
   );
 }

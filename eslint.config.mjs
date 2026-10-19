@@ -4,7 +4,7 @@ import nextTypescript from "eslint-config-next/typescript";
 const config = [
   ...nextCoreWebVitals,
   ...nextTypescript,
-  { ignores: [".next/**", "out/**", "next-env.d.ts"] },
+  { ignores: [".next/**", "out/**", "next-env.d.ts", ".agents/**", ".taste-skill/**"] },
 ];
 
 export default config;

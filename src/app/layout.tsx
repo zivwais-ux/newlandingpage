@@ -1,10 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Heebo } from "next/font/google";
+import { Rubik } from "next/font/google";
 import Script from "next/script";
 import { analytics, business, seo } from "@/content/site";
 import "./globals.css";
 
-const heebo = Heebo({ subsets: ["hebrew", "latin"], variable: "--font-heebo", display: "swap" });
+const rubik = Rubik({ subsets: ["hebrew", "latin"], weight: ["400", "500"], variable: "--font-rubik", display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(business.siteUrl),
@@ -19,15 +19,18 @@ export const metadata: Metadata = {
   },
 };
 
-export const viewport: Viewport = { themeColor: "#fffaf3" };
+export const viewport: Viewport = { themeColor: "#f8f8f8" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="he" dir="rtl" className={heebo.variable}>
-      <body className="font-sans">
+    <html lang="he" dir="rtl" className={rubik.variable} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
+      </head>
+      <body>
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:right-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-ink focus:px-4 focus:py-2 focus:text-white"
+          className="sr-only focus:not-sr-only focus:fixed focus:right-4 focus:top-4 focus:z-50 focus:bg-black focus:px-4 focus:py-2 focus:text-white"
         >
           דילוג לתוכן
         </a>
