@@ -1,8 +1,6 @@
-"use client";
-
 import { contact } from "@/content/site";
-import { trackWhatsAppClick, whatsappLink } from "@/lib/whatsapp";
 import { LeadForm } from "../LeadForm";
+import { WhatsAppButton } from "../WhatsAppButton";
 
 export function Contact() {
   return (
@@ -16,16 +14,7 @@ export function Contact() {
           <div className="coupon__a">
             <h2 id="contact-title">{contact.title}</h2>
             <p className="coupon__text">
-              {contact.text}{" "}
-              <a
-                href={whatsappLink()}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="link"
-                onClick={() => trackWhatsAppClick("contact")}
-              >
-                {contact.whatsappLink}
-              </a>
+              {contact.text} <WhatsAppButton label={contact.whatsappLink} location="contact" variant="text" />
             </p>
           </div>
           <div className="coupon__b">

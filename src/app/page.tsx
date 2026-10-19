@@ -10,8 +10,11 @@ import { How } from "@/components/sections/How";
 import { Intro } from "@/components/sections/Intro";
 import { Pain } from "@/components/sections/Pain";
 import { Testimonials } from "@/components/sections/Testimonials";
+import { validateContent } from "@/lib/content";
 
 export default function Home() {
+  // תוכן לא תקין מכשיל את הבנייה כאן, לפני שהדף יוצא לאוויר.
+  validateContent();
   return (
     <>
       <Hero />

@@ -1,4 +1,5 @@
 import { pain } from "@/content/site";
+import { WhatsAppButton } from "../WhatsAppButton";
 
 export function Pain() {
   return (
@@ -10,6 +11,9 @@ export function Pain() {
           </h2>
           <p className="pain__answer" data-reveal style={{ "--d": 1 } as React.CSSProperties}>
             {pain.answer}
+          </p>
+          <p className="pain__cta" data-reveal style={{ "--d": 2 } as React.CSSProperties}>
+            <WhatsAppButton label={pain.cta} location="pain" variant="text" />
           </p>
         </div>
         <ul className="pain__list">

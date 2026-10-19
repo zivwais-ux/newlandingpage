@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* ---------- Tokens (direction: One motif · palette: Mint and pink) ---------- */
+/* ---------- Tokens (direction: One motif · palette: Mint and forest green) ---------- */
 :root {
   --bg: #f8f8f8;
   --surface: #eeeeee;
@@ -10,7 +10,9 @@
   --accent-strong: #17552d;
   --accent-ink: #ffffff;
   --mint: #c3edce;
-  --pink: #f8c7c9;
+  --forest: #0f3d24;
+  --forest-ink: #f8f8f8;
+  --forest-field: #1d5636;
   --white: #ffffff;
 
   /* five type steps */
@@ -119,6 +121,10 @@ p {
   padding: 0.5em 1.1em;
   font-size: var(--step-small);
 }
+.btn--light {
+  background: var(--mint);
+  color: var(--ink);
+}
 .link {
   color: inherit;
   text-decoration: underline;
@@ -130,6 +136,9 @@ p {
 @media (hover: hover) and (pointer: fine) {
   .btn:hover {
     background: var(--accent-strong);
+  }
+  .btn--light:hover {
+    background: var(--white);
   }
   .link:hover {
     text-decoration-color: currentColor;
@@ -352,8 +361,8 @@ p {
 .build__disc[data-field="mint"] {
   background: var(--mint);
 }
-.build__disc[data-field="pink"] {
-  background: var(--pink);
+.build__disc[data-field="forest"] {
+  background: var(--forest);
 }
 .build__object .chat {
   box-shadow: 0 24px 48px -24px rgb(10 10 10 / 0.35); /* taste-skill-ignore: the panel floats in front of the disc */
@@ -533,6 +542,26 @@ p {
   }
 }
 
+.pain__cta {
+  margin-top: 24px;
+  font-size: var(--step-lead);
+  font-weight: 500;
+}
+.build__cta {
+  margin-top: 28px;
+  display: grid;
+  gap: 16px;
+  justify-items: start;
+}
+.build__cta p {
+  max-width: 36ch;
+}
+.how__cta {
+  margin-top: 48px;
+  display: flex;
+  justify-content: center;
+}
+
 /* ---------- How it works: tiles that grow ---------- */
 .how {
   padding-block: 0 var(--gap);
@@ -560,7 +589,7 @@ p {
   min-height: 300px;
 }
 .how__tile--2 {
-  background: var(--pink);
+  background: var(--forest);
   height: 62vw;
 }
 .how__tile--3 {
@@ -747,7 +776,15 @@ p {
   --c: var(--mint);
 }
 .faq__card:nth-child(3n + 2) {
-  --c: var(--pink);
+  --c: var(--forest);
+  color: var(--forest-ink);
+}
+.faq__card:nth-child(3n + 2) .faq__sign {
+  background: var(--mint);
+  color: var(--ink);
+}
+.faq__card:nth-child(3n + 2) :focus-visible {
+  outline-color: var(--mint);
 }
 .faq__card:nth-child(3n + 3) {
   --c: var(--white);
@@ -828,7 +865,8 @@ p {
 .coupon {
   position: relative;
   display: grid;
-  background: var(--pink);
+  background: var(--forest);
+  color: var(--forest-ink);
   border-radius: var(--r);
   border-start-start-radius: 0;
 }
@@ -885,18 +923,30 @@ p {
   border: 2px solid transparent;
   border-radius: 14px;
   border-start-start-radius: 0;
-  background: #fde9ea;
-  color: var(--ink);
+  background: var(--forest-field);
+  color: var(--forest-ink);
   font-size: var(--step-body);
   transition: border-color var(--t-hover) ease, background-color var(--t-hover) ease;
 }
 .field input::placeholder {
-  color: #6e5455;
+  color: var(--mint);
+  opacity: 0.85;
 }
 .field input:focus {
   outline: none;
-  border-color: var(--ink);
-  background: var(--white);
+  border-color: var(--mint);
+}
+.field input[aria-invalid="true"] {
+  border-color: #ffc9a3;
+}
+.field__error {
+  margin-top: 6px;
+  font-size: var(--step-small);
+  color: #ffd9bd;
+}
+.coupon :focus-visible,
+.footer :focus-visible {
+  outline-color: var(--mint);
 }
 .coupon__submit {
   margin-top: 14px;
@@ -941,57 +991,45 @@ p {
   }
 }
 
-/* ---------- Footer: the mark, built large ---------- */
+/* ---------- Footer: last call, then the mark built large ---------- */
 .footer {
-  background: var(--surface);
-  padding-block: 40px 120px;
+  background: var(--forest);
+  color: var(--forest-ink);
+  padding-block: clamp(72px, 9vw, 140px) 120px;
+}
+.footer__cta h2 {
+  font-size: var(--step-head);
+  line-height: 1.05;
+}
+.footer__cta p {
+  margin-top: 20px;
+  max-width: 36ch;
+  font-size: var(--step-lead);
+  line-height: 1.4;
+}
+.footer__actions {
+  margin-top: 32px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 28px;
 }
 .mark {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 4px;
-  align-items: end;
-  height: clamp(180px, 34svh, 340px);
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: clamp(56px, 7vw, 112px);
 }
-.mark > div {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  height: 100%;
-  padding: 16px 12px 0.1em;
-  font-size: clamp(5.5rem, 15vw, 13rem);
-  border-radius: var(--r);
-  border-start-start-radius: 0;
-}
-.mark span {
-  order: 2;
+.mark__letter {
+  font-family: var(--font-rubik), system-ui, sans-serif;
+  font-size: 330px;
   font-weight: 500;
-  line-height: 0.8;
-}
-.mark small {
-  font-size: var(--step-small);
-  text-align: center;
-}
-.mark > div:nth-child(1) {
-  background: var(--mint);
-  height: 78%;
-}
-.mark > div:nth-child(2) {
-  background: var(--ink);
-  color: var(--surface);
-  height: 100%;
-}
-.mark > div:nth-child(3) {
-  background: var(--pink);
-  height: 62%;
+  fill: var(--forest);
 }
 .footer__row {
-  margin-top: 56px;
+  margin-top: 48px;
   display: grid;
   gap: 28px;
-  font-size: var(--step-small);
 }
 .footer__row ul {
   display: grid;
@@ -999,11 +1037,8 @@ p {
 }
 .footer__bottom {
   margin-top: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
   font-size: var(--step-small);
+  color: var(--mint);
 }
 @media (min-width: 900px) {
   .footer {

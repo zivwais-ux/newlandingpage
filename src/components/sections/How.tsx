@@ -1,5 +1,6 @@
 import Image from "next/image";
-import { how, whatsappMessage } from "@/content/site";
+import { how, primaryAction, whatsappMessage } from "@/content/site";
+import { WhatsAppButton } from "../WhatsAppButton";
 import { Chat } from "../Chat";
 
 export function How() {
@@ -37,6 +38,9 @@ export function How() {
           <p>{after.text}</p>
         </li>
         </ol>
+      </div>
+      <div className="how__cta" data-reveal>
+        <WhatsAppButton label={primaryAction} location="how" />
       </div>
     </section>
   );

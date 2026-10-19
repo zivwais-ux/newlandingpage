@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { hero, nav, primaryAction } from "@/content/site";
+import { hero, nav, navAction, primaryAction } from "@/content/site";
 import { WhatsAppButton } from "../WhatsAppButton";
 
 export function Hero() {
@@ -17,7 +17,7 @@ export function Hero() {
             </a>
           ))}
         </nav>
-        <WhatsAppButton label={primaryAction} location="nav" small />
+        <WhatsAppButton label={navAction} location="nav" small />
       </div>
       <section className="hero" aria-labelledby="hero-title">
         <div className="hero__copy">
@@ -28,7 +28,7 @@ export function Hero() {
           </h1>
           <p className="hero__sub">{hero.subtitle}</p>
           <div className="hero__actions">
-            <WhatsAppButton label={`${primaryAction} בוואטסאפ`} location="hero" />
+            <WhatsAppButton label={primaryAction} location="hero" />
             <span className="hero__note">{hero.note}</span>
           </div>
         </div>

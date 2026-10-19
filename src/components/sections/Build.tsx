@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { build } from "@/content/site";
 import { Chat } from "../Chat";
+import { WhatsAppButton } from "../WhatsAppButton";
 
 // הדבר החי בדף: בוחרים סוג עסק ורואים דוגמה לכלי שבונים בשיעור.
 export function Build() {
@@ -46,6 +47,10 @@ export function Build() {
             <b>{ex.tool}</b>
             {ex.gives}
           </p>
+          <div className="build__cta">
+            <p>{build.ctaLead}</p>
+            <WhatsAppButton label={build.ctaLabel} location={`build-${ex.id}`} message={ex.message} />
+          </div>
         </div>
       </div>
     </section>

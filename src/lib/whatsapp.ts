@@ -1,7 +1,17 @@
 import { business, whatsappMessage } from "@/content/site";
+import { whatsappMessageSchema, whatsappNumberSchema } from "./schema";
 
-export function whatsappLink(text: string = whatsappMessage): string {
-  return `https://wa.me/${business.whatsappNumber}?text=${encodeURIComponent(text)}`;
+/** בונה קישור wa.me עם הודעה מוכנה. זורק שגיאה אם המספר או ההודעה לא תקינים. */
+export function whatsappLink(text: string = whatsappMessage, number: string = business.whatsappNumber): string {
+  const n = whatsappNumberSchema.parse(number);
+  const url = new URL(`https://wa.me/${n}`);
+  url.searchParams.set("text", text);
+  return url.toString();
+}
+
+/** קישור עם הודעה מוכנה שנבדקה מראש (מתחילה ב"היי זיו" ולא ארוכה מדי). */
+export function presetWhatsappLink(text: string): string {
+  return whatsappLink(whatsappMessageSchema.parse(text));
 }
 
 type TrackWindow = Window & {
