@@ -21,6 +21,12 @@ describe("התוכן של הדף (site.ts)", () => {
     expect(content.hero.subtitle).toContain("שיעורים פרטיים וייעוץ AI");
   });
 
+  it("אין טענות על לקוחות או על עסקים שזיו בנה עבורם", () => {
+    const all = JSON.stringify(content);
+    for (const claim of ["הלקוחות שלי", "ללקוחות שלי", "בעסקים אמיתיים", "בניתי את זה", "מותגים שמוכרים"]) expect(all).not.toContain(claim);
+    expect(content.about.credentials.join(" ")).toContain("תעודת מפתח AI מהאוניברסיטה העברית");
+  });
+
   it("אין מחירים בדף", () => {
     expect(JSON.stringify(content)).not.toMatch(/₪|\bש״ח\b|\bשקל/);
   });

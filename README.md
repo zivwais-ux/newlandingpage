@@ -33,7 +33,6 @@ npm run check    # הכול: lint, בדיקות יחידה, build ו-verify
 - [ ] כתובת האתר הסופית (`siteUrl`, נדרש לתמונת השיתוף)
 - [ ] תמונה אמיתית של זיו (`public/img/` + `about.photoSrc`)
 - [ ] אישור לדוגמאות בחלק "מה בונים בשיעור" (`build.examples` – תוכן לדוגמה)
-- [ ] פסקה אישית ב"על זיו"
 - [ ] המלצות אמיתיות (כשיהיו)
 - [ ] לאן הלידים מהטופס צריכים להגיע (מייל / Google Sheets / CRM)
 - [ ] מזהי Google Analytics / Meta Pixel (`analytics` ב-`site.ts`)

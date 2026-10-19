@@ -25,9 +25,14 @@ export function About() {
             <p>{b.text}</p>
           </div>
         ))}
-        <p data-reveal>
-          <Fill value={about.personal} />
-        </p>
+        <ul className="about__credentials" data-reveal aria-label="ניסיון והכשרה">
+          {about.credentials.map((c) => (
+            <li key={c}>
+              <span className="dot" aria-hidden="true" />
+              {c}
+            </li>
+          ))}
+        </ul>
         <div data-reveal>
           <WhatsAppButton label={primaryAction} location="about" />
         </div>

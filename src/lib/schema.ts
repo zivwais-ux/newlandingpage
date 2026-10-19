@@ -85,7 +85,7 @@ export const contentSchema = z.object({
     photoSrc: z.union([z.literal(""), imagePath]),
     photoAlt: text,
     blocks: z.array(z.object({ title: text, text: text })).min(1),
-    personal: text,
+    credentials: z.array(text).min(1).max(5),
   }),
   faq: z.object({ title: text, items: z.array(z.object({ tab: text.max(12), q: text, a: text })).min(1) }),
   contact: z.object({
