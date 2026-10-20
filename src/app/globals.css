@@ -270,9 +270,6 @@ p {
   font-weight: 500;
   letter-spacing: -0.015em;
 }
-.ink__on {
-  display: none;
-}
 .intro__icon {
   display: inline-block;
   width: 0.95em;
@@ -1312,6 +1309,16 @@ p {
 .float-wa:active {
   transform: scale(0.94);
 }
+.float-wa {
+  transition:
+    transform var(--t-ui) var(--ease-out),
+    opacity var(--t-ui) ease;
+}
+.float-wa.is-hidden {
+  opacity: 0;
+  transform: translateY(24px);
+  pointer-events: none;
+}
 .float-wa svg {
   width: 32px;
   height: 32px;
@@ -1319,6 +1326,75 @@ p {
 @media (min-width: 900px) {
   .float-wa {
     display: none;
+  }
+}
+
+/* ---------- Phone layout: the desktop composition, adapted (no content added or removed) ---------- */
+@media (max-width: 899px) {
+  /* Hero: the photo leads, as it does on desktop. The bubble runs off the left edge under the bar,
+     its big curve at the bottom right, and the headline, sentence and action follow on the same screen. */
+  .hero {
+    gap: 0;
+  }
+  .hero__shape {
+    order: -1;
+    aspect-ratio: auto;
+    height: clamp(260px, 40svh, 380px);
+    margin-inline-start: var(--margin);
+    border-end-start-radius: clamp(72px, 26vw, 140px);
+  }
+  .hero__shape img {
+    object-position: 46% 55%;
+  }
+  .hero__copy {
+    padding-top: 28px;
+  }
+  .hero__sub {
+    margin-top: 18px;
+  }
+  .hero__actions {
+    margin-top: 24px;
+  }
+  .hero__actions .btn {
+    width: 100%;
+  }
+
+  /* What we build: heading first, then the example, then the choices under it (as read on desktop). */
+  .build__grid {
+    gap: 0;
+  }
+  .build__list {
+    display: contents;
+  }
+  .build__list h2 {
+    order: 1;
+  }
+  .build__hint {
+    order: 2;
+  }
+  .build__stage {
+    order: 3;
+    margin-top: 28px;
+  }
+  .build__names {
+    order: 4;
+    margin-top: 28px;
+  }
+  .build__fact {
+    order: 5;
+  }
+  .build__cta {
+    order: 6;
+  }
+  .build__object {
+    width: min(76vw, 320px);
+  }
+
+  /* About: the photo frame stays, at a size that does not take over the screen. */
+  .about__portrait {
+    width: min(64vw, 280px);
+    margin-inline: 0;
+    margin-bottom: 0;
   }
 }
 
@@ -1419,15 +1495,8 @@ p {
     }
 
     /* 2. The opening statement fills with ink, word by word, as it is read. */
-    [data-fill] .ink__word {
-      position: relative;
-      color: #8a8a8a; /* 3.4:1 on the ground: readable large text before it fills */
-    }
-    [data-fill] .ink__on {
-      display: inline;
-      position: absolute;
-      inset: 0;
-      color: var(--ink);
+    [data-fill] .ink {
+      display: inline-block;
       animation: ink-fill linear both;
       animation-timeline: view();
       animation-range: cover 18% cover 42%;
@@ -1519,7 +1588,7 @@ p {
 }
 @keyframes ink-fill {
   from {
-    opacity: 0;
+    opacity: 0.55; /* still readable large text (about 3.3:1) before it fills */
   }
   to {
     opacity: 1;

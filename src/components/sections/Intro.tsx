@@ -2,7 +2,7 @@ import { intro } from "@/content/site";
 import { IntroIcon } from "../IntroIcon";
 
 // כל מילה ב-span משלה, כדי שהמשפט "יתמלא בדיו" מילה אחרי מילה בזמן הגלילה (CSS בלבד).
-// עותק שחור של המילה (ink__on, מוסתר מקוראי מסך) נחשף מעל האפור עם opacity, שרץ על ה-GPU.
+// המילה עצמה עוברת מ-55% ל-100% אטימות (נשארת קריאה, ורצה על ה-GPU).
 // האייקון נצמד למילה שלפניו, כך שהם מתמלאים יחד ולא נשברים לשורות נפרדות.
 export function Intro() {
   return (
@@ -18,12 +18,7 @@ export function Intro() {
                 <span key={i}>
                   {i > 0 && " "}
                   <span className="ink">
-                    <span className="ink__word">
-                      {word}
-                      <span className="ink__on" aria-hidden="true">
-                        {word}
-                      </span>
-                    </span>
+                    {word}
                     {i === words.length - 1 && part.icon && <IntroIcon name={part.icon} />}
                   </span>
                 </span>
