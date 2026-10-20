@@ -305,17 +305,80 @@ p {
   font-size: var(--step-lead);
   line-height: 1.4;
 }
-.pain__list {
+/* The pains as phone notifications, piled up the way they arrive at the end of the day. */
+.pain__stack {
   display: grid;
-  gap: 28px;
-  font-size: var(--step-statement);
-  line-height: 1.25;
+  gap: 14px;
+  align-content: center;
+  max-width: 560px;
+  width: 100%;
+  justify-self: center;
 }
-.pain__list li {
+.note {
+  --rot: 0deg;
+  --shift: 0px;
+  padding: 14px 18px 16px;
+  background: var(--white);
+  border-radius: 22px;
+  border-start-start-radius: 6px;
+  transform: translateX(var(--shift)) rotate(var(--rot));
+}
+/* a loose pile: each card at its own angle, offset and width */
+.note:nth-child(1) {
+  --rot: -1.4deg;
+  --shift: 10px;
+  width: 100%;
+}
+.note:nth-child(2) {
+  --rot: 1deg;
+  --shift: -18px;
+  width: 93%;
+  justify-self: end;
+}
+.note:nth-child(3) {
+  --rot: -0.6deg;
+  --shift: 22px;
+  width: 97%;
+}
+.note:nth-child(4) {
+  --rot: 1.6deg;
+  --shift: -6px;
+  width: 88%;
+  justify-self: center;
+}
+.note__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--step-small);
+  color: var(--muted);
+}
+.note__icon {
+  width: 26px;
+  height: 26px;
+  flex: none;
   display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 18px;
-  align-items: start;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--forest);
+  color: var(--mint);
+}
+.note__icon svg {
+  width: 16px;
+  height: 16px;
+}
+.note__app {
+  font-weight: 500;
+  color: var(--ink);
+}
+.note__time {
+  margin-inline-start: auto;
+  font-variant-numeric: tabular-nums;
+}
+.note__text {
+  margin-top: 8px;
+  font-size: var(--step-lead);
+  line-height: 1.3;
 }
 .dot {
   display: inline-block;
@@ -330,6 +393,25 @@ p {
   .pain__grid {
     grid-template-columns: 5fr 7fr;
     gap: 64px;
+    align-items: center;
+  }
+  .pain__stack {
+    max-width: 640px;
+    gap: 18px;
+  }
+  .note {
+    padding: 18px 24px 20px;
+    border-radius: 26px;
+    border-start-start-radius: 6px;
+  }
+  .note__icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+  }
+  .note__icon svg {
+    width: 18px;
+    height: 18px;
   }
 }
 
@@ -748,6 +830,7 @@ p {
   }
 }
 .pain__circle {
+  rotate: -2deg;
   position: absolute;
   top: -0.45em;
   inset-inline-start: -0.95em;
@@ -1433,19 +1516,61 @@ p {
   .pain__stage {
     padding-block: 56px;
   }
+
+  /* order on a phone: heading, answer, the notifications, then the circled line */
+  .pain__intro {
+    display: contents;
+  }
+  .pain h2 {
+    order: 1;
+  }
+  .pain__answer {
+    order: 2;
+    margin-top: 0;
+  }
+  .pain__stack {
+    order: 3;
+    gap: 8px;
+  }
+  .pain__cta {
+    order: 4;
+    margin-top: 0;
+  }
   .pain__grid {
-    gap: 36px;
+    gap: 20px;
   }
-  .pain__list {
-    gap: 18px;
-    font-size: var(--step-lead);
-    line-height: 1.3;
+  .note {
+    padding: 10px 14px 12px;
   }
-  .pain__list .dot {
-    margin-top: 0.34em;
+  .note:nth-child(odd) {
+    --shift: 6px;
+  }
+  .note:nth-child(even) {
+    --shift: -6px;
+  }
+  .note__text {
+    margin-top: 4px;
+    font-size: var(--step-body);
   }
   .pain__mark {
     max-width: 8.2em;
+  }
+  @media (max-height: 760px) {
+    .pain__stage {
+      padding-block: 20px;
+    }
+    .pain__grid {
+      gap: 12px;
+    }
+    .pain__stack {
+      gap: 6px;
+    }
+    .note {
+      padding: 8px 12px 10px;
+    }
+    .note__text {
+      font-size: var(--step-small);
+    }
   }
 
   /* About: the photo frame stays, at a size that does not take over the screen. */
@@ -1566,9 +1691,7 @@ p {
     }
 
     /* 3. The pains arrive one after another from the side; the answer follows. */
-    .pain__list li,
-    .pain__answer,
-    .pain__cta {
+    .pain__answer {
       animation: slide-in linear both;
       animation-timeline: view();
       animation-range: entry 0% cover 32%;
@@ -1579,7 +1702,7 @@ p {
     @media (min-height: 640px) {
       .pain {
         view-timeline: --pain block;
-        min-height: 155svh;
+        min-height: 210svh;
       }
       .pain__stage {
         position: sticky;
@@ -1588,10 +1711,27 @@ p {
         display: grid;
         align-content: center;
       }
+      /* the notifications pile up one by one, then the circle marks the way out */
+      .note {
+        animation: note-in linear both;
+        animation-timeline: --pain;
+      }
+      .note:nth-child(1) {
+        animation-range: contain 2% contain 14%;
+      }
+      .note:nth-child(2) {
+        animation-range: contain 14% contain 26%;
+      }
+      .note:nth-child(3) {
+        animation-range: contain 26% contain 38%;
+      }
+      .note:nth-child(4) {
+        animation-range: contain 38% contain 50%;
+      }
       .pain__circle path {
         animation: circle-draw linear both;
         animation-timeline: --pain;
-        animation-range: contain 8% contain 85%;
+        animation-range: contain 58% contain 92%;
       }
     }
     @media (max-height: 639.98px) {
@@ -1707,12 +1847,28 @@ p {
     }
   }
 }
-@keyframes circle-draw {
+@keyframes note-in {
   from {
-    stroke-dashoffset: 1;
+    opacity: 0;
+    transform: translateX(var(--shift)) translateY(48px) scale(0.94) rotate(calc(var(--rot) * 3));
   }
   to {
+    opacity: 1;
+    transform: translateX(var(--shift)) rotate(var(--rot));
+  }
+}
+@keyframes circle-draw {
+  /* hidden until the pen starts: a zero-length dash with a round cap would show as a dot */
+  0% {
+    stroke-dashoffset: 1;
+    opacity: 0;
+  }
+  2% {
+    opacity: 1;
+  }
+  100% {
     stroke-dashoffset: 0;
+    opacity: 1;
   }
 }
 @keyframes disc-grow {

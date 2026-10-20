@@ -70,7 +70,22 @@ export const contentSchema = z.object({
     photoAlt: text,
   }),
   intro: z.array(z.object({ text: text, icon: z.enum(["laptop", "notebook", "coffee"]).optional() })).min(1),
-  pain: z.object({ title: text, items: z.array(text).min(2).max(5), answer: text, cta: text }),
+  pain: z.object({
+    title: text,
+    items: z
+      .array(
+        z.object({
+          app: text.max(24),
+          icon: z.enum(["bell", "spark", "people", "note"]),
+          time: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "שעה בפורמט HH:MM"),
+          text: text,
+        }),
+      )
+      .min(2)
+      .max(5),
+    answer: text,
+    cta: text,
+  }),
   build: z
     .object({ title: text, hint: text, ctaLead: text, ctaLabel: text.max(32), examples: z.array(buildExampleSchema).min(2) })
     .superRefine((b, ctx) => {

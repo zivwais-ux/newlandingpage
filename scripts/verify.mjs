@@ -153,7 +153,7 @@ try {
     const overflowDuringScroll = await mp.evaluate(async () => {
       let worst = 0;
       for (let y = 0; y <= document.documentElement.scrollHeight; y += 200) {
-        scrollTo(0, y);
+        window.scrollTo({ top: y, behavior: "instant" });
         await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
         worst = Math.max(worst, document.documentElement.scrollWidth - innerWidth);
       }
@@ -185,10 +185,16 @@ try {
         dash: parseFloat(getComputedStyle(document.querySelector(".pain__circle path")).strokeDashoffset),
         stage: Math.round(document.querySelector(".pain__stage").getBoundingClientRect().top),
         fits: document.querySelector(".pain__stage").getBoundingClientRect().height <= innerHeight + 1,
+        notes: [...document.querySelectorAll(".note")].map((n) => +getComputedStyle(n).opacity),
       }));
     };
-    const s0 = await at(g.top), s1 = await at(g.top + g.hold * 0.5), s2 = await at(g.top + g.hold), s3 = await at(g.top + g.hold + 300);
+    const s0 = await at(g.top), sN = await at(g.top + g.hold * 0.25), s1 = await at(g.top + g.hold * 0.75), s2 = await at(g.top + g.hold), s3 = await at(g.top + g.hold + 300);
     check(`${width}x${height}: האזור נעצר במסך בזמן ההחזקה (${Math.round(g.hold)}px)`, g.hold > 200 && s0.stage === 0 && s1.stage === 0 && s2.stage === 0 && s3.stage < 0 && s1.fits, JSON.stringify({ s0, s1, s2, s3 }));
+    check(
+      `${width}x${height}: ההתראות נערמות אחת-אחת בחצי הראשון של העצירה`,
+      s0.notes.every((o) => o < 0.2) && sN.notes[0] > 0.99 && sN.notes[3] < 0.2 && s1.notes.every((o) => o > 0.99),
+      JSON.stringify([s0.notes, sN.notes, s1.notes]),
+    );
     check(`${width}x${height}: העיגול נמתח עם הגלילה ונשאר מצויר`, s0.dash > 0.9 && s1.dash > 0.1 && s1.dash < 0.9 && s2.dash < 0.02 && s3.dash < 0.02, [s0.dash, s1.dash, s2.dash, s3.dash].map((d) => d.toFixed(2)).join(" → "));
     const href = await cp.getAttribute(".pain__mark a", "href");
     check(`${width}x${height}: "ספרו לי…" עדיין פותח וואטסאפ`, new URL(href).pathname === `/${NUMBER}`, href);
