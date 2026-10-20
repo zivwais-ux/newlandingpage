@@ -5,6 +5,8 @@ import { useEffect } from "react";
 // מפעיל את כניסת האלמנטים המסומנים ב-data-reveal פעם אחת, כשהם נכנסים למסך.
 export function Reveal() {
   useEffect(() => {
+    // דפדפן שתומך באנימציות גלילה מקבל את התנועה מה-CSS; זה רק גיבוי לשאר.
+    if (CSS.supports("animation-timeline: view()")) return;
     const els = document.querySelectorAll("[data-reveal]");
     const io = new IntersectionObserver(
       (entries) => {

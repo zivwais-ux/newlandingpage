@@ -143,7 +143,47 @@ try {
   await page.click("#faq details:nth-of-type(3) summary");
   check("שאלות נפוצות: רק כרטיס אחד פתוח", (await page.locator("#faq details[open]").count()) === 1);
 
-  // 7. עמודי משנה וקישורים פנימיים
+  // 7. חוויית הגלילה
+  for (const width of [390, 1440]) {
+    const mp = await browser.newPage({ viewport: { width, height: 844 } });
+    await mp.goto(URL_, { waitUntil: "networkidle" });
+    const linked = await mp.evaluate(() => document.getAnimations().filter((a) => a.timeline && !(a.timeline instanceof DocumentTimeline)).length);
+    check(`${width}px: אנימציות גלילה פעילות (צמודות לגלילה, בלי JS)`, linked >= 20, `${linked}`);
+    // גוללים לאט עד הסוף ובודקים בדרך שאין גלילה הצידה
+    const overflowDuringScroll = await mp.evaluate(async () => {
+      let worst = 0;
+      for (let y = 0; y <= document.documentElement.scrollHeight; y += 200) {
+        scrollTo(0, y);
+        await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+        worst = Math.max(worst, document.documentElement.scrollWidth - innerWidth);
+      }
+      return worst;
+    });
+    check(`${width}px: אין גלילה הצידה באף שלב של הגלילה`, overflowDuringScroll <= 0, `${overflowDuringScroll}px`);
+    // בסוף הגלילה כל אלמנט מונפש שכבר עבר במסך גמור: אטום, לא חתוך ולא מוזז
+    const unfinished = await mp.evaluate(() =>
+      document
+        .getAnimations()
+        .filter((a) => a.timeline && !(a.timeline instanceof DocumentTimeline))
+        .map((a) => a.effect.target)
+        .filter((el) => el.getBoundingClientRect().bottom < innerHeight * 0.6 && !el.closest(".hero") && !el.matches(".how__pic img"))
+        .filter((el) => { const cs = getComputedStyle(el); return +cs.opacity < 0.99 || (cs.clipPath !== "none" && !/inset\(0(px)?( round 0(px)?)?\)/.test(cs.clipPath)); })
+        .map((el) => el.className || el.tagName),
+    );
+    check(`${width}px: אחרי הגלילה אין טקסט שנשאר שקוף או חתוך`, unfinished.length === 0, unfinished.join(", "));
+    await mp.close();
+  }
+  const rm = await browser.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: "reduce" });
+  await rm.goto(URL_, { waitUntil: "networkidle" });
+  const rmState = await rm.evaluate(() => ({
+    anims: document.getAnimations().length,
+    // רק אלמנטים עם טקסט (סוללה ונקודות בורר מוסתרות בכוונה בעיצוב)
+    faded: [...document.querySelectorAll("main *, footer *")].filter((el) => [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim()) && +getComputedStyle(el).opacity < 0.99).length,
+  }));
+  check("הפחתת תנועה: אין אנימציות והכול במצב הסופי", rmState.anims === 0 && rmState.faded === 0, JSON.stringify(rmState));
+  await rm.close();
+
+  // 8. עמודי משנה וקישורים פנימיים
   for (const path of ["accessibility", "privacy"]) {
     const res = await page.goto(URL_ + path);
     check(`/${path} נטען`, res.status() === 200);

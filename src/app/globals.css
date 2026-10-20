@@ -270,6 +270,9 @@ p {
   font-weight: 500;
   letter-spacing: -0.015em;
 }
+.ink__on {
+  display: none;
+}
 .intro__icon {
   display: inline-block;
   width: 0.95em;
@@ -1347,20 +1350,25 @@ p {
 }
 
 /* ---------- Motion ---------- */
-@media (prefers-reduced-motion: no-preference) {
-  .js [data-reveal] {
-    opacity: 0;
-    transform: translateY(24px);
-    transition:
-      opacity 700ms var(--ease-out),
-      transform 900ms var(--ease-expo);
-    transition-delay: calc(var(--d, 0) * 80ms);
+/* Fallback for browsers without scroll-driven animations: a one-time fade-in (Reveal.tsx). */
+@supports not (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .js [data-reveal] {
+      opacity: 0;
+      transform: translateY(24px);
+      transition:
+        opacity 700ms var(--ease-out),
+        transform 900ms var(--ease-expo);
+      transition-delay: calc(var(--d, 0) * 80ms);
+    }
+    .js [data-reveal].is-in {
+      opacity: 1;
+      transform: none;
+    }
   }
-  .js [data-reveal].is-in {
-    opacity: 1;
-    transform: none;
-  }
+}
 
+@media (prefers-reduced-motion: no-preference) {
   .hero h1 span {
     animation: rise 1000ms var(--ease-expo) both;
   }
@@ -1378,6 +1386,234 @@ p {
   }
   .hero__shape img {
     animation: drift 18s var(--ease-soft) 100ms both;
+  }
+}
+/* Scroll-driven motion: runs on the compositor, tied to the finger, no JavaScript while scrolling.
+   Only transform, opacity, clip-path and colour. Reduced motion shows the finished state. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* 1. The hero recedes as it leaves: the picture sinks and grows a little, the words lift away. */
+    .hero__shape {
+      animation:
+        open 1200ms var(--ease-in-out) 100ms both,
+        hero-sink linear both;
+      animation-timeline: auto, scroll(root);
+      animation-range: normal, 0 85vh;
+    }
+    /* Desktop only: on a phone the words and the button stay fully readable while the photo moves. */
+    @media (min-width: 900px) {
+      .hero__copy {
+        animation: hero-lift linear both;
+        animation-timeline: scroll(root);
+        animation-range: 0 70vh;
+      }
+    }
+
+    /* Section headings rise out of their own line as they arrive. */
+    /* ("What we build" already has its own move: the phone settling on the disc.) */
+    main h2:not(#build-title),
+    footer h2 {
+      animation: line-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 30%;
+    }
+
+    /* 2. The opening statement fills with ink, word by word, as it is read. */
+    [data-fill] .ink__word {
+      position: relative;
+      color: #8a8a8a; /* 3.4:1 on the ground: readable large text before it fills */
+    }
+    [data-fill] .ink__on {
+      display: inline;
+      position: absolute;
+      inset: 0;
+      color: var(--ink);
+      animation: ink-fill linear both;
+      animation-timeline: view();
+      animation-range: cover 18% cover 42%;
+    }
+    [data-fill] .intro__icon {
+      animation: icon-fill linear both;
+      animation-timeline: view();
+      animation-range: cover 18% cover 42%;
+    }
+
+    /* 3. The pains arrive one after another from the side; the answer follows. */
+    .pain__list li,
+    .pain__answer,
+    .pain__cta {
+      animation: slide-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 32%;
+    }
+
+    /* 4. The disc settles and the phone is laid down on it. */
+    .build__disc {
+      animation: disc-grow linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 40%;
+    }
+    .build__object > .phone {
+      animation: phone-down linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 42%;
+    }
+
+    /* 5. The tiles grow up from their base, one after another; the photos drift inside them. */
+    .how__tile {
+      animation: tile-grow linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 34%;
+    }
+    .how__pic img {
+      animation: pic-drift linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+    }
+
+    /* 6. The dark panel opens like a window to its full width. */
+    .about {
+      animation: window-open linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 28%;
+    }
+
+    /* 7. The question cards are dealt from the drawer, each settling on the one above. */
+    .faq__card {
+      animation: card-deal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 100%;
+    }
+
+    /* 8. The coupon lands; the footer message rises like a message being sent. */
+    .coupon {
+      animation: coupon-land linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 34%;
+    }
+    .composer {
+      animation: message-up linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 30%;
+    }
+  }
+}
+@keyframes hero-sink {
+  to {
+    transform: translateY(8%) scale(1.06);
+  }
+}
+@keyframes hero-lift {
+  to {
+    transform: translateY(-10%);
+    opacity: 0.2;
+  }
+}
+@keyframes line-rise {
+  from {
+    transform: translateY(0.45em);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes ink-fill {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes icon-fill {
+  from {
+    opacity: 0.45;
+  }
+  to {
+    opacity: 1;
+  }
+}
+/* Phones rise vertically (no room at the edges); wide screens slide in from the inner side. */
+@keyframes slide-in {
+  from {
+    transform: translateY(32px);
+  }
+  to {
+    transform: none;
+  }
+}
+@media (min-width: 900px) {
+  @keyframes slide-in {
+    from {
+      transform: translateX(-32px);
+    }
+    to {
+      transform: none;
+    }
+  }
+}
+@keyframes disc-grow {
+  from {
+    transform: scale(0.9);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes phone-down {
+  from {
+    transform: translateY(64px) rotate(-5deg);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes tile-grow {
+  from {
+    transform: translateY(72px);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes pic-drift {
+  from {
+    transform: translateY(-4%) scale(1.08);
+  }
+  to {
+    transform: translateY(4%) scale(1.08);
+  }
+}
+@keyframes window-open {
+  from {
+    transform: scale(0.95);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes card-deal {
+  from {
+    transform: translateY(56px);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes coupon-land {
+  from {
+    transform: translateY(64px) rotate(-1.5deg);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes message-up {
+  from {
+    transform: translateY(56px) scale(0.97);
+  }
+  to {
+    transform: none;
   }
 }
 @keyframes rise {
