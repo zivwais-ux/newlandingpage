@@ -287,6 +287,8 @@ p {
 /* ---------- Pain: the mint band ---------- */
 .pain {
   background: var(--mint);
+}
+.pain__stage {
   padding-block: clamp(72px, 8vw, 140px);
 }
 .pain__grid {
@@ -723,9 +725,46 @@ p {
 }
 
 .pain__cta {
-  margin-top: 24px;
+  margin-top: 28px;
   font-size: var(--step-lead);
   font-weight: 500;
+}
+/* The hand-drawn circle around "tell me…": drawn in full by default (fallback and reduced motion). */
+.pain__mark {
+  position: relative;
+  display: inline-block;
+  margin-inline-start: 0.9em;
+  padding: 0.35em 0.2em;
+  text-wrap: balance;
+}
+.pain__mark .link {
+  position: relative;
+  z-index: 1;
+  text-decoration-color: transparent;
+}
+@media (hover: hover) and (pointer: fine) {
+  .pain__mark .link:hover {
+    text-decoration-color: currentColor;
+  }
+}
+.pain__circle {
+  position: absolute;
+  top: -0.45em;
+  inset-inline-start: -0.95em;
+  width: calc(100% + 1.9em);
+  height: calc(100% + 0.9em);
+  overflow: visible;
+  pointer-events: none;
+}
+.pain__circle path {
+  fill: none;
+  stroke: var(--ink);
+  /* in the drawing's own units: the stretch gives the line a light pen-pressure variation */
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
 }
 .build__cta {
   margin-top: 28px;
@@ -1390,6 +1429,25 @@ p {
     width: min(76vw, 320px);
   }
 
+  /* Pains: a size that lets the whole section sit on one screen while it is held. */
+  .pain__stage {
+    padding-block: 56px;
+  }
+  .pain__grid {
+    gap: 36px;
+  }
+  .pain__list {
+    gap: 18px;
+    font-size: var(--step-lead);
+    line-height: 1.3;
+  }
+  .pain__list .dot {
+    margin-top: 0.34em;
+  }
+  .pain__mark {
+    max-width: 8.2em;
+  }
+
   /* About: the photo frame stays, at a size that does not take over the screen. */
   .about__portrait {
     width: min(64vw, 280px);
@@ -1516,6 +1574,34 @@ p {
       animation-range: entry 0% cover 32%;
     }
 
+    /* The section is held on screen for about half a screen of scroll while the circle is drawn
+       around "tell me…", tied to the finger; then scrolling carries on. Not on very short screens. */
+    @media (min-height: 640px) {
+      .pain {
+        view-timeline: --pain block;
+        min-height: 155svh;
+      }
+      .pain__stage {
+        position: sticky;
+        top: 0;
+        min-height: 100svh;
+        display: grid;
+        align-content: center;
+      }
+      .pain__circle path {
+        animation: circle-draw linear both;
+        animation-timeline: --pain;
+        animation-range: contain 8% contain 85%;
+      }
+    }
+    @media (max-height: 639.98px) {
+      .pain__circle path {
+        animation: circle-draw linear both;
+        animation-timeline: view();
+        animation-range: entry 40% cover 55%;
+      }
+    }
+
     /* 4. The disc settles and the phone is laid down on it. */
     .build__disc {
       animation: disc-grow linear both;
@@ -1619,6 +1705,14 @@ p {
     to {
       transform: none;
     }
+  }
+}
+@keyframes circle-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
   }
 }
 @keyframes disc-grow {

@@ -173,6 +173,28 @@ try {
     check(`${width}px: אחרי הגלילה אין טקסט שנשאר שקוף או חתוך`, unfinished.length === 0, unfinished.join(", "));
     await mp.close();
   }
+  // העיגול סביב "ספרו לי…": האזור נעצר בזמן שהעיגול נמתח, ואז הגלילה ממשיכה
+  for (const [width, height] of [[390, 844], [375, 667], [1440, 900]]) {
+    const cp = await browser.newPage({ viewport: { width, height } });
+    await cp.goto(URL_, { waitUntil: "networkidle" });
+    const g = await cp.evaluate(() => { const r = document.querySelector(".pain").getBoundingClientRect(); return { top: r.top + scrollY, hold: r.height - innerHeight }; });
+    const at = async (y) => {
+      await cp.evaluate((y) => window.scrollTo({ top: y, behavior: "instant" }), Math.round(y));
+      await cp.waitForTimeout(120);
+      return cp.evaluate(() => ({
+        dash: parseFloat(getComputedStyle(document.querySelector(".pain__circle path")).strokeDashoffset),
+        stage: Math.round(document.querySelector(".pain__stage").getBoundingClientRect().top),
+        fits: document.querySelector(".pain__stage").getBoundingClientRect().height <= innerHeight + 1,
+      }));
+    };
+    const s0 = await at(g.top), s1 = await at(g.top + g.hold * 0.5), s2 = await at(g.top + g.hold), s3 = await at(g.top + g.hold + 300);
+    check(`${width}x${height}: האזור נעצר במסך בזמן ההחזקה (${Math.round(g.hold)}px)`, g.hold > 200 && s0.stage === 0 && s1.stage === 0 && s2.stage === 0 && s3.stage < 0 && s1.fits, JSON.stringify({ s0, s1, s2, s3 }));
+    check(`${width}x${height}: העיגול נמתח עם הגלילה ונשאר מצויר`, s0.dash > 0.9 && s1.dash > 0.1 && s1.dash < 0.9 && s2.dash < 0.02 && s3.dash < 0.02, [s0.dash, s1.dash, s2.dash, s3.dash].map((d) => d.toFixed(2)).join(" → "));
+    const href = await cp.getAttribute(".pain__mark a", "href");
+    check(`${width}x${height}: "ספרו לי…" עדיין פותח וואטסאפ`, new URL(href).pathname === `/${NUMBER}`, href);
+    await cp.close();
+  }
+
   const rm = await browser.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: "reduce" });
   await rm.goto(URL_, { waitUntil: "networkidle" });
   const rmState = await rm.evaluate(() => ({
@@ -181,6 +203,11 @@ try {
     faded: [...document.querySelectorAll("main *, footer *")].filter((el) => [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim()) && +getComputedStyle(el).opacity < 0.99).length,
   }));
   check("הפחתת תנועה: אין אנימציות והכול במצב הסופי", rmState.anims === 0 && rmState.faded === 0, JSON.stringify(rmState));
+  const rmCircle = await rm.evaluate(() => ({
+    dash: parseFloat(getComputedStyle(document.querySelector(".pain__circle path")).strokeDashoffset),
+    sticky: getComputedStyle(document.querySelector(".pain__stage")).position,
+  }));
+  check("הפחתת תנועה: העיגול מצויר במלואו ואין עצירה", rmCircle.dash === 0 && rmCircle.sticky !== "sticky", JSON.stringify(rmCircle));
   await rm.close();
 
   // 8. עמודי משנה וקישורים פנימיים

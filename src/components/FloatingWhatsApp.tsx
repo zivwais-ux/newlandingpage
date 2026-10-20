@@ -5,12 +5,12 @@ import { primaryAction } from "@/content/site";
 import { trackWhatsAppClick, whatsappLink } from "@/lib/whatsapp";
 import { WhatsAppIcon } from "./WhatsAppIcon";
 
-// הכפתור הצף מתחבא כשכפתור וואטסאפ אחר כבר על המסך (בהירו, בטופס ובפוטר), כדי לא לכסות אותו.
+// הכפתור הצף מתחבא כשכפתור וואטסאפ אחר כבר על המסך (בהירו, ב"ספרו לי…", בטופס ובפוטר), כדי לא לכסות אותו.
 export function FloatingWhatsApp() {
   const [hidden, setHidden] = useState(true);
 
   useEffect(() => {
-    const targets = [document.querySelector(".hero__actions"), document.querySelector(".coupon__b"), document.querySelector(".footer__cta")].filter(Boolean) as Element[];
+    const targets = [document.querySelector(".hero__actions"), document.querySelector(".pain__mark"), document.querySelector(".coupon__b"), document.querySelector(".footer__cta")].filter(Boolean) as Element[];
     const visible = new Set<Element>();
     const io = new IntersectionObserver((entries) => {
       for (const e of entries) {
