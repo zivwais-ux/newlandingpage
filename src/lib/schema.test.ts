@@ -10,6 +10,10 @@ describe("התוכן של הדף (site.ts)", () => {
     expect(() => validateContent()).not.toThrow();
   });
 
+  it("שם העסק הוא ZIV ייעוץ ולימוד AI מעשי", () => {
+    expect(content.business.name).toBe("ZIV ייעוץ ולימוד AI מעשי");
+  });
+
   it("מספר הוואטסאפ הוא 054-804-4345", () => {
     expect(content.business.whatsappNumber).toBe("972548044345");
     expect(toWhatsAppNumber(normalizeIsraeliPhone(content.business.phoneDisplay)!)).toBe(content.business.whatsappNumber);

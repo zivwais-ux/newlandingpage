@@ -4,7 +4,7 @@
 export const TODO_PREFIX = "[למלא";
 
 export const business = {
-  name: "[למלא – שם העסק]",
+  name: "ZIV ייעוץ ולימוד AI מעשי",
   teacher: "זיו",
   // מספר בפורמט בינלאומי בלי + ובלי מקפים (054-804-4345).
   whatsappNumber: "972548044345",

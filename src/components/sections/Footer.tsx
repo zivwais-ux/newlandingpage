@@ -58,7 +58,7 @@ export function Footer() {
           </ul>
         </div>
         <p className="footer__bottom">
-          © {new Date().getFullYear()} {nav.wordmark}, {nav.tagline}
+          © {new Date().getFullYear()} {business.name}
         </p>
       </div>
     </footer>
