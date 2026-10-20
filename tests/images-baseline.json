@@ -14,21 +14,6 @@
       },
       {
         "file": "/img/screen.webp",
-        "alt": "מחשב נייד",
-        "section": "intro"
-      },
-      {
-        "file": "/img/notebook.webp",
-        "alt": "מחברת עם רשימות",
-        "section": "intro"
-      },
-      {
-        "file": "/img/coffee.webp",
-        "alt": "כוס קפה",
-        "section": "intro"
-      },
-      {
-        "file": "/img/screen.webp",
         "alt": "יד מצביעה על מסך מחשב נייד במהלך שיעור",
         "section": "how"
       },
@@ -43,21 +28,6 @@
         "file": "/img/lesson.webp",
         "alt": "שני אנשים יושבים בבית קפה מול מחשב נייד, אחד מהם מצביע על המסך ומסביר",
         "section": "hero"
-      },
-      {
-        "file": "/img/screen.webp",
-        "alt": "מחשב נייד",
-        "section": "intro"
-      },
-      {
-        "file": "/img/notebook.webp",
-        "alt": "מחברת עם רשימות",
-        "section": "intro"
-      },
-      {
-        "file": "/img/coffee.webp",
-        "alt": "כוס קפה",
-        "section": "intro"
       },
       {
         "file": "/img/screen.webp",

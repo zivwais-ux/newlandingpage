@@ -19,13 +19,13 @@ export function About() {
         </div>
       </div>
       <div className="about__blocks">
-        {about.blocks.map((b, i) => (
-          <div key={b.title} data-reveal style={{ "--d": i } as React.CSSProperties}>
+        {about.blocks.map((b) => (
+          <div key={b.title}>
             <h3>{b.title}</h3>
             <p>{b.text}</p>
           </div>
         ))}
-        <ul className="about__credentials" data-reveal aria-label="ניסיון והכשרה">
+        <ul className="about__credentials" aria-label="ניסיון והכשרה">
           {about.credentials.map((c) => (
             <li key={c}>
               <span className="dot" aria-hidden="true" />
@@ -33,7 +33,7 @@ export function About() {
             </li>
           ))}
         </ul>
-        <div data-reveal>
+        <div>
           <WhatsAppButton label={primaryAction} location="about" />
         </div>
       </div>

@@ -22,7 +22,8 @@ export function Faq() {
                 </span>
                 {item.q}
                 <span className="faq__sign" aria-hidden="true">
-                  <span>+</span>
+                  <span className="faq__plus">+</span>
+                  <span className="faq__minus">−</span>
                 </span>
               </summary>
               <p>{item.a}</p>

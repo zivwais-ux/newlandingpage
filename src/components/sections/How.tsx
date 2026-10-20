@@ -1,7 +1,7 @@
 import Image from "next/image";
-import { how, primaryAction, whatsappMessage } from "@/content/site";
+import { business, how, primaryAction, whatsappMessage } from "@/content/site";
 import { WhatsAppButton } from "../WhatsAppButton";
-import { Chat } from "../Chat";
+import { WhatsAppChat } from "../Chat";
 
 export function How() {
   const [talk, lesson, after] = how.steps;
@@ -14,7 +14,11 @@ export function How() {
         <ol className="how__steps">
         <li className="how__step how__step--1" data-reveal>
           <div className="how__tile how__tile--1">
-            <Chat title="וואטסאפ" sub="שיחת ייעוץ" ask={whatsappMessage} answer={["בשמחה! ספרו לי במשפט מה העסק ומה לוקח לכם הכי הרבה זמן."]} asList={false} />
+            <WhatsAppChat
+              name={business.teacher}
+              sent={whatsappMessage}
+              reply="בשמחה! ספרו לי במשפט מה העסק ומה לוקח לכם הכי הרבה זמן."
+            />
           </div>
           <h3>{talk.name}</h3>
           <p>{talk.text}</p>
@@ -39,7 +43,7 @@ export function How() {
         </li>
         </ol>
       </div>
-      <div className="how__cta" data-reveal>
+      <div className="how__cta">
         <WhatsAppButton label={primaryAction} location="how" />
       </div>
     </section>

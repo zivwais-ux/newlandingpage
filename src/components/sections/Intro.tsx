@@ -1,5 +1,5 @@
-import Image from "next/image";
 import { intro } from "@/content/site";
+import { IntroIcon } from "../IntroIcon";
 
 export function Intro() {
   return (
@@ -8,11 +8,7 @@ export function Intro() {
         {intro.map((part) => (
           <span key={part.text}>
             {part.text}
-            {part.img && (
-              <span className="intro__pic">
-                <Image src={part.img} alt={part.alt ?? ""} width={640} height={480} loading="lazy" />
-              </span>
-            )}
+            {part.icon && <IntroIcon name={part.icon} />}
           </span>
         ))}
       </p>

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { build } from "@/content/site";
-import { Chat } from "../Chat";
+import { AssistantChat } from "../Chat";
 import { WhatsAppButton } from "../WhatsAppButton";
 
 // הדבר החי בדף: בוחרים סוג עסק ורואים דוגמה לכלי שבונים בשיעור.
@@ -16,18 +16,18 @@ export function Build() {
         <div className="build__stage" data-reveal>
           <div className="build__disc" data-field={ex.field} aria-hidden="true" />
           <div className="build__object swap" key={ex.id} aria-live="polite">
-            <Chat title={ex.tool} sub={`דוגמה: ${ex.who}`} ask={ex.ask} answer={ex.answer} asList={ex.answer.length > 2} />
+            <AssistantChat ask={ex.ask} intro={ex.intro} tool={ex.tool} answer={ex.answer} asList={ex.answer.length > 2} />
           </div>
         </div>
         <div className="build__list">
           <h2 id="build-title" data-reveal>
             {build.title}
           </h2>
-          <p className="build__hint" data-reveal>
+          <p className="build__hint">
             {build.hint}
           </p>
           <div className="build__names" role="group" aria-label={build.hint}>
-            {build.examples.map((e, i) => (
+            {build.examples.map((e) => (
               <button
                 key={e.id}
                 type="button"
@@ -35,8 +35,6 @@ export function Build() {
                 aria-pressed={e.id === active}
                 onClick={() => setActive(e.id)}
                 onPointerEnter={(ev) => ev.pointerType === "mouse" && setActive(e.id)}
-                data-reveal
-                style={{ "--d": i } as React.CSSProperties}
               >
                 <span className="dot" aria-hidden="true" />
                 {e.who}

@@ -33,6 +33,7 @@ const buildExampleSchema = z.object({
   who: text,
   tool: text,
   ask: text,
+  intro: text.max(60),
   answer: z.array(text).min(1).max(4),
   gives: text,
   message: whatsappMessageSchema,
@@ -68,7 +69,7 @@ export const contentSchema = z.object({
     note: text,
     photoAlt: text,
   }),
-  intro: z.array(z.object({ text: text, img: imagePath.optional(), alt: text.optional() })).min(1),
+  intro: z.array(z.object({ text: text, icon: z.enum(["laptop", "notebook", "coffee"]).optional() })).min(1),
   pain: z.object({ title: text, items: z.array(text).min(2).max(5), answer: text, cta: text }),
   build: z
     .object({ title: text, hint: text, ctaLead: text, ctaLabel: text.max(32), examples: z.array(buildExampleSchema).min(2) })
@@ -110,12 +111,21 @@ export const contentSchema = z.object({
   footer: z.object({
     ctaTitle: text,
     ctaText: text,
+    composerLabel: text,
+    composerSend: text.max(24),
     accessibility: text,
     privacy: text,
   }),
 });
 
 export type Content = z.infer<typeof contentSchema>;
+
+/** ההודעה שהגולש כותב בתיבה שבפוטר לפני שליחה לוואטסאפ. */
+export const footerMessageSchema = z
+  .string()
+  .trim()
+  .min(2, "כתבו כמה מילים לפני השליחה")
+  .max(500, "ההודעה ארוכה מדי, נסו לקצר אותה");
 
 /** פרטי ליד מהטופס. */
 export const leadSchema = z.object({

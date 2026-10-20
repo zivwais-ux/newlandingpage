@@ -88,7 +88,7 @@ try {
   await page.getByRole("button", { name: "חנות קטנה" }).tap();
   await page.waitForTimeout(350);
   const after = new URL(await ctaHref()).searchParams.get("text");
-  const title = await page.textContent(".build__object .chat__title");
+  const title = await page.textContent(".build__object .ai__tool");
   const field = await page.getAttribute(".build__disc", "data-field");
   check("בורר העסקים: הדוגמה מתחלפת", title === "תיאורי מוצרים", title);
   check("בורר העסקים: ההודעה המוכנה מותאמת לסוג העסק", before.includes("מורה פרטי") && after.includes("חנות קטנה"), after);
@@ -118,11 +118,32 @@ try {
   check("טופס תקין: ההודעה כוללת שם, טלפון מנורמל וסוג עסק", text.includes("דנה") && text.includes("0501234567") && text.includes("מספרה"), text);
   check("טופס תקין: מוצגת הודעת תודה", (await page.textContent(".coupon__note")).includes("נפתחה שיחת וואטסאפ"));
 
-  // 4. שאלות נפוצות: אחת פתוחה בכל פעם
+  // 4. שיחות שנראות אמיתיות, אייקונים בפתיחה, ופוטר בלי בלוקים של אותיות
+  check("שיחת הוואטסאפ: שעה ווי כפול כחול", (await page.locator(".phone--wa .wa__meta").first().innerText()).includes("10:42") && (await page.locator(".phone--wa .wa__ticks").count()) === 1);
+  check("שיחת העוזר: שורת סטטוס, שורת פתיחה ותיבת 'שאלו כל דבר'", (await page.locator(".phone--ai .phone__status").count()) === 1 && (await page.locator(".phone--ai .ai__answer p").first().innerText()).length > 5 && (await page.locator(".phone--ai .ai__placeholder").innerText()) === "שאלו כל דבר");
+  check("משפט הפתיחה: 3 אייקונים ואין תמונות", (await page.locator(".intro .intro__icon").count()) === 3 && (await page.locator(".intro img").count()) === 0);
+  check("הפוטר: אין יותר בלוקים של אותיות", (await page.locator("footer svg.mark, footer .mark").count()) === 0);
+
+  // 5. תיבת ההודעה בפוטר
+  await page.evaluate(() => (window.__opened = []));
+  await page.fill("#composer-text", "   ");
+  await page.click(".composer__send");
+  check("תיבת הפוטר ריקה: שגיאה בעברית ולא נפתח וואטסאפ", /[א-ת]/.test(await page.locator("#composer-error").innerText()) && (await page.evaluate(() => window.__opened.length)) === 0);
+  await page.fill("#composer-text", "היי זיו, יש לי סטודיו ליוגה ואשמח לשמוע");
+  await page.click(".composer__send");
+  const composed = await page.evaluate(() => window.__opened);
+  check(
+    "תיבת הפוטר: נשלח בדיוק מה שהגולש כתב, ל-054-804-4345",
+    composed.length === 1 && new URL(composed[0]).pathname === `/${NUMBER}` && new URL(composed[0]).searchParams.get("text") === "היי זיו, יש לי סטודיו ליוגה ואשמח לשמוע",
+    composed[0],
+  );
+  check("תיבת הפוטר עובדת גם בלי JavaScript (action ל-wa.me)", (await page.getAttribute(".composer", "action")) === `https://wa.me/${NUMBER}` && (await page.getAttribute("#composer-text", "name")) === "text");
+
+  // 6. שאלות נפוצות: אחת פתוחה בכל פעם
   await page.click("#faq details:nth-of-type(3) summary");
   check("שאלות נפוצות: רק כרטיס אחד פתוח", (await page.locator("#faq details[open]").count()) === 1);
 
-  // 5. עמודי משנה וקישורים פנימיים
+  // 7. עמודי משנה וקישורים פנימיים
   for (const path of ["accessibility", "privacy"]) {
     const res = await page.goto(URL_ + path);
     check(`/${path} נטען`, res.status() === 200);

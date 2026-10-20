@@ -270,20 +270,13 @@ p {
   font-weight: 500;
   letter-spacing: -0.015em;
 }
-.intro__pic {
+.intro__icon {
   display: inline-block;
-  width: 1.35em;
-  height: 0.9em;
-  margin-inline: 0.14em;
-  vertical-align: -0.1em;
-  overflow: hidden;
-  border-radius: 0.32em;
-  border-start-start-radius: 0;
-}
-.intro__pic img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  width: 0.95em;
+  height: 0.95em;
+  margin-inline: 0.2em 0;
+  vertical-align: -0.14em;
+  color: var(--accent);
 }
 @media (min-width: 900px) {
   .intro p {
@@ -364,21 +357,20 @@ p {
 .build__disc[data-field="forest"] {
   background: var(--forest);
 }
-.build__object .chat {
-  box-shadow: 0 24px 48px -24px rgb(10 10 10 / 0.35); /* taste-skill-ignore: the panel floats in front of the disc */
+.build__disc,
+.build__object {
+  grid-area: 1 / 1;
 }
 .build__object {
-  position: absolute;
-  inset-inline: 0;
-  margin-inline: auto;
-  top: 50%;
-  transform: translateY(-55%);
-  width: min(76vw, 440px);
+  position: relative;
+  width: min(80vw, 360px);
+}
+.build__object .phone {
+  box-shadow: 0 28px 56px -32px rgb(10 10 10 / 0.4); /* taste-skill-ignore: a screenshot laid on the disc */
 }
 .build__list h2 {
   font-size: var(--step-head);
   line-height: 1.1;
-  color: var(--muted);
 }
 .build__hint {
   margin-top: 12px;
@@ -447,7 +439,7 @@ p {
     width: min(64vh, 44vw);
   }
   .build__object {
-    width: min(46vh, 32vw);
+    width: min(44vh, 30vw, 380px);
   }
   .build__names {
     flex-direction: column;
@@ -459,78 +451,266 @@ p {
   }
 }
 
-/* A real piece of interface: the assistant conversation the tool runs in */
-.chat {
+/* Real pieces of interface (data-ui): phone screenshots of an AI assistant and of WhatsApp */
+.phone {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   background: var(--white);
-  border-radius: 22px;
-  border-start-start-radius: 0;
-  padding: 18px;
-  font-size: var(--step-small);
-  line-height: 1.5;
+  color: #0d0d0d;
+  border-radius: 30px;
+  font-size: 14px;
+  line-height: 1.45;
+  text-align: start;
 }
-.chat__head {
+.ui-icon {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+.ui-icon--sm {
+  width: 17px;
+  height: 17px;
+}
+.phone__status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 22px 4px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.phone__sys {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding-bottom: 12px;
-  margin-bottom: 14px;
-  border-bottom: 1px solid #ececec; /* taste-skill-ignore: inside a data-ui interface fragment */
+  gap: 5px;
 }
-.chat__avatar {
-  width: 34px;
-  height: 34px;
+.phone__sys svg {
+  height: 11px;
+  width: auto;
+  fill: currentColor;
+}
+.ai__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px 10px;
+  color: #3c3c3c;
+}
+.ai__model {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #0d0d0d;
+}
+.ai__model .ui-icon {
+  color: #8a8a8a;
+}
+.ai__body {
+  flex: 1;
+  padding: 8px 16px 14px;
+}
+.ai__user {
+  width: fit-content;
+  max-width: 84%;
+  margin-inline-start: auto;
+  padding: 9px 14px;
+  border-radius: 20px;
+  background: #f1f1f1;
+}
+.ai__answer {
+  margin-top: 16px;
+}
+.ai__tool {
+  margin-top: 10px;
+  font-weight: 500;
+}
+.ai__answer ul {
+  margin-top: 4px;
+  padding-inline-start: 20px;
+  list-style: disc;
+}
+.ai__answer li + li {
+  margin-top: 3px;
+}
+.ai__quote {
+  margin-top: 6px;
+  padding-inline-start: 12px;
+  border-inline-start: 3px solid #e3e3e3; /* taste-skill-ignore: quote bar inside a data-ui fragment */
+}
+.ai__actions {
+  display: flex;
+  gap: 14px;
+  margin-top: 12px;
+  color: #8a8a8a;
+}
+.ai__composer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px 16px;
+}
+.ai__field {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 24px;
+  background: #f4f4f4;
+  color: #616161;
+}
+.ai__placeholder {
+  flex: 1;
+}
+.ai__send {
+  width: 36px;
+  height: 36px;
+  flex: none;
   display: grid;
   place-items: center;
-  border-radius: 12px;
-  border-start-start-radius: 0;
-  background: var(--accent);
+  border-radius: 50%;
+  background: #0d0d0d;
   color: var(--white);
-  font-weight: 500;
-  font-size: var(--step-small);
 }
-.chat__title {
-  font-weight: 500;
-  font-size: var(--step-body);
+
+.phone--wa {
+  border-radius: 22px;
+  font-size: 13.5px;
+  line-height: 1.4;
+  color: #111b21;
 }
-.chat__sub {
-  color: var(--muted);
-  font-size: var(--step-small);
+.wa__bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  color: #54656f;
 }
-.chat__msg {
-  max-width: 88%;
-  padding: 10px 14px;
-  border-radius: 16px;
-}
-.chat__msg--me {
-  margin-inline-start: auto;
-  background: var(--mint);
-  border-start-end-radius: 0;
-}
-.chat__msg--tool {
-  margin-top: 10px;
-  background: var(--surface);
-  border-start-start-radius: 0;
-}
-.chat__msg--tool ul {
+.wa__avatar {
+  width: 32px;
+  height: 32px;
+  flex: none;
   display: grid;
-  gap: 4px;
+  place-items: center;
+  border-radius: 50%;
+  background: #dfe5e7;
+  color: #3b4a54;
+  font-weight: 500;
 }
-.chat__msg--tool li::before {
+.wa__who {
+  display: grid;
+  line-height: 1.25;
+}
+.wa__who b {
+  font-weight: 500;
+  font-size: 14.5px;
+  color: #111b21;
+}
+.wa__who span {
+  font-size: 12px;
+}
+.wa__calls {
+  display: flex;
+  gap: 16px;
+  margin-inline-start: auto;
+}
+.wa__body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px 12px;
+  background: #efeae2;
+}
+.wa__day {
+  align-self: center;
+  padding: 3px 10px;
+  border-radius: 8px;
+  background: var(--white);
+  color: #54656f;
+  font-size: 12px;
+}
+.wa__msg {
+  position: relative;
+  max-width: 80%;
+  padding: 6px 9px 4px;
+  border-radius: 8px;
+  box-shadow: 0 1px 0.5px rgb(11 20 26 / 0.13); /* taste-skill-ignore: message bubbles inside a data-ui fragment */
+}
+.wa__msg::before {
   content: "";
-  display: inline-block;
-  width: 7px;
-  height: 7px;
-  margin-inline-end: 8px;
-  border-radius: 3px;
-  border-start-start-radius: 0;
-  background: var(--accent);
-  vertical-align: 0.1em;
+  position: absolute;
+  top: 0;
+  width: 0;
+  height: 0;
+  border-top: 9px solid;
 }
-.chat__time {
-  display: block;
-  margin-top: 2px;
-  font-size: 13px;
-  color: var(--muted);
+/* RTL: outgoing on the left with its tail top-left, incoming on the right */
+.wa__msg--out {
+  align-self: flex-end;
+  background: #d9fdd3;
+  border-top-left-radius: 0;
+}
+.wa__msg--out::before {
+  left: -7px;
+  border-top-color: #d9fdd3;
+  border-left: 8px solid transparent;
+}
+.wa__msg--in {
+  align-self: flex-start;
+  background: var(--white);
+  border-top-right-radius: 0;
+}
+.wa__msg--in::before {
+  right: -7px;
+  border-top-color: var(--white);
+  border-right: 8px solid transparent;
+}
+.wa__meta {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 3px;
+  margin-top: 1px;
+  font-size: 11px;
+  color: #4f5f68;
+}
+.wa__ticks {
+  width: 17px;
+  height: 11px;
+  color: #53bdeb;
+}
+.wa__composer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px 10px;
+  background: #efeae2;
+}
+.wa__field {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 22px;
+  background: var(--white);
+  color: #5f707a;
+}
+.wa__field span {
+  flex: 1;
+}
+.wa__mic {
+  width: 38px;
+  height: 38px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #00a884;
+  color: var(--white);
 }
 .swap {
   animation: swap-in 300ms var(--ease-out);
@@ -608,7 +788,7 @@ p {
   height: 100%;
   object-fit: cover;
 }
-.how__tile .chat {
+.how__tile .phone {
   width: 100%;
   max-width: 340px;
 }
@@ -639,19 +819,18 @@ p {
   }
   .how__step--1 {
     grid-column: 1 / 4;
-    grid-row: 1;
+    grid-row: 2;
   }
   .how__step--2 {
     grid-column: 4 / 8;
-    grid-row: 1;
+    grid-row: 2;
   }
   .how__step--3 {
     grid-column: 8 / 13;
     grid-row: 1 / span 2;
   }
   .how__tile--1 {
-    height: 34vh;
-    min-height: 280px;
+    min-height: 34vh;
     padding: 18px;
   }
   .how__tile--2 {
@@ -842,17 +1021,20 @@ p {
   place-items: center;
   border-radius: 12px;
   border-start-start-radius: 0;
-  background: var(--ink);
-  color: var(--bg);
-  font-size: var(--step-body);
+  position: relative;
+  background: var(--forest);
+  color: var(--forest-ink);
+}
+.faq__sign {
+  font-size: 22px;
   line-height: 1;
 }
-.faq__sign span {
-  display: block;
-  transition: transform var(--t-ui) var(--ease-out);
+.faq__minus,
+.faq__card[open] .faq__plus {
+  display: none;
 }
-.faq__card[open] .faq__sign span {
-  transform: rotate(45deg);
+.faq__card[open] .faq__minus {
+  display: inline;
 }
 .faq__card p {
   padding: 4px 24px 20px;
@@ -1022,24 +1204,68 @@ p {
   font-size: var(--step-lead);
   line-height: 1.4;
 }
-.footer__actions {
-  margin-top: 32px;
+.footer__cta {
+  display: grid;
+  gap: 32px;
+}
+.footer__tel {
+  display: inline-block;
+  margin-top: 24px;
+}
+.composer {
+  display: grid;
+  gap: 12px;
+}
+.composer textarea {
+  width: 100%;
+  min-height: 136px;
+  resize: none;
+  padding: 18px 20px;
+  border: 2px solid transparent;
+  border-radius: var(--r);
+  border-start-start-radius: 0;
+  background: var(--forest-field);
+  color: var(--forest-ink);
+  font-size: var(--step-body);
+  line-height: 1.5;
+  transition: border-color var(--t-hover) ease;
+}
+.composer textarea:focus {
+  outline: none;
+  border-color: var(--mint);
+}
+.composer textarea[aria-invalid="true"] {
+  border-color: #ffc9a3;
+}
+.composer__send {
+  justify-self: end;
+}
+.composer__error {
+  margin-top: 0;
+}
+.footer__mark {
+  margin-top: clamp(64px, 8vw, 120px);
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 16px 28px;
+  align-items: baseline;
+  gap: 4px 16px;
 }
-.mark {
-  display: block;
-  width: 100%;
-  height: auto;
-  margin-top: clamp(56px, 7vw, 112px);
-}
-.mark__letter {
-  font-family: var(--font-rubik), system-ui, sans-serif;
-  font-size: 330px;
+.footer__mark b {
+  font-size: var(--step-head);
   font-weight: 500;
-  fill: var(--forest);
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.footer__mark span {
+  font-size: var(--step-lead);
+  color: var(--mint);
+}
+@media (min-width: 900px) {
+  .footer__cta {
+    grid-template-columns: 5fr 6fr;
+    align-items: end;
+    gap: 64px;
+  }
 }
 .footer__row {
   margin-top: 48px;
