@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* ---------- Tokens (direction: One motif · palette: Mint and forest green) ---------- */
+/* ---------- Tokens (direction: One motif · palette: Sage and forest green) ---------- */
 :root {
   --bg: #f8f8f8;
   --surface: #eeeeee;
@@ -9,7 +9,7 @@
   --accent: #1f6b3a;
   --accent-strong: #17552d;
   --accent-ink: #ffffff;
-  --mint: #c3edce;
+  --sage: #a8c3ae;
   --forest: #0f3d24;
   --forest-ink: #f8f8f8;
   --forest-field: #1d5636;
@@ -57,7 +57,7 @@ body {
 }
 
 ::selection {
-  background: var(--mint);
+  background: var(--sage);
   color: var(--ink);
 }
 
@@ -122,7 +122,7 @@ p {
   font-size: var(--step-small);
 }
 .btn--light {
-  background: var(--mint);
+  background: var(--sage);
   color: var(--ink);
 }
 .link {
@@ -228,7 +228,7 @@ p {
   border-end-start-radius: clamp(48px, 18vw, 140px);
   border-end-end-radius: 0;
   border-start-end-radius: 0;
-  background: var(--mint);
+  background: var(--sage);
 }
 .hero__shape img {
   width: 100%;
@@ -270,13 +270,28 @@ p {
   font-weight: 500;
   letter-spacing: -0.015em;
 }
-.intro__icon {
+/* "כלי שעובד" gets a hand-drawn line under it, drawn with the same pen as the circle */
+.intro__mark {
+  position: relative;
   display: inline-block;
-  width: 0.95em;
-  height: 0.95em;
-  margin-inline: 0.2em 0;
-  vertical-align: -0.14em;
-  color: var(--accent);
+  white-space: nowrap;
+}
+.intro__line {
+  position: absolute;
+  inset-inline: -0.08em;
+  bottom: -0.22em;
+  width: calc(100% + 0.16em);
+  height: 0.32em;
+  overflow: visible;
+  pointer-events: none;
+}
+.intro__line path {
+  fill: none;
+  stroke: var(--forest);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
 }
 @media (min-width: 900px) {
   .intro p {
@@ -284,9 +299,9 @@ p {
   }
 }
 
-/* ---------- Pain: the mint band ---------- */
+/* ---------- Pain: the sage band ---------- */
 .pain {
-  background: var(--mint);
+  background: var(--sage);
 }
 .pain__stage {
   padding-block: clamp(72px, 8vw, 140px);
@@ -361,7 +376,7 @@ p {
   place-items: center;
   border-radius: 8px;
   background: var(--forest);
-  color: var(--mint);
+  color: var(--sage);
 }
 .note__icon svg {
   width: 16px;
@@ -435,8 +450,8 @@ p {
   border-start-start-radius: 0;
   transition: background-color 300ms ease;
 }
-.build__disc[data-field="mint"] {
-  background: var(--mint);
+.build__disc[data-field="sage"] {
+  background: var(--sage);
 }
 .build__disc[data-field="forest"] {
   background: var(--forest);
@@ -887,7 +902,7 @@ p {
   border-start-start-radius: 0;
 }
 .how__tile--1 {
-  background: var(--mint);
+  background: var(--sage);
   min-height: 300px;
 }
 .how__tile--2 {
@@ -998,7 +1013,7 @@ p {
   place-items: center;
   padding: 24px;
   text-align: center;
-  background: var(--mint);
+  background: var(--sage);
   color: var(--ink);
   border-radius: 28%;
   border-start-start-radius: 0;
@@ -1018,7 +1033,7 @@ p {
 }
 .about h3 {
   font-size: var(--step-lead);
-  color: var(--mint);
+  color: var(--sage);
 }
 .about__credentials {
   display: grid;
@@ -1033,7 +1048,7 @@ p {
   align-items: start;
 }
 .about__credentials .dot {
-  background: var(--mint);
+  background: var(--sage);
 }
 .about__blocks p {
   margin-top: 10px;
@@ -1089,18 +1104,18 @@ p {
   margin-top: -16px;
 }
 .faq__card:nth-child(3n + 1) {
-  --c: var(--mint);
+  --c: var(--sage);
 }
 .faq__card:nth-child(3n + 2) {
   --c: var(--forest);
   color: var(--forest-ink);
 }
 .faq__card:nth-child(3n + 2) .faq__sign {
-  background: var(--mint);
+  background: var(--sage);
   color: var(--ink);
 }
 .faq__card:nth-child(3n + 2) :focus-visible {
-  outline-color: var(--mint);
+  outline-color: var(--sage);
 }
 .faq__card:nth-child(3n + 3) {
   --c: var(--white);
@@ -1248,12 +1263,12 @@ p {
   transition: border-color var(--t-hover) ease, background-color var(--t-hover) ease;
 }
 .field input::placeholder {
-  color: var(--mint);
+  color: var(--sage);
   opacity: 0.85;
 }
 .field input:focus {
   outline: none;
-  border-color: var(--mint);
+  border-color: var(--sage);
 }
 .field input[aria-invalid="true"] {
   border-color: #ffc9a3;
@@ -1265,7 +1280,7 @@ p {
 }
 .coupon :focus-visible,
 .footer :focus-visible {
-  outline-color: var(--mint);
+  outline-color: var(--sage);
 }
 .coupon__submit {
   margin-top: 14px;
@@ -1354,7 +1369,7 @@ p {
 }
 .composer textarea:focus {
   outline: none;
-  border-color: var(--mint);
+  border-color: var(--sage);
 }
 .composer textarea[aria-invalid="true"] {
   border-color: #ffc9a3;
@@ -1380,7 +1395,7 @@ p {
 }
 .footer__mark span {
   font-size: var(--step-lead);
-  color: var(--mint);
+  color: var(--sage);
 }
 @media (min-width: 900px) {
   .footer__cta {
@@ -1401,7 +1416,7 @@ p {
 .footer__bottom {
   margin-top: 40px;
   font-size: var(--step-small);
-  color: var(--mint);
+  color: var(--sage);
 }
 @media (min-width: 900px) {
   .footer {
@@ -1434,12 +1449,19 @@ p {
 .float-wa {
   transition:
     transform var(--t-ui) var(--ease-out),
-    opacity var(--t-ui) ease;
+    opacity var(--t-ui) ease,
+    visibility 0s;
 }
+/* מוסתר באמת: לא נצבע, לא נלחץ ולא מקבל פוקוס מהמקלדת */
 .float-wa.is-hidden {
   opacity: 0;
   transform: translateY(24px);
   pointer-events: none;
+  visibility: hidden;
+  transition:
+    transform var(--t-ui) var(--ease-out),
+    opacity var(--t-ui) ease,
+    visibility 0s var(--t-ui);
 }
 .float-wa svg {
   width: 32px;
@@ -1458,15 +1480,17 @@ p {
   .hero {
     gap: 0;
   }
+  /* The photo in a bubble window with equal margins, like a picture sent in a chat.
+     4:3 keeps both people and the laptop: of the photo's 1536px width only 171px are trimmed. */
   .hero__shape {
     order: -1;
-    aspect-ratio: auto;
-    height: clamp(260px, 40svh, 380px);
-    margin-inline-start: var(--margin);
-    border-end-start-radius: clamp(72px, 26vw, 140px);
+    aspect-ratio: 4 / 3;
+    margin-inline: var(--margin);
+    border-radius: var(--r);
+    border-start-start-radius: 0;
   }
   .hero__shape img {
-    object-position: 46% 55%;
+    object-position: 45% 50%;
   }
   .hero__copy {
     padding-top: 28px;
@@ -1684,10 +1708,10 @@ p {
       animation-timeline: view();
       animation-range: cover 18% cover 42%;
     }
-    [data-fill] .intro__icon {
-      animation: icon-fill linear both;
+    .intro__line path {
+      animation: circle-draw linear both;
       animation-timeline: view();
-      animation-range: cover 18% cover 42%;
+      animation-range: cover 28% cover 44%;
     }
 
     /* 3. The pains arrive one after another from the side; the answer follows. */
@@ -1820,15 +1844,6 @@ p {
     opacity: 1;
   }
 }
-@keyframes icon-fill {
-  from {
-    opacity: 0.45;
-  }
-  to {
-    opacity: 1;
-  }
-}
-/* Phones rise vertically (no room at the edges); wide screens slide in from the inner side. */
 @keyframes slide-in {
   from {
     transform: translateY(32px);

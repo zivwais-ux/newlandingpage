@@ -121,7 +121,12 @@ try {
   // 4. שיחות שנראות אמיתיות, אייקונים בפתיחה, ופוטר בלי בלוקים של אותיות
   check("שיחת הוואטסאפ: שעה ווי כפול כחול", (await page.locator(".phone--wa .wa__meta").first().innerText()).includes("10:42") && (await page.locator(".phone--wa .wa__ticks").count()) === 1);
   check("שיחת העוזר: שורת סטטוס, שורת פתיחה ותיבת 'שאלו כל דבר'", (await page.locator(".phone--ai .phone__status").count()) === 1 && (await page.locator(".phone--ai .ai__answer p").first().innerText()).length > 5 && (await page.locator(".phone--ai .ai__placeholder").innerText()) === "שאלו כל דבר");
-  check("משפט הפתיחה: 3 אייקונים ואין תמונות", (await page.locator(".intro .intro__icon").count()) === 3 && (await page.locator(".intro img").count()) === 0);
+  check(
+    "משפט הפתיחה: קו כתב-יד מתחת ל'כלי שעובד', בלי אייקונים ובלי תמונות",
+    (await page.locator(".intro .intro__mark .intro__line").count()) === 1 &&
+      (await page.locator(".intro__mark").innerText()).trim() === "כלי שעובד" &&
+      (await page.locator(".intro svg:not(.intro__line), .intro img").count()) === 0,
+  );
   check("הפוטר: אין יותר בלוקים של אותיות", (await page.locator("footer svg.mark, footer .mark").count()) === 0);
 
   // 5. תיבת ההודעה בפוטר

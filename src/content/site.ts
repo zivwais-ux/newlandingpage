@@ -50,19 +50,17 @@ export const hero = {
   photoAlt: "שני אנשים יושבים בבית קפה מול מחשב נייד, אחד מהם מצביע על המסך ומסביר",
 };
 
-// משפט הפתיחה. חלק עם icon מקבל אייקון קטן בתוך השורה, אחרי המילה.
-export type IntroIcon = "laptop" | "notebook" | "coffee";
-export const intro: { text: string; icon?: IntroIcon }[] = [
-  { text: "שיעור פרטי וחי, אחד על אחד. מחשב", icon: "laptop" },
-  { text: ", מחברת", icon: "notebook" },
-  { text: ", קפה", icon: "coffee" },
-  { text: ", ושעה אחת שבסופה יוצאים עם כלי שעובד בעסק שלכם." },
-];
+// משפט הפתיחה. החלק ב-mark מקבל קו בכתב-יד שנמתח מתחתיו בזמן הגלילה (אותו עט כמו העיגול).
+export const intro = {
+  before: "שיעור פרטי וחי, אחד על אחד. שעה אחת מול המחשב שלכם, ויוצאים עם",
+  mark: "כלי שעובד",
+  after: ".",
+};
 
 // הכאבים מוצגים כהתראות טלפון שנערמות בערב: אפליקציה, שעה וטקסט.
 export type PainIcon = "bell" | "spark" | "people" | "note";
 export const pain = {
-  title: "מכירים את זה?",
+  title: "עוד ערב של עבודה?",
   items: [
     { app: "תזכורות", icon: "bell", time: "21:40", text: "היום נגמר, ואז מתחילה העבודה השנייה: הודעות, ניירת, הכנות." },
     { app: "עוזר AI", icon: "spark", time: "22:05", text: "ניסיתם ChatGPT, קיבלתם תשובה כללית, ולא היה ברור מה עושים איתה." },
@@ -85,7 +83,7 @@ export type BuildExample = {
   answer: string[];
   gives: string;
   message: string;
-  field: "mint" | "forest";
+  field: "sage" | "forest";
 };
 
 export const build = {
@@ -103,7 +101,7 @@ export const build = {
       answer: ["רמה א׳: חיבור שברים עם מכנה שווה", "רמה ב׳: מכנים שונים, עם רמז", "רמה ג׳: בעיה מילולית מהחיים"],
       gives: "דף מותאם לכל תלמיד, מוכן לפני שהוא נכנס בדלת.",
       message: "היי זיו, הגעתי מהאתר. אני מורה פרטי ואשמח לשמוע מה אפשר לבנות לי עם AI",
-      field: "mint",
+      field: "sage",
     },
     {
       id: "therapist",
@@ -125,7 +123,7 @@ export const build = {
       answer: ["היי! ביום חמישי יש לי שני חלונות פנויים.", "רוצה שאשריין לך אחד מהם?"],
       gives: "עונים ללקוחות מהר, בלי להקליד את אותה תשובה שוב ושוב.",
       message: "היי זיו, הגעתי מהאתר. יש לי מספרה או קליניקה ואשמח לשמוע מה אפשר לבנות לי עם AI",
-      field: "mint",
+      field: "sage",
     },
     {
       id: "shop",
@@ -147,7 +145,7 @@ export const build = {
       answer: ["החלטות שהתקבלו", "משימה ותאריך לכל אחד", "מה פתוח לישיבה הבאה"],
       gives: "כולם יוצאים מהישיבה עם אותה רשימה.",
       message: "היי זיו, הגעתי מהאתר. אני מנהל/ת צוות ואשמח לשמוע איך להכניס AI לעבודה שלנו",
-      field: "mint",
+      field: "sage",
     },
     {
       id: "personal",

@@ -32,10 +32,10 @@ describe("התוכן של הדף (site.ts)", () => {
     expect(JSON.stringify(content)).not.toMatch(/בחברה גדולה|ז׳רגון|ז'רגון/);
   });
 
-  it("משפט הפתיחה משתמש באייקונים ולא בתמונות, ובלי ניסוח 'לא X ולא Y'", () => {
-    expect(content.intro.map((p) => p.icon).filter(Boolean)).toEqual(["laptop", "notebook", "coffee"]);
-    expect(content.intro.some((p) => "img" in p)).toBe(false);
-    expect(content.intro.map((p) => p.text).join("")).not.toMatch(/^לא /);
+  it("משפט הפתיחה: 'כלי שעובד' מסומן בקו, בלי אייקונים ובלי ניסוח 'לא X ולא Y'", () => {
+    expect(content.intro.mark).toBe("כלי שעובד");
+    expect(content.intro.before).not.toMatch(/^לא /);
+    expect(content.intro).not.toHaveProperty("icon");
   });
 
   it("לכל דוגמה ב'מה בונים' יש שורת פתיחה לתשובה", () => {
@@ -64,7 +64,7 @@ describe("התוכן של הדף (site.ts)", () => {
     expect(broken(() => {})).toBe(true);
     expect(broken((c) => ((c.business as { whatsappNumber: string }).whatsappNumber = "0548044345"))).toBe(false);
     expect(broken((c) => (((c.how as { steps: { img?: string }[] }).steps[1].img = "/images/x.jpg")))).toBe(false);
-    expect(broken((c) => ((c.intro as { icon?: string }[])[0].icon = "rocket"))).toBe(false);
+    expect(broken((c) => ((c.intro as { mark: string }).mark = ""))).toBe(false);
     expect(broken((c) => ((c.hero as { subtitle: string }).subtitle = "שיעורים פרטיים בלבד"))).toBe(false);
     expect(broken((c) => ((c.whatsappMessage as unknown) = "שלום"))).toBe(false);
     expect(

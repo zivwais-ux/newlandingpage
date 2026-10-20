@@ -37,7 +37,7 @@ const buildExampleSchema = z.object({
   answer: z.array(text).min(1).max(4),
   gives: text,
   message: whatsappMessageSchema,
-  field: z.enum(["mint", "forest"]),
+  field: z.enum(["sage", "forest"]),
 });
 
 export const contentSchema = z.object({
@@ -69,7 +69,7 @@ export const contentSchema = z.object({
     note: text,
     photoAlt: text,
   }),
-  intro: z.array(z.object({ text: text, icon: z.enum(["laptop", "notebook", "coffee"]).optional() })).min(1),
+  intro: z.object({ before: text, mark: text.max(20), after: z.string() }),
   pain: z.object({
     title: text,
     items: z
