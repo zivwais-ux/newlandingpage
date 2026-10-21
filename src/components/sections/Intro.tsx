@@ -1,4 +1,5 @@
 import { intro } from "@/content/site";
+import { PenMark } from "../PenMark";
 
 // משפט הפתיחה: כל מילה "מתמלאת בדיו" בזמן הגלילה, ואז קו בכתב-יד נמתח מתחת ל"כלי שעובד"
 // (אותו עט כמו העיגול באזור ההתראות). CSS בלבד; בלי תמיכה או עם הפחתת תנועה הכול מוצג גמור.
@@ -21,9 +22,7 @@ export function Intro() {
         <Words text={intro.before} />{" "}
         <span className="intro__mark">
           <Words text={intro.mark} />
-          <svg className="intro__line" viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true">
-            <path pathLength={1} d="M197 4C168 5 138 3 104 6C70 9 38 4 3 8" />
-          </svg>
+          <PenMark kind="underline" className="intro__line" />
         </span>
         {intro.after}
       </p>

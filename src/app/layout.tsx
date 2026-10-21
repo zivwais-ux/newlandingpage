@@ -4,7 +4,7 @@ import Script from "next/script";
 import { analytics, business, seo } from "@/content/site";
 import "./globals.css";
 
-const rubik = Rubik({ subsets: ["hebrew", "latin"], weight: ["400", "500"], variable: "--font-rubik", display: "swap" });
+const rubik = Rubik({ subsets: ["hebrew", "latin"], weight: ["400", "500", "600"], variable: "--font-rubik", display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(business.siteUrl),

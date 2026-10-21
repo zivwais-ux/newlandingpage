@@ -1,5 +1,6 @@
 import Image from "next/image";
-import { hero, nav, navAction, primaryAction } from "@/content/site";
+import { hero, nav, navAction, primaryAction, whatsappMessage } from "@/content/site";
+import { HeroBubble } from "../Chat";
 import { WhatsAppButton } from "../WhatsAppButton";
 
 export function Hero() {
@@ -29,18 +30,31 @@ export function Hero() {
           <p className="hero__sub">{hero.subtitle}</p>
           <div className="hero__actions">
             <WhatsAppButton label={primaryAction} location="hero" />
-            <span className="hero__note">{hero.note}</span>
           </div>
+          <ul className="hero__trust">
+            {hero.trust.map((t) => (
+              <li key={t}>
+                <svg viewBox="0 0 16 16" aria-hidden="true">
+                  <path d="M3 8.5l3 3 7-7" />
+                </svg>
+                {t}
+              </li>
+            ))}
+          </ul>
         </div>
-        <div className="hero__shape">
-          <Image
-            src="/img/lesson.webp"
-            alt={hero.photoAlt}
-            width={1536}
-            height={1024}
-            priority
-            sizes="(min-width: 900px) 60vw, 100vw"
-          />
+        {/* התמונה בחלון, משטח מרווה מתחתיה, והודעת הוואטסאפ שהגולש ישלח צפה על הפינה */}
+        <div className="hero__media">
+          <div className="hero__shape">
+            <Image
+              src="/img/lesson.webp"
+              alt={hero.photoAlt}
+              width={1536}
+              height={1024}
+              priority
+              sizes="(min-width: 900px) 50vw, 100vw"
+            />
+          </div>
+          <HeroBubble text={whatsappMessage} />
         </div>
       </section>
     </header>

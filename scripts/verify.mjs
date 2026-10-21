@@ -128,6 +128,17 @@ try {
       (await page.locator(".intro svg:not(.intro__line), .intro img").count()) === 0,
   );
   check("הפוטר: אין יותר בלוקים של אותיות", (await page.locator("footer svg.mark, footer .mark").count()) === 0);
+  const cards = await page.locator(".about__card h3").allInnerTexts();
+  check("עליי: שלושה כרטיסי הכשרה, הראשון הוא הדיפלומה", cards.length === 3 && cards[0].startsWith("בעל דיפלומת מפתח AI מהאוניברסיטה העברית"), cards.join(" | "));
+  check("עליי: פסקה אחת קצרה", (await page.locator(".about__lead").count()) === 1 && (await page.locator(".about__lead").innerText()).length <= 220);
+  check(
+    "הירו: הודעת הוואטסאפ הצפה היא ההודעה המוכנה, ושורת אמון של שלושה פריטים",
+    (await page.locator(".hero__bubble .wa__msg").innerText()).startsWith("היי זיו") && (await page.locator(".hero__trust li").count()) === 3,
+  );
+  check(
+    "המילים המסומנות בעט מודגשות (600)",
+    (await page.evaluate(() => [".intro__mark", ".pain__mark .link"].every((q) => getComputedStyle(document.querySelector(q)).fontWeight === "600"))),
+  );
 
   // 5. תיבת ההודעה בפוטר
   await page.evaluate(() => (window.__opened = []));
@@ -204,6 +215,22 @@ try {
     const href = await cp.getAttribute(".pain__mark a", "href");
     check(`${width}x${height}: "ספרו לי…" עדיין פותח וואטסאפ`, new URL(href).pathname === `/${NUMBER}`, href);
     await cp.close();
+  }
+
+  // העט: ה-viewBox בגודל האמיתי בפיקסלים, כך שהקו באותו עובי בכל מסך ולא נמתח
+  for (const width of [390, 768, 1440]) {
+    const pp = await browser.newPage({ viewport: { width, height: 900 } });
+    await pp.goto(URL_, { waitUntil: "networkidle" });
+    await pp.waitForTimeout(150);
+    const pens = await pp.evaluate(() =>
+      [".intro__line", ".pain__circle"].map((q) => {
+        const el = document.querySelector(q);
+        const [, , w, h] = el.getAttribute("viewBox").split(" ").map(Number);
+        return { q, w, h, bw: el.clientWidth, bh: el.clientHeight };
+      }),
+    );
+    check(`${width}px: הקו והעיגול בעובי אחיד (viewBox = גודל אמיתי)`, pens.every((p) => Math.abs(p.w - p.bw) <= 1 && Math.abs(p.h - p.bh) <= 1), JSON.stringify(pens));
+    await pp.close();
   }
 
   const rm = await browser.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: "reduce" });

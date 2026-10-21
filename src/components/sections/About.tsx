@@ -2,6 +2,7 @@ import { about, primaryAction } from "@/content/site";
 import { Fill } from "../Fill";
 import { WhatsAppButton } from "../WhatsAppButton";
 
+// עליי: כותרת גדולה, פסקה אחת קצרה ושלושה כרטיסי הכשרה. הדיפלומה היא הכרטיס הגדול.
 export function About() {
   return (
     <section id="about" className="about" aria-labelledby="about-title">
@@ -18,18 +19,15 @@ export function About() {
           )}
         </div>
       </div>
-      <div className="about__blocks">
-        {about.blocks.map((b) => (
-          <div key={b.title}>
-            <h3>{b.title}</h3>
-            <p>{b.text}</p>
-          </div>
-        ))}
-        <ul className="about__credentials" aria-label="ניסיון והכשרה">
+      <div className="about__main">
+        <p className="about__lead" data-reveal>
+          {about.lead}
+        </p>
+        <ul className="about__cards" aria-label="ניסיון והכשרה">
           {about.credentials.map((c) => (
-            <li key={c}>
-              <span className="dot" aria-hidden="true" />
-              {c}
+            <li key={c.title} className="about__card" data-reveal>
+              <h3>{c.title}</h3>
+              <p>{c.text}</p>
             </li>
           ))}
         </ul>

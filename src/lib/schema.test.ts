@@ -28,7 +28,7 @@ describe("התוכן של הדף (site.ts)", () => {
   it("אין טענות על לקוחות או על עסקים שזיו בנה עבורם", () => {
     const all = JSON.stringify(content);
     for (const claim of ["הלקוחות שלי", "ללקוחות שלי", "בעסקים אמיתיים", "בניתי את זה", "מותגים שמוכרים"]) expect(all).not.toContain(claim);
-    expect(content.about.credentials.join(" ")).toContain("בעל דיפלומת מפתח AI מהאוניברסיטה העברית");
+    expect(content.about.credentials.map((c) => c.title).join(" ")).toContain("בעל דיפלומת מפתח AI מהאוניברסיטה העברית");
     expect(JSON.stringify(content)).not.toMatch(/בחברה גדולה|ז׳רגון|ז'רגון/);
   });
 

@@ -66,7 +66,7 @@ export const contentSchema = z.object({
   hero: z.object({
     titleLines: z.tuple([text.max(18), text.max(20)]),
     subtitle: text.includes("שיעורים פרטיים וייעוץ AI", { message: "תת-הכותרת בהירו חייבת לכלול 'שיעורים פרטיים וייעוץ AI'" }),
-    note: text,
+    trust: z.array(text.max(36)).length(3, "שורת האמון בהירו כוללת שלושה פריטים"),
     photoAlt: text,
   }),
   intro: z.object({ before: text, mark: text.max(20), after: z.string() }),
@@ -100,8 +100,11 @@ export const contentSchema = z.object({
     title: text,
     photoSrc: z.union([z.literal(""), imagePath]),
     photoAlt: text,
-    blocks: z.array(z.object({ title: text, text: text })).min(1),
-    credentials: z.array(text).min(1).max(5),
+    lead: text.max(220, "הפסקה ב'עליי' צריכה להישאר קצרה"),
+    credentials: z
+      .array(z.object({ title: text.max(60), text: text.max(60) }))
+      .length(3, "ב'עליי' יש בדיוק שלושה כרטיסי הכשרה")
+      .refine((c) => c[0].title.startsWith("בעל דיפלומת מפתח AI"), "הכרטיס הראשון הוא הדיפלומה"),
   }),
   faq: z.object({ title: text, items: z.array(z.object({ tab: text.max(12), q: text, a: text })).min(1) }),
   contact: z.object({

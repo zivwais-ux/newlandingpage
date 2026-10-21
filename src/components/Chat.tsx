@@ -181,3 +181,18 @@ export function WhatsAppChat({ name, sent, reply }: WhatsAppProps) {
     </div>
   );
 }
+
+/** הודעת הוואטסאפ שהגולש ישלח, כבועה יוצאת שצפה על פינת התמונה בהירו (קישוט בלבד) */
+export function HeroBubble({ text }: { text: string }) {
+  return (
+    <div className="hero__bubble" data-ui aria-hidden="true">
+      <p className="wa__msg wa__msg--out">
+        {text}
+        <span className="wa__meta">
+          10:42
+          <ReadTicks />
+        </span>
+      </p>
+    </div>
+  );
+}

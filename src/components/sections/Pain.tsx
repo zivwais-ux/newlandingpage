@@ -1,18 +1,6 @@
 import { pain, type PainIcon } from "@/content/site";
+import { PenMark } from "../PenMark";
 import { WhatsAppButton } from "../WhatsAppButton";
-
-// עיגול בכתב-יד סביב "ספרו לי…": מקיף פעם וקצת, כמו עט אמיתי, ונמתח בקצב הגלילה.
-// בלי תמיכה בדפדפן או עם הפחתת תנועה הוא מוצג מצויר במלואו.
-function HandCircle() {
-  return (
-    <svg className="pain__circle" viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true">
-      <path
-        pathLength={1}
-        d="M176 10C140 1 62 1 26 9C3 15 2 46 27 53C68 62 150 60 179 49C200 41 198 13 163 6C130 0 70 3 40 12"
-      />
-    </svg>
-  );
-}
 
 const ICONS: Record<PainIcon, string> = {
   bell: "M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20a2 2 0 0 0 4 0",
@@ -21,6 +9,7 @@ const ICONS: Record<PainIcon, string> = {
   note: "M6 3h9l4 4v14H6zM15 3v4h4M9 12h6M9 16h4",
 };
 
+// "ספרו לי…" מסומן בעיגול בעט שנמתח בקצב הגלילה (בלי תמיכה או עם הפחתת תנועה הוא מצויר במלואו).
 // הכאבים כהתראות טלפון שנערמות אחת על השנייה בזמן שהאזור מוחזק במסך.
 export function Pain() {
   return (
@@ -35,7 +24,7 @@ export function Pain() {
             <p className="pain__cta">
               <span className="pain__mark">
                 <WhatsAppButton label={pain.cta} location="pain" variant="text" />
-                <HandCircle />
+                <PenMark kind="circle" className="pain__circle" />
               </span>
             </p>
           </div>

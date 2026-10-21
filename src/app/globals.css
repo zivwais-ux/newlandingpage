@@ -203,6 +203,9 @@ p {
 .hero h1 span {
   display: block;
 }
+.hero h1 span:nth-child(2) {
+  font-weight: 400;
+}
 .hero__sub {
   margin-top: 32px;
   max-width: 34ch;
@@ -216,29 +219,83 @@ p {
   align-items: center;
   gap: 16px 24px;
 }
-.hero__note {
+/* Three short reasons to send the message now, right under the button */
+.hero__trust {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
   font-size: var(--step-small);
   color: var(--muted);
+}
+.hero__trust li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.hero__trust svg {
+  width: 15px;
+  height: 15px;
+  flex: none;
+  fill: none;
+  stroke: var(--forest);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+/* The photo in a rounded window with one square corner, a sage sheet laid under it,
+   and the WhatsApp message the visitor is about to send floating on its corner. */
+.hero__media {
+  position: relative;
+  margin-inline: var(--margin);
+  margin-bottom: 18px;
+  /* its own layer: the photo, the sheet and the message sink together on the compositor */
+  will-change: transform;
+}
+.hero__media::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  translate: -14px 14px;
+  background: var(--sage);
+  border-radius: var(--r);
+  border-start-start-radius: 0;
 }
 .hero__shape {
   position: relative;
   overflow: hidden;
-  margin-inline-start: var(--margin);
-  aspect-ratio: 5 / 4;
-  border-end-start-radius: clamp(48px, 18vw, 140px);
-  border-end-end-radius: 0;
-  border-start-end-radius: 0;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--r);
+  border-start-start-radius: 0;
   background: var(--sage);
 }
 .hero__shape img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 42% 50%;
+  object-position: 45% 50%;
+}
+.hero__bubble {
+  position: absolute;
+  right: -6px;
+  bottom: -22px;
+  width: min(62%, 270px);
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #111b21;
+}
+.hero__bubble .wa__msg {
+  max-width: 100%;
+  box-shadow: 0 10px 24px rgb(10 10 10 / 0.16); /* taste-skill-ignore: a real chat bubble lifted off the photo (data-ui) */
+  padding: 8px 11px 5px;
+  border-radius: 12px;
+  border-top-left-radius: 0;
 }
 @media (min-width: 900px) {
   .hero {
-    grid-template-columns: 1.2fr 1fr;
+    grid-template-columns: 1fr 1.1fr;
     min-height: min(calc(100svh - var(--nav-h)), 900px);
     gap: 0;
   }
@@ -248,13 +305,31 @@ p {
     padding-bottom: 64px;
     padding-inline-end: 48px;
   }
+  .hero__media {
+    align-self: center;
+    /* the page's left edge, plus room for the sage sheet that peeks out on that side */
+    margin: 0;
+    margin-left: calc(var(--margin) + 22px);
+    margin-bottom: 22px;
+  }
+  .hero__media::before {
+    translate: -22px 22px;
+    border-radius: calc(var(--r) * 1.6);
+    border-start-start-radius: 0;
+  }
   .hero__shape {
-    aspect-ratio: auto;
-    margin-inline-start: 0;
-    /* runs off the left edge of the page; only the bubble's inner corners show */
-    margin-inline-end: -12vw;
-    border-radius: 0;
-    border-end-start-radius: clamp(120px, 22vw, 360px);
+    aspect-ratio: 5 / 4;
+    border-radius: calc(var(--r) * 1.6);
+    border-start-start-radius: 0;
+  }
+  .hero__shape img {
+    object-position: 42% 50%;
+  }
+  .hero__bubble {
+    right: -40px;
+    bottom: 36px;
+    width: 300px;
+    font-size: 15px;
   }
 }
 
@@ -275,20 +350,21 @@ p {
   position: relative;
   display: inline-block;
   white-space: nowrap;
+  font-weight: 600;
 }
 .intro__line {
   position: absolute;
   inset-inline: -0.08em;
-  bottom: -0.22em;
+  bottom: -0.3em;
   width: calc(100% + 0.16em);
-  height: 0.32em;
+  height: 0.4em;
   overflow: visible;
   pointer-events: none;
 }
 .intro__line path {
   fill: none;
   stroke: var(--forest);
-  stroke-width: 2.6;
+  stroke-width: 3px;
   stroke-linecap: round;
   stroke-dasharray: 1;
   stroke-dashoffset: 0;
@@ -837,6 +913,7 @@ p {
 .pain__mark .link {
   position: relative;
   z-index: 1;
+  font-weight: 600;
   text-decoration-color: transparent;
 }
 @media (hover: hover) and (pointer: fine) {
@@ -857,8 +934,8 @@ p {
 .pain__circle path {
   fill: none;
   stroke: var(--ink);
-  /* in the drawing's own units: the stretch gives the line a light pen-pressure variation */
-  stroke-width: 1.7;
+  /* the viewBox matches the box in pixels (PenMark), so this is a true, even 3px pen line */
+  stroke-width: 3px;
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-dasharray: 1;
@@ -1000,9 +1077,10 @@ p {
   gap: 40px;
 }
 .about h2 {
-  font-size: var(--step-head);
-  line-height: 1.05;
-  max-width: 11ch;
+  font-size: clamp(2.25rem, 1.2rem + 3.4vw, 4.25rem);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  max-width: 10ch;
 }
 .about__portrait {
   width: min(86vw, 420px);
@@ -1026,38 +1104,58 @@ p {
   height: 100%;
   object-fit: cover;
 }
-.about__blocks {
+.about__main {
   display: grid;
-  gap: 40px;
+  gap: 32px;
   align-content: start;
 }
-.about h3 {
+.about__lead {
+  max-width: 34ch;
   font-size: var(--step-lead);
-  color: var(--sage);
+  line-height: 1.45;
+  color: rgb(248 248 248 / 0.82);
 }
-.about__credentials {
+/* Three credentials as a small bento: the diploma is the big sage card, the other two sit beside it. */
+.about__cards {
   display: grid;
   gap: 12px;
-  font-size: var(--step-lead);
-  line-height: 1.3;
 }
-.about__credentials li {
+.about__card {
   display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 14px;
-  align-items: start;
+  align-content: start;
+  gap: 10px;
+  padding: clamp(20px, 2vw, 28px);
+  background: #181818;
+  border-radius: calc(var(--r) * 0.7);
+  border-start-start-radius: 0;
 }
-.about__credentials .dot {
+.about__card h3 {
+  font-size: var(--step-lead);
+  line-height: 1.25;
+  color: var(--sage);
+}
+.about__card p {
+  font-size: var(--step-small);
+  line-height: 1.5;
+  color: rgb(248 248 248 / 0.72);
+}
+.about__card:first-child {
   background: var(--sage);
+  align-content: end;
 }
-.about__blocks p {
-  margin-top: 10px;
-  max-width: 40ch;
+.about__card:first-child h3 {
+  font-size: clamp(1.375rem, 1rem + 1vw, 1.875rem);
+  line-height: 1.2;
+  color: var(--ink);
+}
+.about__card:first-child p {
+  font-size: var(--step-body);
+  color: var(--ink);
 }
 @media (min-width: 900px) {
   .about {
     margin-inline: 20px;
-    grid-template-columns: 1.2fr 1fr;
+    grid-template-columns: 1fr 1.25fr;
     gap: 48px 64px;
     min-height: 90svh;
   }
@@ -1071,9 +1169,17 @@ p {
     margin-inline: 0;
     margin-top: 56px;
   }
-  .about__blocks {
+  .about__main {
     padding-top: 12px;
-    gap: 64px;
+    gap: 40px;
+  }
+  .about__cards {
+    grid-template-columns: 1.15fr 1fr;
+    grid-template-rows: auto auto;
+  }
+  .about__card:first-child {
+    grid-row: span 2;
+    min-height: 300px;
   }
 }
 
@@ -1480,17 +1586,18 @@ p {
   .hero {
     gap: 0;
   }
-  /* The photo in a bubble window with equal margins, like a picture sent in a chat.
-     4:3 keeps both people and the laptop: of the photo's 1536px width only 171px are trimmed. */
-  .hero__shape {
+  /* The photo window leads. 4:3 keeps both people and the laptop:
+     of the photo's 1536px width only 171px are trimmed. */
+  .hero__media {
     order: -1;
-    aspect-ratio: 4 / 3;
-    margin-inline: var(--margin);
-    border-radius: var(--r);
-    border-start-start-radius: 0;
+    /* leaves room on the left for the sage sheet, so nothing touches the screen edge */
+    margin-left: calc(var(--margin) + 10px);
   }
-  .hero__shape img {
-    object-position: 45% 50%;
+  .hero__media::before {
+    translate: -10px 10px;
+  }
+  .hero__bubble {
+    right: 8px;
   }
   .hero__copy {
     padding-top: 28px;
@@ -1578,6 +1685,10 @@ p {
   }
   .pain__mark {
     max-width: 8.2em;
+  }
+  .pain__circle path,
+  .intro__line path {
+    stroke-width: 2.6px;
   }
   @media (max-height: 760px) {
     .pain__stage {
@@ -1670,18 +1781,30 @@ p {
   .hero__shape img {
     animation: drift 18s var(--ease-soft) 100ms both;
   }
+  .hero__trust {
+    animation: rise 1000ms var(--ease-expo) 380ms both;
+  }
+  /* the message pops in once the photo has opened, like it was just sent */
+  .hero__bubble {
+    animation: bubble-pop 520ms var(--ease-expo) 1150ms both;
+    transform-origin: 0% 0%;
+  }
+}
+@keyframes bubble-pop {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.9);
+  }
 }
 /* Scroll-driven motion: runs on the compositor, tied to the finger, no JavaScript while scrolling.
    Only transform, opacity, clip-path and colour. Reduced motion shows the finished state. */
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
     /* 1. The hero recedes as it leaves: the picture sinks and grows a little, the words lift away. */
-    .hero__shape {
-      animation:
-        open 1200ms var(--ease-in-out) 100ms both,
-        hero-sink linear both;
-      animation-timeline: auto, scroll(root);
-      animation-range: normal, 0 85vh;
+    .hero__media {
+      animation: hero-sink linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 85vh;
     }
     /* Desktop only: on a phone the words and the button stay fully readable while the photo moves. */
     @media (min-width: 900px) {
