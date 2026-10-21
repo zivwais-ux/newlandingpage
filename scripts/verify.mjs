@@ -206,7 +206,8 @@ try {
         .getAnimations()
         .filter((a) => a.timeline && !(a.timeline instanceof DocumentTimeline))
         .map((a) => a.effect.target)
-        .filter((el) => el.getBoundingClientRect().bottom < innerHeight * 0.6 && !el.closest(".hero") && !el.matches(".how__pic img"))
+        // (the evening sky behind "עוד ערב של עבודה?" is decoration: half-dark and the earlier hours hidden on purpose)
+        .filter((el) => el.getBoundingClientRect().bottom < innerHeight * 0.6 && !el.closest(".hero, .pain__sky") && !el.matches(".how__pic img"))
         .filter((el) => { const cs = getComputedStyle(el); return +cs.opacity < 0.99 || (cs.clipPath !== "none" && !/inset\(0(px)?( round 0(px)?)?\)/.test(cs.clipPath)); })
         .map((el) => el.className || el.tagName),
     );
@@ -264,6 +265,30 @@ try {
     const held = await lidAt(g.top + g.hold * 0.2);
     const laptopShown = await mp.evaluate(() => getComputedStyle(document.querySelector(".laptop__body")).display !== "none");
     check(`${width}x${height}: ${width >= 900 ? "MacBook עם 4 ההתראות" : "בטלפון: 4 ההתראות בלי המחשב"}`, (await mp.locator(".laptop .note").count()) === 4 && laptopShown === width >= 900);
+    // הרקע: הערב מחשיך, השעון מתקדם עם ההתראות, נקודות האור זזות; בטלפון ההתראות בזיגזג
+    const sky = async (y) => {
+      await mp.evaluate((t) => window.scrollTo({ top: t, behavior: "instant" }), Math.round(y));
+      await mp.waitForTimeout(120);
+      return mp.evaluate(() => {
+        const texts = [...document.querySelectorAll(".pain__hour")];
+        const shown = texts.filter((t) => +getComputedStyle(t).opacity > 0.6).map((t) => t.textContent);
+        const night = +getComputedStyle(document.querySelector(".pain__night")).opacity;
+        const rots = [...document.querySelectorAll(".laptop .note")].map((n) => getComputedStyle(n).transform);
+        return { shown, night, rots, stars: document.getAnimations().filter((a) => a.animationName === "star-drift").length };
+      });
+    };
+    const k0 = await sky(g.top), k1 = await sky(g.top + g.hold * 0.25), k2 = await sky(g.top + g.hold * 0.75);
+    check(`${width}x${height}: הערב מחשיך בזמן שההתראות מגיעות`, k0.night < 0.05 && k2.night > 0.28, `${k0.night} → ${k2.night}`);
+    check(`${width}x${height}: השעון ברקע מתקדם עם ההתראות`, k0.shown.join() === "21:40" && k2.shown.join() === "23:02" && k1.shown.length === 1, `${k0.shown} → ${k1.shown} → ${k2.shown}`);
+    {
+      // הגוון הכהה ביותר: מרווה עם שכבת יער באטימות של סוף העצירה, מול הטקסט השחור
+      const mix = [168, 195, 174].map((c, i) => c * (1 - k2.night) + [15, 61, 36][i] * k2.night);
+      const lum = (rgb) => { const [r, g2, b] = rgb.map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }); return 0.2126 * r + 0.7152 * g2 + 0.0722 * b; };
+      const ratio = (lum(mix) + 0.05) / (lum([10, 10, 10]) + 0.05);
+      check(`${width}x${height}: גם כשהערב הכי כהה, הטקסט קריא (ניגודיות ${ratio.toFixed(1)}:1)`, ratio >= 4.5);
+    }
+    check(`${width}x${height}: נקודות האור ברקע זזות`, k2.stars >= 2, String(k2.stars));
+    if (width < 900) check(`${width}x${height}: בטלפון ההתראות בזיגזג`, k2.rots.every((t) => t !== "none" && t !== "matrix(1, 0, 0, 1, 0, 0)"), k2.rots.join(" | "));
     if (width >= 900) check(`${width}x${height}: המכסה נפתח בגלילה ופתוח לגמרי בזמן העצירה`, before !== "none" && (held === "none" || held === "matrix(1, 0, 0, 1, 0, 0)"), `${before.slice(0, 30)} → ${held}`);
     if (width >= 900) {
       await mp.evaluate((t) => window.scrollTo({ top: t, behavior: "instant" }), Math.round(g.top + g.hold * 0.9));
@@ -320,7 +345,7 @@ try {
   const rmState = await rm.evaluate(() => ({
     anims: document.getAnimations().length,
     // רק אלמנטים עם טקסט (סוללה ונקודות בורר מוסתרות בכוונה בעיצוב)
-    faded: [...document.querySelectorAll("main *, footer *")].filter((el) => [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim()) && +getComputedStyle(el).opacity < 0.99).length,
+    faded: [...document.querySelectorAll("main *, footer *")].filter((el) => !el.closest(".pain__sky") && [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim()) && +getComputedStyle(el).opacity < 0.99).length,
   }));
   check("הפחתת תנועה: אין אנימציות והכול במצב הסופי", rmState.anims === 0 && rmState.faded === 0, JSON.stringify(rmState));
   const rmCircle = await rm.evaluate(() => ({

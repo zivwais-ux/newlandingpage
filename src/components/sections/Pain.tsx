@@ -1,6 +1,7 @@
 import { pain, type PainIcon } from "@/content/site";
 import { MacBook } from "../Chat";
 import { PenMark } from "../PenMark";
+import { SkyWatch } from "../SkyWatch";
 import { WhatsAppButton } from "../WhatsAppButton";
 
 const ICONS: Record<PainIcon, string> = {
@@ -10,12 +11,35 @@ const ICONS: Record<PainIcon, string> = {
   note: "M6 3h9l4 4v14H6zM15 3v4h4M9 12h6M9 16h4",
 };
 
+// הרקע: השעה מתקדמת עם ההתראות והערב מחשיך (קישוט בלבד)
+function Sky() {
+  return (
+    <SkyWatch>
+      <div className="pain__night" />
+      {/* נקודות האור: שתי קבוצות (כל אחת שכבה אחת שנעה ומנצנצת), כדי שהרקע יישאר קל לטלפון */}
+      <span className="pain__stars pain__stars--a" />
+      <span className="pain__stars pain__stars--b" />
+      {/* כל שעה ב-svg משלה: האנימציה זזה על האלמנט כולו, ולכן רצה על כרטיס המסך בלי לצייר מחדש */}
+      <div className="pain__clock">
+        {pain.items.map((item) => (
+          <svg key={item.time} className="pain__hour" viewBox="0 0 520 160">
+            <text x="260" y="134" textAnchor="middle">
+              {item.time}
+            </text>
+          </svg>
+        ))}
+      </div>
+    </SkyWatch>
+  );
+}
+
 // "ספרו לי…" מסומן בעיגול בעט שנמתח בקצב הגלילה (בלי תמיכה או עם הפחתת תנועה הוא מצויר במלואו).
 // הכאבים כהתראות טלפון שנערמות אחת על השנייה בזמן שהאזור מוחזק במסך.
 export function Pain() {
   return (
     <section className="pain" aria-labelledby="pain-title">
       <div className="pain__stage">
+        <Sky />
         <div className="wrap pain__grid">
           <div className="pain__intro">
             <h2 id="pain-title" data-reveal>
