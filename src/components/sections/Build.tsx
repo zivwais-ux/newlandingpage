@@ -36,7 +36,6 @@ export function Build() {
                 onClick={() => setActive(e.id)}
                 onPointerEnter={(ev) => ev.pointerType === "mouse" && setActive(e.id)}
               >
-                <span className="dot" aria-hidden="true" />
                 {e.who}
               </button>
             ))}

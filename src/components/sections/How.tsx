@@ -20,6 +20,7 @@ export function How() {
               reply="בשמחה! ספרו לי במשפט מה העסק ומה לוקח לכם הכי הרבה זמן."
             />
           </div>
+          <span className="how__num">שלב 1</span>
           <h3>{talk.name}</h3>
           <p>{talk.text}</p>
         </li>
@@ -29,6 +30,7 @@ export function How() {
               <Image src={lesson.img!} alt={lesson.alt!} width={640} height={480} loading="lazy" />
             </div>
           </div>
+          <span className="how__num">שלב 2</span>
           <h3>{lesson.name}</h3>
           <p>{lesson.text}</p>
         </li>
@@ -38,6 +40,7 @@ export function How() {
               <Image src={after.img!} alt={after.alt!} width={640} height={427} loading="lazy" />
             </div>
           </div>
+          <span className="how__num">שלב 3</span>
           <h3>{after.name}</h3>
           <p>{after.text}</p>
         </li>

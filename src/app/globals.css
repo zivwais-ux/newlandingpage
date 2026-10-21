@@ -45,6 +45,11 @@ html {
   scroll-behavior: smooth;
   scroll-padding-top: 24px;
 }
+/* Links to a section land below the floating menu. (Set on the targets, not as scroll-padding,
+   which would also shift every scroll-driven animation's timeline.) */
+section[id] {
+  scroll-margin-top: 76px;
+}
 
 body {
   background: var(--bg);
@@ -145,29 +150,63 @@ p {
   }
 }
 
-/* ---------- Navigation ---------- */
+/* ---------- Logo: "ZIV solutions" with a sage dot ---------- */
+.logo {
+  display: inline-flex;
+  align-items: baseline;
+  white-space: nowrap;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.logo b {
+  font-weight: 600;
+}
+.logo span {
+  font-weight: 400;
+  white-space: pre;
+}
+.logo__dot {
+  width: 0.28em;
+  height: 0.28em;
+  margin-inline-start: 0.08em;
+  border-radius: 50%;
+  background: var(--sage);
+}
+
+/* ---------- Navigation: a floating pill that stays at the top ---------- */
+/* Zero height, so the pill floats over the hero instead of pushing it down. */
+.topbar {
+  position: sticky;
+  top: 20px;
+  z-index: 40;
+  height: 0;
+}
 .nav {
-  height: var(--nav-h);
+  position: relative;
+  max-width: 1180px;
+  margin-inline: max(22px, calc((100% - 1180px) / 2));
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 24px;
+  padding-inline: 24px 8px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.94);
+}
+/* the lift under the pill sits on its own layer; with scroll-driven motion it fades in as the page moves */
+.nav::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  box-shadow: 0 8px 28px rgb(10 10 10 / 0.12); /* taste-skill-ignore: the floating menu needs to lift off the content under it */
 }
 .nav__mark {
-  display: flex;
-  align-items: baseline;
-  gap: 0.6em;
   color: var(--ink);
   text-decoration: none;
-}
-.nav__mark b {
   font-size: var(--step-lead);
-  font-weight: 500;
-  letter-spacing: -0.03em;
-}
-.nav__mark span {
-  font-size: var(--step-small);
-  color: var(--muted);
 }
 .nav__links {
   display: none;
@@ -177,23 +216,59 @@ p {
 .nav__links a {
   color: var(--ink);
 }
+.nav .btn {
+  border-radius: 999px;
+}
 @media (min-width: 900px) {
   .nav__links {
     display: flex;
   }
 }
+@media (max-width: 899px) {
+  .nav {
+    margin-inline: 18px;
+    height: 58px;
+    padding-inline: 18px 6px;
+  }
+  .nav .btn--small {
+    min-height: 46px;
+  }
+}
 
-/* ---------- Hero: giant cropped bubble holding the photo ---------- */
+/* ---------- Hero: a deep forest panel with a soft sage light, the photo framed on it ---------- */
 .hero {
   position: relative;
   overflow: clip;
+  isolation: isolate;
   display: grid;
   gap: 40px;
-  padding-bottom: 0;
+  margin: 10px;
+  /* room for the floating menu */
+  padding-top: 92px;
+  padding-bottom: 44px;
+  background: var(--forest);
+  color: var(--white);
+  border-radius: calc(var(--r) * 1.2);
+}
+/* The light: one big radial gradient, moved only with transform (the pointer on desktop, a slow drift on phones). */
+/* Drawn at a third of its size and scaled up 3×: a soft gradient has no detail to lose,
+   and the moving layer costs the GPU 9× less. */
+.hero__glow {
+  --s: min(30vmax, 466px);
+  position: absolute;
+  z-index: -1;
+  top: calc(-35% + var(--s));
+  inset-inline-start: calc(-10% + var(--s));
+  width: var(--s);
+  height: var(--s);
+  transform: scale(3);
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(168 195 174 / 0.34), rgb(168 195 174 / 0.12) 55%, transparent); /* taste-skill-ignore: this is the moving light itself, not a fill */
+  pointer-events: none;
+  will-change: transform;
 }
 .hero__copy {
   padding-inline: var(--margin);
-  padding-top: clamp(24px, 6vh, 64px);
 }
 .hero h1 {
   font-size: var(--step-display);
@@ -211,6 +286,7 @@ p {
   max-width: 34ch;
   font-size: var(--step-lead);
   line-height: 1.4;
+  color: rgb(255 255 255 / 0.84);
 }
 .hero__actions {
   margin-top: 36px;
@@ -226,7 +302,7 @@ p {
   flex-wrap: wrap;
   gap: 8px 20px;
   font-size: var(--step-small);
-  color: var(--muted);
+  color: rgb(255 255 255 / 0.8);
 }
 .hero__trust li {
   display: inline-flex;
@@ -238,7 +314,7 @@ p {
   height: 15px;
   flex: none;
   fill: none;
-  stroke: var(--forest);
+  stroke: var(--sage);
   stroke-width: 2.2;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -296,13 +372,13 @@ p {
 @media (min-width: 900px) {
   .hero {
     grid-template-columns: 1fr 1.1fr;
-    min-height: min(calc(100svh - var(--nav-h)), 900px);
+    min-height: min(calc(100svh - 20px), 920px);
     gap: 0;
+    padding-top: 112px;
+    padding-bottom: 56px;
   }
   .hero__copy {
     align-self: center;
-    padding-top: 0;
-    padding-bottom: 64px;
     padding-inline-end: 48px;
   }
   .hero__media {
@@ -368,6 +444,17 @@ p {
   stroke-linecap: round;
   stroke-dasharray: 1;
   stroke-dashoffset: 0;
+}
+/* desktop: the words sit on one long line, so the loop gets more room at the ends and a gentler tilt */
+@media (min-width: 900px) {
+  .pain__mark {
+    margin-inline: 1.4em 0.6em;
+  }
+  .pain__circle {
+    rotate: -1deg;
+    inset-inline-start: -1.4em;
+    width: calc(100% + 2.8em);
+  }
 }
 @media (min-width: 900px) {
   .intro p {
@@ -552,44 +639,40 @@ p {
   font-size: var(--step-small);
   color: var(--muted);
 }
+/* The business types as pills: the chosen one filled, the rest outlined */
 .build__names {
-  margin-top: 20px;
+  margin-top: 24px;
   display: flex;
   flex-wrap: wrap;
-  gap: 4px 24px;
+  gap: 10px;
 }
 .build__name {
-  display: flex;
-  align-items: center;
-  gap: 14px;
   min-height: 48px;
-  font-size: var(--step-lead);
-  line-height: 1.15;
+  padding: 0.55em 1.2em;
+  border: 1.5px solid rgb(10 10 10 / 0.18);
+  border-radius: 999px;
+  font-size: var(--step-body);
+  line-height: 1.2;
   font-weight: 500;
-  color: var(--muted);
-  text-align: start;
+  color: var(--ink);
   cursor: pointer;
-  transition: color var(--t-hover) ease;
-}
-.build__name .dot {
-  margin-top: 0;
-  background: var(--accent);
-  opacity: 0;
-  transform: scale(0.6);
   transition:
-    opacity var(--t-ui) ease,
-    transform var(--t-ui) var(--ease-out);
+    background-color var(--t-hover) ease,
+    border-color var(--t-hover) ease,
+    color var(--t-hover) ease,
+    transform var(--t-press) var(--ease-out);
+}
+.build__name:active {
+  transform: scale(0.97);
 }
 .build__name[aria-pressed="true"] {
-  color: var(--ink);
-}
-.build__name[aria-pressed="true"] .dot {
-  opacity: 1;
-  transform: none;
+  background: var(--forest);
+  border-color: var(--forest);
+  color: var(--white);
 }
 @media (hover: hover) and (pointer: fine) {
   .build__name:hover {
-    color: var(--ink);
+    border-color: var(--forest);
   }
 }
 .build__fact {
@@ -617,12 +700,7 @@ p {
     width: min(44vh, 30vw, 380px);
   }
   .build__names {
-    flex-direction: column;
-    overflow: visible;
-    gap: 6px;
-  }
-  .build__name {
-    font-size: var(--step-statement);
+    max-width: 520px;
   }
 }
 
@@ -907,6 +985,8 @@ p {
   position: relative;
   display: inline-block;
   margin-inline-start: 0.9em;
+  /* the circle reaches 0.45em past the words on every side: that room is reserved, so it never touches a card */
+  margin-block: 0.45em;
   padding: 0.35em 0.2em;
   text-wrap: balance;
 }
@@ -958,7 +1038,7 @@ p {
 
 /* ---------- How it works: tiles that grow ---------- */
 .how {
-  padding-block: 0 var(--gap);
+  padding-block: clamp(48px, 6vw, 96px) var(--gap);
 }
 .how h2 {
   font-size: var(--step-head);
@@ -1006,8 +1086,19 @@ p {
   width: 100%;
   max-width: 340px;
 }
-.how h3 {
+/* a small pill over each step: it is a real sequence */
+.how__num {
+  display: inline-block;
   margin-top: 20px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--sage);
+  color: var(--ink);
+  font-size: var(--step-small);
+  font-weight: 500;
+}
+.how h3 {
+  margin-top: 10px;
   font-size: var(--step-lead);
 }
 .how__step p {
@@ -1056,6 +1147,10 @@ p {
   .how__step {
     padding-inline-end: 14px;
   }
+  /* the same room for every step's text, so the three labels and titles sit on one line */
+  .how__step p {
+    min-height: calc(3 * 1.55em);
+  }
   .how__grid {
     grid-template-rows: auto auto;
   }
@@ -1077,7 +1172,7 @@ p {
   gap: 40px;
 }
 .about h2 {
-  font-size: clamp(2.25rem, 1.2rem + 3.4vw, 4.25rem);
+  font-size: var(--step-display);
   line-height: 1.02;
   letter-spacing: -0.03em;
   max-width: 10ch;
@@ -1144,7 +1239,6 @@ p {
   align-content: end;
 }
 .about__card:first-child h3 {
-  font-size: clamp(1.375rem, 1rem + 1vw, 1.875rem);
   line-height: 1.2;
   color: var(--ink);
 }
@@ -1209,22 +1303,13 @@ p {
 .faq__card + .faq__card {
   margin-top: -16px;
 }
-.faq__card:nth-child(3n + 1) {
-  --c: var(--sage);
-}
-.faq__card:nth-child(3n + 2) {
-  --c: var(--forest);
-  color: var(--forest-ink);
-}
-.faq__card:nth-child(3n + 2) .faq__sign {
-  background: var(--sage);
-  color: var(--ink);
-}
-.faq__card:nth-child(3n + 2) :focus-visible {
-  outline-color: var(--sage);
-}
-.faq__card:nth-child(3n + 3) {
+/* One calm system: white cards on sage tabs; the open card turns sage */
+.faq__card {
   --c: var(--white);
+  transition: background-color var(--t-ui) ease;
+}
+.faq__card[open] {
+  --c: var(--sage);
 }
 .faq__tab {
   position: absolute;
@@ -1235,7 +1320,7 @@ p {
   display: flex;
   align-items: center;
   padding-inline: 16px;
-  background: var(--c);
+  background: var(--sage);
   font-weight: 400;
   border-radius: 14px 14px 0 0;
   font-size: var(--step-small);
@@ -1359,10 +1444,9 @@ p {
 .field input {
   width: 100%;
   min-height: 56px;
-  padding: 12px 18px;
+  padding: 12px 22px;
   border: 2px solid transparent;
-  border-radius: 14px;
-  border-start-start-radius: 0;
+  border-radius: 999px;
   background: var(--forest-field);
   color: var(--forest-ink);
   font-size: var(--step-body);
@@ -1391,6 +1475,7 @@ p {
 .coupon__submit {
   margin-top: 14px;
   width: 100%;
+  border-radius: 999px;
 }
 .coupon__note {
   margin-top: 12px;
@@ -1431,11 +1516,35 @@ p {
   }
 }
 
-/* ---------- Footer: last call, then the mark built large ---------- */
+/* ---------- Footer: the tools strip, the last call, then the logo built large ---------- */
 .footer {
   background: var(--forest);
   color: var(--forest-ink);
-  padding-block: clamp(72px, 9vw, 140px) 120px;
+  padding-bottom: 120px;
+}
+/* The tools you build in a lesson, drifting by slowly. Two copies of the list make a seamless loop. */
+/* a band of a lighter green: separated by tone, not a line */
+.strip {
+  overflow: hidden;
+  padding-block: 22px;
+  background: var(--forest-field);
+  margin-bottom: clamp(64px, 8vw, 120px);
+}
+.strip__track {
+  display: flex;
+  width: max-content;
+}
+.strip__list {
+  display: flex;
+  gap: 12px;
+  padding-inline-end: 12px;
+}
+.strip__list li {
+  padding: 10px 20px;
+  border: 1.5px solid rgb(168 195 174 / 0.5);
+  border-radius: 999px;
+  white-space: nowrap;
+  font-size: var(--step-body);
 }
 .footer__cta h2 {
   font-size: var(--step-head);
@@ -1450,10 +1559,6 @@ p {
 .footer__cta {
   display: grid;
   gap: 32px;
-}
-.footer__tel {
-  display: inline-block;
-  margin-top: 24px;
 }
 .composer {
   display: grid;
@@ -1486,20 +1591,19 @@ p {
 .composer__error {
   margin-top: 0;
 }
-.footer__mark {
-  margin-top: clamp(64px, 8vw, 120px);
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 4px 16px;
+/* The logo, built large: the last thing on the page */
+.footer__brand {
+  margin-top: clamp(72px, 9vw, 140px);
+  display: grid;
+  gap: 12px;
 }
-.footer__mark b {
-  font-size: var(--step-head);
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: -0.03em;
+.footer__logo {
+  justify-self: start;
+  font-size: clamp(3rem, 11.5vw, 11rem);
+  letter-spacing: -0.045em;
+  color: var(--white);
 }
-.footer__mark span {
+.footer__tagline {
   font-size: var(--step-lead);
   color: var(--sage);
 }
@@ -1510,26 +1614,22 @@ p {
     gap: 64px;
   }
 }
+/* Every detail on one compact line */
 .footer__row {
-  margin-top: 48px;
-  display: grid;
-  gap: 28px;
-}
-.footer__row ul {
-  display: grid;
-  gap: 10px;
+  margin-top: 56px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 28px;
+  font-size: var(--step-small);
 }
 .footer__bottom {
-  margin-top: 40px;
+  margin-top: 20px;
   font-size: var(--step-small);
   color: var(--sage);
 }
 @media (min-width: 900px) {
   .footer {
-    padding-bottom: 56px;
-  }
-  .footer__row {
-    grid-template-columns: repeat(3, 1fr);
+    padding-bottom: 48px;
   }
 }
 
@@ -1694,6 +1794,9 @@ p {
     .pain__stage {
       padding-block: 20px;
     }
+    .pain__mark {
+      margin-block: 0.3em;
+    }
     .pain__grid {
       gap: 12px;
     }
@@ -1784,10 +1887,41 @@ p {
   .hero__trust {
     animation: rise 1000ms var(--ease-expo) 380ms both;
   }
+  .strip__track {
+    animation: strip-move 46s linear infinite;
+  }
+  @media (hover: hover) {
+    .strip:hover .strip__track {
+      animation-play-state: paused;
+    }
+  }
+  /* on touch screens the light drifts slowly by itself (on desktop it follows the pointer, HeroGlow.tsx) */
+  @media (hover: none), (pointer: coarse) {
+    .hero__glow {
+      animation: glow-wander 18s ease-in-out infinite alternate;
+    }
+  }
   /* the message pops in once the photo has opened, like it was just sent */
   .hero__bubble {
     animation: bubble-pop 520ms var(--ease-expo) 1150ms both;
     transform-origin: 0% 0%;
+  }
+}
+/* RTL: the copy sits to the left of the original, so the track moves right by one copy */
+@keyframes strip-move {
+  to {
+    transform: translateX(50%);
+  }
+}
+@keyframes glow-wander {
+  0% {
+    transform: translate3d(0, 0, 0) scale(3);
+  }
+  50% {
+    transform: translate3d(-18vw, 22vh, 0) scale(3);
+  }
+  100% {
+    transform: translate3d(14vw, 34vh, 0) scale(3);
   }
 }
 @keyframes bubble-pop {
@@ -1805,6 +1939,12 @@ p {
       animation: hero-sink linear both;
       animation-timeline: scroll(root);
       animation-range: 0 85vh;
+    }
+    /* The menu's lift fades in as soon as the page moves. */
+    .nav::after {
+      animation: fade-in linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 120px;
     }
     /* Desktop only: on a phone the words and the button stay fully readable while the photo moves. */
     @media (min-width: 900px) {
@@ -1857,6 +1997,14 @@ p {
         min-height: 100svh;
         display: grid;
         align-content: center;
+        /* the floating menu sits over the top of the screen: the held content starts below it */
+        padding-top: 88px;
+      }
+      @media (max-height: 760px) {
+        .pain__stage {
+          padding-top: 80px;
+          padding-bottom: 8px;
+        }
       }
       /* the notifications pile up one by one, then the circle marks the way out */
       .note {
@@ -1938,6 +2086,17 @@ p {
       animation-timeline: view();
       animation-range: entry 0% cover 30%;
     }
+    /* the big logo rises out of its own line as the page ends */
+    .footer__logo {
+      animation: line-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 40%;
+    }
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
   }
 }
 @keyframes hero-sink {

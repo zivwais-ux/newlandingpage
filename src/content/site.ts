@@ -33,7 +33,7 @@ export const seo = {
 };
 
 export const nav = {
-  wordmark: "זיו",
+  wordmark: "ZIV solutions",
   tagline: "שיעורים פרטיים וייעוץ AI",
   links: [
     { href: "#build", label: "מה בונים" },
@@ -258,7 +258,7 @@ export const testimonials = {
 
 export const footer = {
   ctaTitle: "נשאר רק לשלוח הודעה",
-  ctaText: "ספרו לי במשפט מה העסק שלכם עושה, ונבדוק יחד מה אפשר לבנות. שיחת הייעוץ הראשונה חינם.",
+  ctaText: "ספרו לי במשפט מה העסק שלכם עושה. השיחה הראשונה חינם.",
   // תיבת ההודעה בפוטר: הגולש עורך את ההודעה ושולח אותה ישר לוואטסאפ
   composerLabel: "ההודעה שלכם לזיו",
   composerSend: "שליחה בוואטסאפ",

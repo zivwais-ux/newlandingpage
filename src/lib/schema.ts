@@ -59,7 +59,7 @@ export const contentSchema = z.object({
   navAction: text.max(20),
   seo: z.object({ title: text.max(70), description: text.max(170) }),
   nav: z.object({
-    wordmark: text,
+    wordmark: z.literal("ZIV solutions"),
     tagline: text,
     links: z.array(z.object({ href: z.string().regex(/^#[a-z]+$/), label: text })).min(1).max(5),
   }),
@@ -128,7 +128,7 @@ export const contentSchema = z.object({
   }),
   footer: z.object({
     ctaTitle: text,
-    ctaText: text,
+    ctaText: text.max(80, "המשפט בפוטר צריך להישאר קצר"),
     composerLabel: text,
     composerSend: text.max(24),
     accessibility: text,

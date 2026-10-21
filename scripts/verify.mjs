@@ -135,6 +135,17 @@ try {
     "הירו: הודעת הוואטסאפ הצפה היא ההודעה המוכנה, ושורת אמון של שלושה פריטים",
     (await page.locator(".hero__bubble .wa__msg").innerText()).startsWith("היי זיו") && (await page.locator(".hero__trust li").count()) === 3,
   );
+  check("הלוגו 'ZIV solutions' בתפריט ובפוטר", (await page.locator(".nav .logo").innerText()).replace(/\s+/g, " ").trim() === "ZIV solutions" && (await page.locator("footer .logo").count()) === 1);
+  const heroBg = await page.evaluate(() => getComputedStyle(document.querySelector(".hero")).backgroundColor);
+  check("הירו: רקע ירוק יער וכותרת לבנה", heroBg === "rgb(15, 61, 36)" && (await page.evaluate(() => getComputedStyle(document.querySelector(".hero h1")).color)) === "rgb(255, 255, 255)", heroBg);
+  await page.evaluate(() => window.scrollTo({ top: 3000, behavior: "instant" }));
+  await page.waitForTimeout(150);
+  const navTop = await page.evaluate(() => Math.round(document.querySelector(".nav").getBoundingClientRect().top));
+  check("התפריט נשאר צף למעלה גם אחרי גלילה", navTop >= 0 && navTop <= 24, String(navTop));
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
+  const strip = await page.locator(".strip__list:not([aria-hidden]) li").allInnerTexts();
+  check("הפוטר: הפס הנע מציג את כל הכלים מהדוגמאות", strip.length === 6 && strip.includes("דפי עבודה בשלוש רמות"), strip.join(" | "));
+  check("הפוטר: בלי השורה הכפולה 'או התקשרו'", !(await page.locator("footer").innerText()).includes("או התקשרו"));
   check(
     "המילים המסומנות בעט מודגשות (600)",
     (await page.evaluate(() => [".intro__mark", ".pain__mark .link"].every((q) => getComputedStyle(document.querySelector(q)).fontWeight === "600"))),
@@ -202,6 +213,14 @@ try {
         stage: Math.round(document.querySelector(".pain__stage").getBoundingClientRect().top),
         fits: document.querySelector(".pain__stage").getBoundingClientRect().height <= innerHeight + 1,
         notes: [...document.querySelectorAll(".note")].map((n) => +getComputedStyle(n).opacity),
+        // העיגול (כולל הזנב) לא נוגע באף כרטיס התראה
+        hit: (() => {
+          const c = document.querySelector(".pain__circle").getBoundingClientRect();
+          return [...document.querySelectorAll(".note")].some((n) => {
+            const r = n.getBoundingClientRect();
+            return c.left < r.right && c.right > r.left && c.top < r.bottom && c.bottom > r.top;
+          });
+        })(),
       }));
     };
     const s0 = await at(g.top), sN = await at(g.top + g.hold * 0.25), s1 = await at(g.top + g.hold * 0.75), s2 = await at(g.top + g.hold), s3 = await at(g.top + g.hold + 300);
@@ -212,6 +231,7 @@ try {
       JSON.stringify([s0.notes, sN.notes, s1.notes]),
     );
     check(`${width}x${height}: העיגול נמתח עם הגלילה ונשאר מצויר`, s0.dash > 0.9 && s1.dash > 0.1 && s1.dash < 0.9 && s2.dash < 0.02 && s3.dash < 0.02, [s0.dash, s1.dash, s2.dash, s3.dash].map((d) => d.toFixed(2)).join(" → "));
+    check(`${width}x${height}: העיגול לא עולה על אף כרטיס התראה`, !s2.hit && !s3.hit);
     const href = await cp.getAttribute(".pain__mark a", "href");
     check(`${width}x${height}: "ספרו לי…" עדיין פותח וואטסאפ`, new URL(href).pathname === `/${NUMBER}`, href);
     await cp.close();

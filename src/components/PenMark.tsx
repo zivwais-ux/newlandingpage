@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
 
 type Kind = "circle" | "underline";
 
-const PAD = 3;
+const PAD = 4;
 const r = (n: number) => Math.round(n * 10) / 10;
 
 /** עקומה חלקה דרך הנקודות (Catmull-Rom כ-Bezier) */
@@ -39,11 +39,14 @@ export function circlePath(w: number, h: number): string {
   const pts: [number, number][] = [];
   for (let a = start; a >= end - 0.01; a -= 12) {
     const t = (start - a) / (start - end);
-    const k = 0.95 + 0.13 * t; // הזנב חוצה את ההתחלה מבחוץ, כמו עט שלא עוצר בדיוק
+    // הרוחב מלא לכל אורך הלולאה; רק בגובה היא מתחילה מעט פנימה ומסיימת בקצה,
+    // כך שהזנב חוצה את ההתחלה מבחוץ, כמו עט שלא עוצר בדיוק, ונשאר בתוך הקופסה
+    const kx = 0.97 + 0.03 * t;
+    const ky = 0.88 + 0.12 * t;
     const rad = (a * Math.PI) / 180;
     const c = Math.cos(rad);
     const s = Math.sin(rad);
-    pts.push([cx + rx * k * Math.sign(c) * Math.abs(c) ** e, cy + ry * k * Math.sign(s) * Math.abs(s) ** e]);
+    pts.push([cx + rx * kx * Math.sign(c) * Math.abs(c) ** e, cy + ry * ky * Math.sign(s) * Math.abs(s) ** e]);
   }
   return smooth(pts);
 }
