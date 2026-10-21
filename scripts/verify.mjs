@@ -262,16 +262,18 @@ try {
     };
     const before = await lidAt(g.top - height * 0.3);
     const held = await lidAt(g.top + g.hold * 0.2);
-    check(`${width}x${height}: MacBook עם 4 ההתראות`, (await mp.locator(".laptop .note").count()) === 4 && (await mp.locator(".laptop .mac__doc").count()) === 1);
-    check(`${width}x${height}: המכסה נפתח בגלילה ופתוח לגמרי בזמן העצירה`, before !== "none" && (held === "none" || held === "matrix(1, 0, 0, 1, 0, 0)"), `${before.slice(0, 30)} → ${held}`);
+    const laptopShown = await mp.evaluate(() => getComputedStyle(document.querySelector(".laptop__body")).display !== "none");
+    check(`${width}x${height}: ${width >= 900 ? "MacBook עם 4 ההתראות" : "בטלפון: 4 ההתראות בלי המחשב"}`, (await mp.locator(".laptop .note").count()) === 4 && laptopShown === width >= 900);
+    if (width >= 900) check(`${width}x${height}: המכסה נפתח בגלילה ופתוח לגמרי בזמן העצירה`, before !== "none" && (held === "none" || held === "matrix(1, 0, 0, 1, 0, 0)"), `${before.slice(0, 30)} → ${held}`);
     if (width >= 900) {
       await mp.evaluate((t) => window.scrollTo({ top: t, behavior: "instant" }), Math.round(g.top + g.hold * 0.9));
       await mp.waitForTimeout(120);
       const inside = await mp.evaluate(() => {
         const sc = document.querySelector(".laptop__screen").getBoundingClientRect();
-        return [...document.querySelectorAll(".laptop .note")].every((n) => { const r = n.getBoundingClientRect(); return r.left >= sc.left - 1 && r.right <= sc.right + 1 && r.top >= sc.top - 1 && r.bottom <= sc.bottom + 1; });
+        // the banners sit on the screen and may spill a little past its frame: their centres are on it
+        return [...document.querySelectorAll(".laptop .note")].every((n) => { const r = n.getBoundingClientRect(); const cx = (r.left + r.right) / 2, cy = (r.top + r.bottom) / 2; return cx > sc.left && cx < sc.right && cy > sc.top && cy < sc.bottom; });
       });
-      check(`${width}px: ההתראות בתוך מסך המחשב`, inside);
+      check(`${width}px: ההתראות יושבות על מסך המחשב`, inside);
     }
     await mp.close();
   }

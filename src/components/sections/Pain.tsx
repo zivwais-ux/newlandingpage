@@ -36,7 +36,7 @@ export function Pain() {
                 {pain.items.map((item, i) => (
                   <li key={item.text} className="note" style={{ "--i": i } as React.CSSProperties}>
                     <div className="note__head" aria-hidden="true">
-                      <span className="note__icon">
+                      <span className="note__icon" data-icon={item.icon}>
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
                           <path d={ICONS[item.icon]} />
                         </svg>
