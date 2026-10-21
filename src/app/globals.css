@@ -1729,52 +1729,6 @@ p {
   }
 }
 
-/* ---------- Floating WhatsApp (phones only; it really floats) ---------- */
-.float-wa {
-  position: fixed;
-  bottom: 16px;
-  left: 16px;
-  z-index: 50;
-  width: 64px;
-  height: 64px;
-  display: grid;
-  place-items: center;
-  border-radius: 22px;
-  border-start-start-radius: 0;
-  background: var(--accent);
-  color: var(--white);
-  transition: transform var(--t-press) var(--ease-out);
-}
-.float-wa:active {
-  transform: scale(0.94);
-}
-.float-wa {
-  transition:
-    transform var(--t-ui) var(--ease-out),
-    opacity var(--t-ui) ease,
-    visibility 0s;
-}
-/* מוסתר באמת: לא נצבע, לא נלחץ ולא מקבל פוקוס מהמקלדת */
-.float-wa.is-hidden {
-  opacity: 0;
-  transform: translateY(24px);
-  pointer-events: none;
-  visibility: hidden;
-  transition:
-    transform var(--t-ui) var(--ease-out),
-    opacity var(--t-ui) ease,
-    visibility 0s var(--t-ui);
-}
-.float-wa svg {
-  width: 32px;
-  height: 32px;
-}
-@media (min-width: 900px) {
-  .float-wa {
-    display: none;
-  }
-}
-
 /* ---------- Phone layout: the desktop composition, adapted (no content added or removed) ---------- */
 @media (max-width: 899px) {
   /* Hero: the photo leads, as it does on desktop. The bubble runs off the left edge under the bar,

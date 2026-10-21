@@ -60,7 +60,7 @@ try {
         h1Lines: lines.reduce((a, b) => a + b, 0),
         heroText: document.querySelector(".hero").innerText,
         wa: [...document.querySelectorAll('a[href*="wa.me"]')].map((a) => a.href),
-        floating: getComputedStyle(document.querySelector("[data-floating-whatsapp]")).display !== "none",
+        floating: document.querySelector("[data-floating-whatsapp], .float-wa") !== null,
         pink: [...document.querySelectorAll("*")].some((el) => /248, 199, 201/.test(getComputedStyle(el).backgroundColor)),
         prices: /₪|ש״ח|שקלים/.test(document.body.innerText),
       };
@@ -73,7 +73,7 @@ try {
       `${width}px: כל ${info.wa.length} קישורי הוואטסאפ פותחים את 054-804-4345 עם הודעה מוכנה`,
       info.wa.length >= 6 && info.wa.every((h) => { const u = new URL(h); return u.pathname === `/${NUMBER}` && (u.searchParams.get("text") ?? "").startsWith("היי זיו"); }),
     );
-    check(`${width}px: כפתור וואטסאפ צף רק בטלפון ובטאבלט`, info.floating === width < 900);
+    check(`${width}px: אין כפתור וואטסאפ צף (הכפתור שבתפריט תמיד גלוי)`, !info.floating);
     check(`${width}px: אין יותר ורוד באתר`, !info.pink);
     check(`${width}px: אין מחירים`, !info.prices);
     check(`${width}px: אין שגיאות בקונסול`, errors.length === 0, errors.join(" | "));
@@ -142,6 +142,19 @@ try {
   await page.waitForTimeout(150);
   const navTop = await page.evaluate(() => Math.round(document.querySelector(".nav").getBoundingClientRect().top));
   check("התפריט נשאר צף למעלה גם אחרי גלילה", navTop >= 0 && navTop <= 24, String(navTop));
+  for (const width of [390, 1440]) {
+    const wp = await browser.newPage({ viewport: { width, height: 844 } });
+    await wp.goto(URL_, { waitUntil: "networkidle" });
+    await wp.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight / 2, behavior: "instant" }));
+    await wp.waitForTimeout(150);
+    const btn = await wp.evaluate(() => {
+      const a = document.querySelector('.nav a[href*="wa.me"]');
+      const r = a.getBoundingClientRect();
+      return r.top >= 0 && r.bottom <= innerHeight && getComputedStyle(a).visibility === "visible";
+    });
+    check(`${width}px: כפתור הוואטסאפ שבתפריט גלוי באמצע הדף`, btn);
+    await wp.close();
+  }
   await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
   const strip = await page.locator(".strip__list:not([aria-hidden]) li").allInnerTexts();
   check("הפוטר: הפס הנע מציג את כל הכלים מהדוגמאות", strip.length === 6 && strip.includes("דפי עבודה בשלוש רמות"), strip.join(" | "));

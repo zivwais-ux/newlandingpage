@@ -1,4 +1,3 @@
-import { FloatingWhatsApp } from "@/components/FloatingWhatsApp";
 import { Reveal } from "@/components/Reveal";
 import { About } from "@/components/sections/About";
 import { Build } from "@/components/sections/Build";
@@ -29,7 +28,6 @@ export default function Home() {
         <Contact />
       </main>
       <Footer />
-      <FloatingWhatsApp />
       <Reveal />
     </>
   );
