@@ -70,11 +70,13 @@ type AssistantProps = {
   tool: string;
   answer: string[];
   asList?: boolean;
+  /** רק תוכן המסך, בלי כרטיס משלו: כשהשיחה מוצגת בתוך מכשיר (IPhone) */
+  bare?: boolean;
 };
 
-export function AssistantChat({ ask, intro, tool, answer, asList = true }: AssistantProps) {
+export function AssistantChat({ ask, intro, tool, answer, asList = true, bare = false }: AssistantProps) {
   return (
-    <div className="phone phone--ai" data-ui role="img" aria-label={`דוגמה לשיחה עם עוזר AI: ${ask}`}>
+    <div className={`phone phone--ai ${bare ? "phone--bare" : ""}`} data-ui role="img" aria-label={`דוגמה לשיחה עם עוזר AI: ${ask}`}>
       <StatusBar time="9:41" />
       <div className="ai__bar" aria-hidden="true">
         <Glyph d={ICON.menu} />
@@ -119,6 +121,23 @@ export function AssistantChat({ ask, intro, tool, answer, asList = true }: Assis
         <span className="ai__send">
           <Glyph d={ICON.send} className="ui-icon ui-icon--sm" />
         </span>
+      </div>
+    </div>
+  );
+}
+
+/** מכשיר אייפון מצויר ב-CSS: מסגרת, כפתורי צד, Dynamic Island ופס בית. המסך הוא ה-children. */
+export function IPhone({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="iphone" data-ui>
+      <span className="iphone__btn iphone__btn--action" aria-hidden="true" />
+      <span className="iphone__btn iphone__btn--up" aria-hidden="true" />
+      <span className="iphone__btn iphone__btn--down" aria-hidden="true" />
+      <span className="iphone__btn iphone__btn--power" aria-hidden="true" />
+      <div className="iphone__screen">
+        <span className="iphone__island" aria-hidden="true" />
+        {children}
+        <span className="iphone__home" aria-hidden="true" />
       </div>
     </div>
   );

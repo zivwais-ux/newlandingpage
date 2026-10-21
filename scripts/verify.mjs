@@ -237,6 +237,27 @@ try {
     await cp.close();
   }
 
+  // "מה בונים": אייפון שעולה ומתיישר בגלילה; בבחירת עסק מתחלף רק המסך
+  for (const [width, height] of [[390, 844], [1440, 900]]) {
+    const ip = await browser.newPage({ viewport: { width, height } });
+    await ip.goto(URL_, { waitUntil: "networkidle" });
+    const y = await ip.evaluate(() => document.querySelector(".build__object").getBoundingClientRect().top + scrollY);
+    const at = async (top) => {
+      await ip.evaluate((t) => window.scrollTo({ top: t, behavior: "instant" }), Math.round(top));
+      await ip.waitForTimeout(120);
+      return ip.evaluate(() => getComputedStyle(document.querySelector(".iphone")).transform);
+    };
+    const mid = await at(y - height * 0.9);
+    const end = await at(y - 40);
+    check(`${width}px: אייפון עם Dynamic Island במקום הכרטיס`, (await ip.locator(".build__object .iphone .iphone__island").count()) === 1 && (await ip.locator(".build__object .iphone .phone--bare").count()) === 1);
+    check(`${width}px: האייפון עולה מוטה ומתיישר עד סוף הכניסה`, mid !== "none" && (end === "none" || end === "matrix(1, 0, 0, 1, 0, 0)"), `${mid} → ${end}`);
+    await ip.evaluate(() => (document.querySelector(".iphone").dataset.same = "1"));
+    await ip.locator(".build__name").nth(3).click();
+    await ip.waitForTimeout(350);
+    check(`${width}px: בחירת עסק מחליפה רק את המסך, המכשיר נשאר`, (await ip.locator('.iphone[data-same="1"]').count()) === 1 && (await ip.locator(".iphone .ai__tool").innerText()).length > 2);
+    await ip.close();
+  }
+
   // העט: ה-viewBox בגודל האמיתי בפיקסלים, כך שהקו באותו עובי בכל מסך ולא נמתח
   for (const width of [390, 768, 1440]) {
     const pp = await browser.newPage({ viewport: { width, height: 900 } });

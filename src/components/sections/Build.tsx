@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { build } from "@/content/site";
-import { AssistantChat } from "../Chat";
+import { AssistantChat, IPhone } from "../Chat";
 import { WhatsAppButton } from "../WhatsAppButton";
 
 // הדבר החי בדף: בוחרים סוג עסק ורואים דוגמה לכלי שבונים בשיעור.
@@ -15,8 +15,13 @@ export function Build() {
       <div className="build__grid">
         <div className="build__stage" data-reveal>
           <div className="build__disc" data-field={ex.field} aria-hidden="true" />
-          <div className="build__object swap" key={ex.id} aria-live="polite">
-            <AssistantChat ask={ex.ask} intro={ex.intro} tool={ex.tool} answer={ex.answer} asList={ex.answer.length > 2} />
+          <div className="build__object">
+            {/* המכשיר נשאר במקומו; בבחירת עסק מתחלף רק המסך */}
+            <IPhone>
+              <div className="build__screen swap" key={ex.id} aria-live="polite">
+                <AssistantChat ask={ex.ask} intro={ex.intro} tool={ex.tool} answer={ex.answer} asList={ex.answer.length > 2} bare />
+              </div>
+            </IPhone>
           </div>
         </div>
         <div className="build__list">

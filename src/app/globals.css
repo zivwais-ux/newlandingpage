@@ -625,10 +625,106 @@ p {
 }
 .build__object {
   position: relative;
-  width: min(80vw, 360px);
+  width: min(66vw, 270px);
+  /* the device is sized in its own width (cqw), so frame, island and corners keep their proportions */
+  container-type: inline-size;
 }
-.build__object .phone {
-  box-shadow: 0 28px 56px -32px rgb(10 10 10 / 0.4); /* taste-skill-ignore: a screenshot laid on the disc */
+
+/* ---------- iPhone, drawn in CSS: titanium frame, side buttons, Dynamic Island, home bar ---------- */
+.iphone {
+  position: relative;
+  aspect-ratio: 9 / 19.5;
+  padding: 3.4cqw;
+  border-radius: 17cqw;
+  background: #1d1d1f;
+  /* a real device standing on the disc: its metal edge, and the darkness it casts below */
+  box-shadow: inset 0 0 0 1.5px #5b5b5f, inset 0 0 0 4px #2a2a2c, 0 40px 70px -36px rgb(10 10 10 / 0.5); /* taste-skill-ignore: device frame (data-ui) */
+}
+.iphone__btn {
+  position: absolute;
+  width: 1.3cqw;
+  border-radius: 1cqw;
+  background: #3a3a3c;
+}
+/* left side: action button and volume; right side: the side button */
+.iphone__btn--action {
+  left: -1cqw;
+  top: 17%;
+  height: 6%;
+}
+.iphone__btn--up {
+  left: -1cqw;
+  top: 26%;
+  height: 10%;
+}
+.iphone__btn--down {
+  left: -1cqw;
+  top: 38%;
+  height: 10%;
+}
+.iphone__btn--power {
+  right: -1cqw;
+  top: 29%;
+  height: 15%;
+}
+.iphone__screen {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 13.6cqw;
+  background: var(--white);
+}
+.iphone__island {
+  position: absolute;
+  z-index: 2;
+  top: 3cqw;
+  left: 50%;
+  width: 28cqw;
+  height: 8.6cqw;
+  translate: -50% 0;
+  border-radius: 999px;
+  background: #000;
+}
+.iphone__home {
+  position: absolute;
+  z-index: 2;
+  bottom: 2.4cqw;
+  left: 50%;
+  width: 36cqw;
+  height: 1.5cqw;
+  translate: -50% 0;
+  border-radius: 999px;
+  background: #111;
+}
+.build__screen {
+  height: 100%;
+}
+/* The assistant screen inside the device: no card of its own; the time and icons flank the island,
+   and the conversation sits at the bottom above the input, as in a real chat app. */
+.phone--bare {
+  height: 100%;
+  border-radius: 0;
+  font-size: 13px;
+}
+.phone--bare .phone__status {
+  height: 15cqw;
+  padding: 0 7.5cqw 0 9cqw;
+  font-size: 4.9cqw;
+}
+.phone--bare .phone__sys {
+  gap: 1.4cqw;
+}
+.phone--bare .phone__sys svg {
+  height: 3.6cqw;
+}
+.phone--bare .ai__body {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: clip;
+}
+.phone--bare .ai__composer {
+  padding-bottom: 8cqw;
 }
 .build__list h2 {
   font-size: var(--step-head);
@@ -697,7 +793,7 @@ p {
     width: min(64vh, 44vw);
   }
   .build__object {
-    width: min(44vh, 30vw, 380px);
+    width: min(34vh, 24vw, 300px);
   }
   .build__names {
     max-width: 520px;
@@ -1740,7 +1836,7 @@ p {
     order: 6;
   }
   .build__object {
-    width: min(76vw, 320px);
+    width: min(66vw, 270px);
   }
 
   /* Pains: a size that lets the whole section sit on one screen while it is held. */
@@ -2037,16 +2133,22 @@ p {
       }
     }
 
-    /* 4. The disc settles and the phone is laid down on it. */
+    /* 4. The disc settles; the iPhone rises into the frame, tilted, and straightens up,
+       while the conversation on its screen scrolls up a little, as if the answer just arrived. */
     .build__disc {
       animation: disc-grow linear both;
       animation-timeline: view();
       animation-range: entry 0% cover 40%;
     }
-    .build__object > .phone {
-      animation: phone-down linear both;
+    .iphone {
+      animation: iphone-rise linear both;
       animation-timeline: view();
       animation-range: entry 0% cover 42%;
+    }
+    .phone--bare .ai__body > * {
+      animation: screen-scroll linear both;
+      animation-timeline: view();
+      animation-range: entry 30% cover 48%;
     }
 
     /* 5. The tiles grow up from their base, one after another; the photos drift inside them. */
@@ -2176,9 +2278,17 @@ p {
     transform: none;
   }
 }
-@keyframes phone-down {
+@keyframes iphone-rise {
   from {
-    transform: translateY(64px) rotate(-5deg);
+    transform: translateY(18%) rotate(-6deg) scale(0.94);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes screen-scroll {
+  from {
+    transform: translateY(40px);
   }
   to {
     transform: none;
