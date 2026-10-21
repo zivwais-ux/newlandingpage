@@ -250,6 +250,32 @@ try {
     await cp.close();
   }
 
+  // "עוד ערב של עבודה?": MacBook שעולה והמכסה שלו נפתח לפני העצירה; ההתראות על המסך
+  for (const [width, height] of [[390, 844], [375, 667], [1440, 900]]) {
+    const mp = await browser.newPage({ viewport: { width, height } });
+    await mp.goto(URL_, { waitUntil: "networkidle" });
+    const g = await mp.evaluate(() => { const r = document.querySelector(".pain").getBoundingClientRect(); return { top: r.top + scrollY, hold: r.height - innerHeight }; });
+    const lidAt = async (y) => {
+      await mp.evaluate((t) => window.scrollTo({ top: t, behavior: "instant" }), Math.round(y));
+      await mp.waitForTimeout(120);
+      return mp.evaluate(() => getComputedStyle(document.querySelector(".laptop__lid")).transform);
+    };
+    const before = await lidAt(g.top - height * 0.3);
+    const held = await lidAt(g.top + g.hold * 0.2);
+    check(`${width}x${height}: MacBook עם 4 ההתראות`, (await mp.locator(".laptop .note").count()) === 4 && (await mp.locator(".laptop .mac__doc").count()) === 1);
+    check(`${width}x${height}: המכסה נפתח בגלילה ופתוח לגמרי בזמן העצירה`, before !== "none" && (held === "none" || held === "matrix(1, 0, 0, 1, 0, 0)"), `${before.slice(0, 30)} → ${held}`);
+    if (width >= 900) {
+      await mp.evaluate((t) => window.scrollTo({ top: t, behavior: "instant" }), Math.round(g.top + g.hold * 0.9));
+      await mp.waitForTimeout(120);
+      const inside = await mp.evaluate(() => {
+        const sc = document.querySelector(".laptop__screen").getBoundingClientRect();
+        return [...document.querySelectorAll(".laptop .note")].every((n) => { const r = n.getBoundingClientRect(); return r.left >= sc.left - 1 && r.right <= sc.right + 1 && r.top >= sc.top - 1 && r.bottom <= sc.bottom + 1; });
+      });
+      check(`${width}px: ההתראות בתוך מסך המחשב`, inside);
+    }
+    await mp.close();
+  }
+
   // "מה בונים": אייפון שעולה ומתיישר בגלילה; בבחירת עסק מתחלף רק המסך
   for (const [width, height] of [[390, 844], [1440, 900]]) {
     const ip = await browser.newPage({ viewport: { width, height } });

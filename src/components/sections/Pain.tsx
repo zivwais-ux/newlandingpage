@@ -1,4 +1,5 @@
 import { pain, type PainIcon } from "@/content/site";
+import { MacBook } from "../Chat";
 import { PenMark } from "../PenMark";
 import { WhatsAppButton } from "../WhatsAppButton";
 
@@ -28,22 +29,27 @@ export function Pain() {
               </span>
             </p>
           </div>
-          <ul className="pain__stack" data-ui>
-            {pain.items.map((item, i) => (
-              <li key={item.text} className="note" style={{ "--i": i } as React.CSSProperties}>
-                <div className="note__head" aria-hidden="true">
-                  <span className="note__icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-                      <path d={ICONS[item.icon]} />
-                    </svg>
-                  </span>
-                  <span className="note__app">{item.app}</span>
-                  <span className="note__time">{item.time}</span>
-                </div>
-                <p className="note__text">{item.text}</p>
-              </li>
-            ))}
-          </ul>
+          {/* ההתראות על מסך של MacBook שעולה ונפתח בגלילה */}
+          <div className="pain__device">
+            <MacBook>
+              <ul className="pain__stack" data-ui>
+                {pain.items.map((item, i) => (
+                  <li key={item.text} className="note" style={{ "--i": i } as React.CSSProperties}>
+                    <div className="note__head" aria-hidden="true">
+                      <span className="note__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+                          <path d={ICONS[item.icon]} />
+                        </svg>
+                      </span>
+                      <span className="note__app">{item.app}</span>
+                      <span className="note__time">{item.time}</span>
+                    </div>
+                    <p className="note__text">{item.text}</p>
+                  </li>
+                ))}
+              </ul>
+            </MacBook>
+          </div>
         </div>
       </div>
     </section>

@@ -143,6 +143,67 @@ export function IPhone({ children }: { children: React.ReactNode }) {
   );
 }
 
+/** מחשב MacBook מצויר ב-CSS: מכסה עם מסך (macOS בערב, מסמך שנתקע באמצע) ובסיס אלומיניום.
+ *  ההתראות הן ה-children (מונחות מעל המסך ב-CSS); כל השאר תפאורה (aria-hidden). */
+export function MacBook({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="laptop" data-ui>
+      <div className="laptop__body">
+        <div className="laptop__lid">
+          <div className="laptop__screen">
+            <span className="laptop__notch" aria-hidden="true" />
+            <div className="mac__bar" aria-hidden="true">
+              <span className="mac__menu">
+                <b>קובץ</b>
+                <span>עריכה</span>
+                <span>הוספה</span>
+                <span>עיצוב</span>
+              </span>
+              <span className="mac__status" dir="ltr">
+                <svg viewBox="0 0 16 12" className="mac__wifi">
+                  <path d="M8 11.5 5.6 8.9a3.4 3.4 0 0 1 4.8 0L8 11.5zM3.4 6.7a6.6 6.6 0 0 1 9.2 0l-1.4 1.5a4.6 4.6 0 0 0-6.4 0L3.4 6.7zM1 4.3a10 10 0 0 1 14 0l-1.4 1.5a8 8 0 0 0-11.2 0L1 4.3z" />
+                </svg>
+                <span className="mac__battery">
+                  <i />
+                </span>
+                <span>18%</span>
+                <span dir="rtl">יום ב׳ 23:04</span>
+              </span>
+            </div>
+            <div className="mac__doc" aria-hidden="true">
+              <div className="mac__doc-bar">
+                <span className="mac__lights">
+                  <i />
+                  <i />
+                  <i />
+                </span>
+                <span>הצעת מחיר – טיוטה</span>
+              </div>
+              <div className="mac__doc-page">
+                <p>שלום רב,</p>
+                <p>
+                  בהמשך לשיחתנו, מצורפת
+                  <span className="mac__caret" />
+                </p>
+              </div>
+            </div>
+            <div className="mac__dock" aria-hidden="true">
+              <i />
+              <i />
+              <i />
+              <i />
+              <i />
+            </div>
+          </div>
+        </div>
+        <div className="laptop__base" aria-hidden="true" />
+      </div>
+      {/* ההתראות: על המסך במחשב; בטלפון "קופצות" ממנו (באותו תא, מעל המכשיר) */}
+      {children}
+    </div>
+  );
+}
+
 /** שני וי כחולים: ההודעה נקראה */
 function ReadTicks() {
   return (
