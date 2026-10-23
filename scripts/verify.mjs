@@ -264,7 +264,7 @@ try {
     const before = await lidAt(g.top - height * 0.3);
     const held = await lidAt(g.top + g.hold * 0.2);
     const laptopShown = await mp.evaluate(() => getComputedStyle(document.querySelector(".laptop__body")).display !== "none");
-    check(`${width}x${height}: ${width >= 900 ? "MacBook עם 4 ההתראות" : "בטלפון: 4 ההתראות בלי המחשב"}`, (await mp.locator(".laptop .note").count()) === 4 && laptopShown === width >= 900);
+    check(`${width}x${height}: MacBook עם 4 ההתראות`, (await mp.locator(".laptop .note").count()) === 4 && laptopShown);
     // הרקע: הערב מחשיך, השעון מתקדם עם ההתראות, נקודות האור זזות; בטלפון ההתראות בזיגזג
     const sky = async (y) => {
       await mp.evaluate((t) => window.scrollTo({ top: t, behavior: "instant" }), Math.round(y));
@@ -288,8 +288,23 @@ try {
       check(`${width}x${height}: גם כשהערב הכי כהה, הטקסט קריא (ניגודיות ${ratio.toFixed(1)}:1)`, ratio >= 4.5);
     }
     check(`${width}x${height}: נקודות האור ברקע זזות`, k2.stars >= 2, String(k2.stars));
-    if (width < 900) check(`${width}x${height}: בטלפון ההתראות בזיגזג`, k2.rots.every((t) => t !== "none" && t !== "matrix(1, 0, 0, 1, 0, 0)"), k2.rots.join(" | "));
+    if (width < 900) {
+      check(`${width}x${height}: בטלפון ההתראות ישרות (באנרים של מק)`, k2.rots.every((t) => t === "none" || t === "matrix(1, 0, 0, 1, 0, 0)"), k2.rots.join(" | "));
+      // the notifications stack above the machine, the last one overlapping just the top of the lid
+      const pos = await mp.evaluate(() => {
+        const notes = [...document.querySelectorAll(".laptop .note")].map((n) => n.getBoundingClientRect());
+        const lid = document.querySelector(".laptop__lid").getBoundingClientRect();
+        return { lastBottom: Math.round(notes[3].bottom), lidTop: Math.round(lid.top), lidBottom: Math.round(lid.bottom), firstTop: Math.round(notes[0].top) };
+      });
+      check(`${width}x${height}: ההתראות מעל המחשב ויוצאות מראש המסך`, pos.firstTop < pos.lidTop && pos.lastBottom > pos.lidTop && pos.lastBottom < (pos.lidTop + pos.lidBottom) / 2, JSON.stringify(pos));
+    }
     if (width >= 900) check(`${width}x${height}: המכסה נפתח בגלילה ופתוח לגמרי בזמן העצירה`, before !== "none" && (held === "none" || held === "matrix(1, 0, 0, 1, 0, 0)"), `${before.slice(0, 30)} → ${held}`);
+    else {
+      // phone: partly open, and more open in the hold than before it (the angle is read from the matrix)
+      const angle = (m) => { const v = m.match(/matrix3d\(([^)]+)\)/); if (!v) return m === "none" ? 0 : NaN; const n = v[1].split(",").map(Number); return Math.round((Math.atan2(n[6], n[5]) * 180) / Math.PI); };
+      const later = await lidAt(g.top + g.hold * 0.6);
+      check(`${width}x${height}: בטלפון המכסה פתוח חלקית ונפתח עוד בגלילה`, angle(before) < angle(later) && angle(later) < -20 && angle(later) > -60, `${angle(before)}° → ${angle(later)}°`);
+    }
     if (width >= 900) {
       await mp.evaluate((t) => window.scrollTo({ top: t, behavior: "instant" }), Math.round(g.top + g.hold * 0.9));
       await mp.waitForTimeout(120);
