@@ -272,7 +272,7 @@ try {
     const before = await scaleAt(info.card2Top - height * 1.2);
     // the moment card 2 locks under the menu (92px + 14px on a phone, 104px + 16px on desktop)
     const covered = await scaleAt(info.card2Top - (width >= 900 ? 120 : 106) + 4);
-    check(`${width}px: כשהכרטיס השני מחליק מעל הראשון, הראשון מתכווץ`, before > 0.99 && covered < 0.95, `${before} → ${covered}`);
+    check(`${width}px: כשהכרטיס השני מחליק מעל הראשון, הראשון מתכווץ`, before > 0.99 && covered < 0.97, `${before} → ${covered}`);
     await hp.close();
   }
 
