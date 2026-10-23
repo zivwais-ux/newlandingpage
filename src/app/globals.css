@@ -854,20 +854,38 @@ p {
     grid-template-rows: auto auto;
     justify-items: center;
   }
+  /* small, tidy banners, narrower than the machine so it frames them */
   .laptop > .pain__stack {
     grid-area: 1 / 1;
-    width: 100%;
-    margin-bottom: -52px;
+    width: 78%;
+    margin-bottom: -40px;
   }
+  /* the machine is the centre of the picture: almost the full width of the phone */
   .laptop__body {
     grid-area: 2 / 1;
-    width: min(66vw, 260px);
+    /* the content width plus a little of the page margin on each side, centred */
+    justify-self: stretch;
+    width: auto;
+    max-width: 400px;
+    margin-inline: -10px;
     /* the machine measures itself, so the lid, notch and screen keep their proportions at this size */
     container-type: inline-size;
   }
   /* without scroll-driven motion: left partly open, the way it is late at night */
   .laptop__lid {
-    transform: rotateX(-38deg);
+    transform: rotateX(-30deg);
+  }
+  /* the screen's light pooling on the table under the machine */
+  .laptop__base::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    left: 12%;
+    right: 12%;
+    top: 40%;
+    height: 40%;
+    border-radius: 50%;
+    box-shadow: 0 10px 28px 6px rgb(15 61 36 / 0.32); /* taste-skill-ignore: the machine resting on the surface (data-ui) */
   }
 }
 
@@ -2155,15 +2173,12 @@ p {
   .pain__device {
     order: 3;
   }
-  .pain__stack {
-    gap: 8px;
-  }
   .pain__cta {
     order: 4;
     margin-top: 0;
   }
   .pain__grid {
-    gap: 14px;
+    gap: 12px;
   }
   /* macOS banners, as on desktop, sized for a phone: all the same width, lined up */
   .pain__stack .note:nth-child(n) {
@@ -2172,31 +2187,34 @@ p {
     width: 100%;
     justify-self: stretch;
   }
+  .pain__stack {
+    gap: 6px;
+  }
   .note {
-    padding: 10px 12px 11px;
-    border-radius: 14px;
+    padding: 7px 10px 8px;
+    border-radius: 12px;
     background: rgb(250 250 250 / 0.98);
-    box-shadow: 0 8px 20px -10px rgb(0 0 0 / 0.38); /* taste-skill-ignore: a macOS banner coming out of the device (data-ui) */
+    box-shadow: 0 6px 16px -8px rgb(0 0 0 / 0.4); /* taste-skill-ignore: a macOS banner coming out of the device (data-ui) */
   }
   .note__head {
-    gap: 8px;
-    font-size: 13px;
+    gap: 6px;
+    font-size: 12px;
   }
   .note__icon {
-    width: 22px;
-    height: 22px;
-    border-radius: 6px;
+    width: 18px;
+    height: 18px;
+    border-radius: 5px;
   }
   .note__icon svg {
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
   }
   .note__app {
     font-weight: 600;
   }
   .note__text {
-    margin-top: 3px;
-    font-size: 14.5px;
+    margin-top: 2px;
+    font-size: 13px;
     line-height: 1.3;
   }
   .pain__mark {
@@ -2224,19 +2242,20 @@ p {
       gap: 6px;
     }
     .note {
-      padding: 7px 11px 8px;
+      padding: 6px 10px 7px;
     }
     .note__text {
       margin-top: 1px;
-      font-size: 13.5px;
       line-height: 1.25;
     }
-    /* a smaller machine on short screens, so the whole hold still fits */
+    /* a little smaller on short screens, so the whole hold still fits */
     .laptop__body {
-      width: min(54vw, 210px);
+      justify-self: center;
+      width: min(70vw, 262px);
+      margin-inline: 0;
     }
     .laptop > .pain__stack {
-      margin-bottom: -66px;
+      margin-bottom: -70px;
     }
   }
 
@@ -2524,13 +2543,13 @@ p {
           animation-name: note-rise;
         }
         .note:nth-child(1) {
-          --from: 290px;
+          --from: 250px;
         }
         .note:nth-child(2) {
-          --from: 215px;
+          --from: 190px;
         }
         .note:nth-child(3) {
-          --from: 140px;
+          --from: 130px;
         }
         .note:nth-child(4) {
           --from: 70px;
@@ -2757,7 +2776,7 @@ p {
     transform: rotateX(-80deg);
   }
   to {
-    transform: rotateX(-38deg);
+    transform: rotateX(-30deg);
   }
 }
 @keyframes note-rise {

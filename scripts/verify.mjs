@@ -296,6 +296,12 @@ try {
         const lid = document.querySelector(".laptop__lid").getBoundingClientRect();
         return { lastBottom: Math.round(notes[3].bottom), lidTop: Math.round(lid.top), lidBottom: Math.round(lid.bottom), firstTop: Math.round(notes[0].top) };
       });
+      const size = await mp.evaluate(() => {
+        const body = document.querySelector(".laptop__body").getBoundingClientRect();
+        const stack = document.querySelector(".laptop > .pain__stack").getBoundingClientRect();
+        return { body: Math.round(body.width), stack: Math.round(stack.width), vw: innerWidth, centred: Math.abs(body.left + body.right - innerWidth) <= 2 };
+      });
+      check(`${width}x${height}: המחשב גדול וממורכז, וההתראות צרות ממנו`, size.centred && size.stack < size.body && (height <= 760 || size.body >= size.vw * 0.8), JSON.stringify(size));
       check(`${width}x${height}: ההתראות מעל המחשב ויוצאות מראש המסך`, pos.firstTop < pos.lidTop && pos.lastBottom > pos.lidTop && pos.lastBottom < (pos.lidTop + pos.lidBottom) / 2, JSON.stringify(pos));
     }
     if (width >= 900) check(`${width}x${height}: המכסה נפתח בגלילה ופתוח לגמרי בזמן העצירה`, before !== "none" && (held === "none" || held === "matrix(1, 0, 0, 1, 0, 0)"), `${before.slice(0, 30)} → ${held}`);
