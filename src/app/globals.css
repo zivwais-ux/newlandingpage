@@ -1493,7 +1493,9 @@ p {
   justify-content: center;
 }
 
-/* ---------- How it works: tiles that grow ---------- */
+/* ---------- How it works: a deck of cards that stack as you scroll ----------
+   Each step sticks under the floating menu and the next one slides over it; the one underneath
+   draws back a little (scroll-driven, transform and opacity only). Without it they simply stack. */
 .how {
   padding-block: clamp(48px, 6vw, 96px) var(--gap);
 }
@@ -1501,35 +1503,57 @@ p {
   font-size: var(--step-head);
   line-height: 1.05;
 }
-.how__grid {
+.how__deck {
   margin-top: 40px;
   display: grid;
-  gap: 40px;
+  gap: 28px;
+  /* lets each card listen to the next one arriving */
+  timeline-scope: --step2, --step3;
 }
-.how__tile {
-  position: relative;
+.how__card {
+  position: sticky;
+  top: calc(92px + var(--i) * 14px);
+  display: grid;
+  gap: 18px;
+  align-items: center;
+  padding: 18px;
   overflow: hidden;
+  border-radius: calc(var(--r) * 1.2);
+  border-start-start-radius: 0;
+  transform-origin: 50% 0;
+}
+/* the dimming as a card goes under the next one (its own layer, so only opacity changes) */
+.how__card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  opacity: 0;
+  pointer-events: none;
+}
+.how__card--1 {
+  background: var(--sage);
+}
+.how__card--2 {
+  background: var(--forest);
+  color: var(--white);
+  view-timeline: --step2 block;
+}
+.how__card--3 {
+  background: #e7ebe8;
+  view-timeline: --step3 block;
+}
+.how__media {
   display: grid;
   place-items: center;
-  padding: 7%;
-  border-radius: var(--r);
-  border-start-start-radius: 0;
 }
-.how__tile--1 {
-  background: var(--sage);
-  min-height: 300px;
-}
-.how__tile--2 {
-  background: var(--forest);
-  height: 62vw;
-}
-.how__tile--3 {
-  background: var(--surface);
-  height: 78vw;
+.how__media .phone {
+  width: 100%;
+  max-width: 340px;
 }
 .how__pic {
   width: 100%;
-  height: 100%;
+  height: 34svh;
   overflow: hidden;
   border-radius: var(--r);
   border-start-start-radius: 0;
@@ -1539,80 +1563,59 @@ p {
   height: 100%;
   object-fit: cover;
 }
-.how__tile .phone {
-  width: 100%;
-  max-width: 340px;
+.how__body {
+  padding: 2px 4px 6px;
 }
-/* a small pill over each step: it is a real sequence */
+/* a pill over each step: it is a real sequence */
 .how__num {
   display: inline-block;
-  margin-top: 20px;
-  padding: 4px 12px;
+  padding: 5px 14px;
   border-radius: 999px;
+  background: var(--forest);
+  color: var(--white);
+  font-size: var(--step-small);
+  font-weight: 600;
+}
+.how__card--2 .how__num {
   background: var(--sage);
   color: var(--ink);
-  font-size: var(--step-small);
-  font-weight: 500;
 }
 .how h3 {
-  margin-top: 10px;
-  font-size: var(--step-lead);
+  margin-top: 12px;
+  font-size: var(--step-statement);
+  line-height: 1.15;
 }
-.how__step p {
-  margin-top: 8px;
+.how__body p {
+  margin-top: 10px;
   max-width: 40ch;
 }
+.how__cta {
+  margin-top: 48px;
+  display: flex;
+  justify-content: center;
+}
 @media (min-width: 900px) {
-  .how__top {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    gap: 10px;
+  .how__deck {
+    gap: 40px;
   }
-  .how__grid {
-    margin-top: 0;
-    grid-template-columns: repeat(12, 1fr);
-    gap: 10px;
-    align-items: end;
+  .how__card {
+    top: calc(104px + var(--i) * 16px);
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(32px, 4vw, 72px);
+    min-height: min(68vh, 620px);
+    padding: clamp(28px, 3vw, 48px);
   }
-  .how__head {
-    grid-column: 1 / 8;
-    grid-row: 1;
-    align-self: start;
+  /* the words first (right, in Hebrew), the picture beside them */
+  .how__body {
+    order: -1;
+    padding: 0 clamp(8px, 2vw, 32px);
   }
-  .how__step--1 {
-    grid-column: 1 / 4;
-    grid-row: 2;
+  .how__body p {
+    font-size: var(--step-lead);
+    line-height: 1.45;
   }
-  .how__step--2 {
-    grid-column: 4 / 8;
-    grid-row: 2;
-  }
-  .how__step--3 {
-    grid-column: 8 / 13;
-    grid-row: 1 / span 2;
-  }
-  .how__tile--1 {
-    min-height: 34vh;
-    padding: 18px;
-  }
-  .how__tile--2 {
-    height: 46vh;
-  }
-  .how__tile--3 {
-    height: 62vh;
-  }
-  .how__step {
-    padding-inline-end: 14px;
-  }
-  /* the same room for every step's text, so the three labels and titles sit on one line */
-  .how__step p {
-    min-height: calc(3 * 1.55em);
-  }
-  .how__grid {
-    grid-template-rows: auto auto;
-  }
-  .how__head {
-    padding-bottom: 32px;
+  .how__pic {
+    height: min(52vh, 480px);
   }
 }
 
@@ -2597,11 +2600,25 @@ p {
       animation-range: entry 30% cover 48%;
     }
 
-    /* 5. The tiles grow up from their base, one after another; the photos drift inside them. */
-    .how__tile {
-      animation: tile-grow linear both;
-      animation-timeline: view();
-      animation-range: entry 0% cover 34%;
+    /* 5. The cards stack: each one draws back and dims while the next rises into view
+       (from its first appearance at the bottom of the screen until it is fully in), then is covered by it. */
+    .how__card--1,
+    .how__card--2 {
+      animation: card-recede linear both;
+      animation-range: entry 20% entry 100%;
+    }
+    .how__card--1::after,
+    .how__card--2::after {
+      animation: card-dim linear both;
+      animation-range: entry 20% entry 100%;
+    }
+    .how__card--1,
+    .how__card--1::after {
+      animation-timeline: --step2;
+    }
+    .how__card--2,
+    .how__card--2::after {
+      animation-timeline: --step3;
     }
     .how__pic img {
       animation: pic-drift linear both;
@@ -2810,6 +2827,16 @@ p {
     transform: none;
   }
 }
+@keyframes card-recede {
+  to {
+    transform: scale(0.92);
+  }
+}
+@keyframes card-dim {
+  to {
+    opacity: 0.2;
+  }
+}
 @keyframes tile-grow {
   from {
     transform: translateY(72px);
@@ -2892,6 +2919,3 @@ p {
   }
 }
 
-.how__steps {
-  display: contents;
-}

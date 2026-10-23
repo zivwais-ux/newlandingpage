@@ -251,6 +251,31 @@ try {
     await cp.close();
   }
 
+  // "איך זה עובד": שלושה כרטיסים שנצמדים ונערמים; הקודם מתכווץ כשהבא מחליק מעליו
+  for (const [width, height] of [[390, 844], [1440, 900]]) {
+    const hp = await browser.newPage({ viewport: { width, height } });
+    await hp.goto(URL_, { waitUntil: "networkidle" });
+    const info = await hp.evaluate(() => ({
+      cards: document.querySelectorAll(".how__card").length,
+      sticky: [...document.querySelectorAll(".how__card")].every((c) => getComputedStyle(c).position === "sticky"),
+      imgs: [...document.querySelectorAll(".how__card img")].map((i) => i.getAttribute("src").split("?")[0]),
+      chat: document.querySelectorAll(".how__card--1 .phone--wa").length,
+      cta: document.querySelectorAll("#how .how__cta a[href*='wa.me']").length,
+      card2Top: document.querySelector(".how__card--2").getBoundingClientRect().top + scrollY,
+    }));
+    check(`${width}px: איך זה עובד: 3 כרטיסים נצמדים, עם השיחה, שתי התמונות והכפתור`, info.cards === 3 && info.sticky && info.chat === 1 && info.imgs.length === 2 && info.cta === 1, JSON.stringify(info));
+    const scaleAt = async (y) => {
+      await hp.evaluate((t) => window.scrollTo({ top: t, behavior: "instant" }), Math.round(y));
+      await hp.waitForTimeout(150);
+      return hp.evaluate(() => { const m = getComputedStyle(document.querySelector(".how__card--1")).transform; return m === "none" ? 1 : +m.slice(7).split(",")[0]; });
+    };
+    const before = await scaleAt(info.card2Top - height * 1.2);
+    // the moment card 2 locks under the menu (92px + 14px on a phone, 104px + 16px on desktop)
+    const covered = await scaleAt(info.card2Top - (width >= 900 ? 120 : 106) + 4);
+    check(`${width}px: כשהכרטיס השני מחליק מעל הראשון, הראשון מתכווץ`, before > 0.99 && covered < 0.95, `${before} → ${covered}`);
+    await hp.close();
+  }
+
   // "עוד ערב של עבודה?": MacBook שעולה והמכסה שלו נפתח לפני העצירה; ההתראות על המסך
   for (const [width, height] of [[390, 844], [375, 667], [1440, 900]]) {
     const mp = await browser.newPage({ viewport: { width, height } });
