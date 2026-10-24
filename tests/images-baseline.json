@@ -4,6 +4,7 @@
     "coffee.webp": "ec97daf3150474829f8a9e1821211997537cd3541cd7fca19a81d28107bf3852",
     "lesson.webp": "54eeb226863b229647cf16581cc638c105fbe4fb035fbf5a0709657ff0ce116b",
     "notebook.webp": "ccc93c9b32d483ce5d526409042038b73a83a8fc460321b1d7c1b84e17a46f4e",
+    "on-your-own.webp": "4c6006f899311a0b5e72ef6414e61c3c0c12460bbdcb9e86b4ddad77bed3000f",
     "screen.webp": "969f910d4642b144d214b31100e90006b1c5e2cf640689a0a89bb610c1f714a0"
   },
   "onPage": {
@@ -19,8 +20,8 @@
         "section": "how"
       },
       {
-        "file": "/img/notebook.webp",
-        "alt": "מחברת פתוחה עם רשימות מהשיעור ועיפרון",
+        "file": "/img/on-your-own.webp",
+        "alt": "אדם עובד לבד מול מחשב נייד עם תהליך אוטומציה על המסך, ולידו מחברת עם הצעדים הבאים",
         "section": "how"
       }
     ],
@@ -36,8 +37,8 @@
         "section": "how"
       },
       {
-        "file": "/img/notebook.webp",
-        "alt": "מחברת פתוחה עם רשימות מהשיעור ועיפרון",
+        "file": "/img/on-your-own.webp",
+        "alt": "אדם עובד לבד מול מחשב נייד עם תהליך אוטומציה על המסך, ולידו מחברת עם הצעדים הבאים",
         "section": "how"
       }
     ]

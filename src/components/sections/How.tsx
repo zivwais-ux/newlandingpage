@@ -41,7 +41,7 @@ export function How() {
         <li className="how__card how__card--3" style={{ "--i": 2 } as React.CSSProperties}>
           <div className="how__media">
             <div className="how__pic">
-              <Image src={after.img!} alt={after.alt!} width={640} height={427} loading="lazy" />
+              <Image src={after.img!} alt={after.alt!} width={1536} height={1024} loading="lazy" />
             </div>
           </div>
           <div className="how__body">

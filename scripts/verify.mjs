@@ -265,7 +265,7 @@ try {
       head: (() => { const h = document.querySelector("#how-title"); const cs = getComputedStyle(h); return { text: h.textContent.trim(), align: cs.textAlign, weight: cs.fontWeight }; })(),
     }));
     check(`${width}px: איך זה עובד: הכותרת ממורכזת, מודגשת ומסתיימת בסימן שאלה`, info.head.align === "center" && +info.head.weight >= 600 && info.head.text.endsWith("?"), JSON.stringify(info.head));
-    check(`${width}px: איך זה עובד: בכרטיס השני התמונה מבית הקפה`, info.imgs[0] === "/img/build-together.webp", info.imgs[0]);
+    check(`${width}px: איך זה עובד: בכרטיס השני התמונה מבית הקפה, ובשלישי העבודה לבד`, info.imgs[0] === "/img/build-together.webp" && info.imgs[1] === "/img/on-your-own.webp", JSON.stringify(info.imgs));
     check(`${width}px: איך זה עובד: 3 כרטיסים נצמדים, עם השיחה, שתי התמונות והכפתור`, info.cards === 3 && info.sticky && info.chat === 1 && info.imgs.length === 2 && info.cta === 1, JSON.stringify(info));
     const scaleAt = async (y) => {
       await hp.evaluate((t) => window.scrollTo({ top: t, behavior: "instant" }), Math.round(y));
