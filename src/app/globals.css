@@ -1500,8 +1500,11 @@ p {
   padding-block: clamp(48px, 6vw, 96px) var(--gap);
 }
 .how h2 {
-  font-size: var(--step-head);
+  font-size: clamp(2.4rem, 1.4rem + 3vw, 4.25rem);
+  font-weight: 600;
   line-height: 1.05;
+  text-align: center;
+  text-wrap: balance;
 }
 .how__deck {
   margin-top: 40px;

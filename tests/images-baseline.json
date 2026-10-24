@@ -1,5 +1,6 @@
 {
   "files": {
+    "build-together.webp": "06ab6cc189a862f9790c16769d7375707f4567f0a5cef7fb435ae52023c6abb4",
     "coffee.webp": "ec97daf3150474829f8a9e1821211997537cd3541cd7fca19a81d28107bf3852",
     "lesson.webp": "54eeb226863b229647cf16581cc638c105fbe4fb035fbf5a0709657ff0ce116b",
     "notebook.webp": "ccc93c9b32d483ce5d526409042038b73a83a8fc460321b1d7c1b84e17a46f4e",
@@ -13,8 +14,8 @@
         "section": "hero"
       },
       {
-        "file": "/img/screen.webp",
-        "alt": "יד מצביעה על מסך מחשב נייד במהלך שיעור",
+        "file": "/img/build-together.webp",
+        "alt": "שני אנשים בבית קפה מול מחשב נייד עם תהליך אוטומציה על המסך, ולידם מחברת עם סקיצה של התהליך",
         "section": "how"
       },
       {
@@ -30,8 +31,8 @@
         "section": "hero"
       },
       {
-        "file": "/img/screen.webp",
-        "alt": "יד מצביעה על מסך מחשב נייד במהלך שיעור",
+        "file": "/img/build-together.webp",
+        "alt": "שני אנשים בבית קפה מול מחשב נייד עם תהליך אוטומציה על המסך, ולידם מחברת עם סקיצה של התהליך",
         "section": "how"
       },
       {
