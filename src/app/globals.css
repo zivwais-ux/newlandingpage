@@ -1688,6 +1688,15 @@ p {
   height: 100%;
   object-fit: cover;
 }
+/* the real photo fills the frame edge to edge, framed on the face */
+.about__portrait--photo {
+  padding: 0;
+}
+.about__portrait--photo img {
+  height: auto;
+  aspect-ratio: 1;
+  object-position: 62% 32%;
+}
 .about__main {
   display: grid;
   gap: 32px;

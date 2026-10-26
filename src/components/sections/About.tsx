@@ -10,10 +10,10 @@ export function About() {
         <h2 id="about-title" data-reveal>
           {about.title}
         </h2>
-        <div className="about__portrait" data-reveal>
+        <div className={`about__portrait${about.photoSrc ? " about__portrait--photo" : ""}`} data-reveal>
           {about.photoSrc ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={about.photoSrc} alt={about.photoAlt} loading="lazy" />
+            <img src={about.photoSrc} alt={about.photoAlt} width={900} height={1477} loading="lazy" />
           ) : (
             <Fill value="[למלא – תמונה אמיתית של זיו]" />
           )}

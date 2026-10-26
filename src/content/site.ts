@@ -185,7 +185,7 @@ export const how = {
 
 export const about = {
   title: "מבין ב-AI, מדבר בשפה שלכם",
-  photoSrc: "", // [למלא – תמונה אמיתית של זיו, למשל /img/ziv.webp]
+  photoSrc: "/img/ziv.webp",
   photoAlt: `${business.teacher}, המורה`,
   lead: `נעים להכיר, אני ${business.teacher}. אני עובד עם AI כל יום, ויודע מה הוא באמת יודע לעשות ומה לא. יושבים יחד על העסק שלכם, בקצב שלכם ובמילים פשוטות.`,
   credentials: [

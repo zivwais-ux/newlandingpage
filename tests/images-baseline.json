@@ -5,7 +5,8 @@
     "lesson.webp": "54eeb226863b229647cf16581cc638c105fbe4fb035fbf5a0709657ff0ce116b",
     "notebook.webp": "ccc93c9b32d483ce5d526409042038b73a83a8fc460321b1d7c1b84e17a46f4e",
     "on-your-own.webp": "4c6006f899311a0b5e72ef6414e61c3c0c12460bbdcb9e86b4ddad77bed3000f",
-    "screen.webp": "969f910d4642b144d214b31100e90006b1c5e2cf640689a0a89bb610c1f714a0"
+    "screen.webp": "969f910d4642b144d214b31100e90006b1c5e2cf640689a0a89bb610c1f714a0",
+    "ziv.webp": "a23e60bc97fd3cfb34a298a9f40d2cf3e0c05b20359f5f400ac75a4c104694ea"
   },
   "onPage": {
     "390": [
@@ -23,6 +24,11 @@
         "file": "/img/on-your-own.webp",
         "alt": "אדם עובד לבד מול מחשב נייד עם תהליך אוטומציה על המסך, ולידו מחברת עם הצעדים הבאים",
         "section": "how"
+      },
+      {
+        "file": "/img/ziv.webp",
+        "alt": "זיו, המורה",
+        "section": "about"
       }
     ],
     "1440": [
@@ -40,6 +46,11 @@
         "file": "/img/on-your-own.webp",
         "alt": "אדם עובד לבד מול מחשב נייד עם תהליך אוטומציה על המסך, ולידו מחברת עם הצעדים הבאים",
         "section": "how"
+      },
+      {
+        "file": "/img/ziv.webp",
+        "alt": "זיו, המורה",
+        "section": "about"
       }
     ]
   }
