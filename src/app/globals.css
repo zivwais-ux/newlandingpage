@@ -1746,34 +1746,83 @@ p {
   color: var(--ink);
 }
 @media (min-width: 900px) {
+  /* The photo stands the full height of the panel on one side; the heading, text, credentials and
+     button fill the other, so the two columns end together and nothing is left hanging. */
   .about {
     margin-inline: 20px;
-    grid-template-columns: 1fr 1.25fr;
-    gap: 48px 64px;
-    min-height: 90svh;
+    grid-template-columns: min(28vw, 400px) 1fr;
+    grid-template-rows: auto 1fr;
+    grid-template-areas: "photo head" "photo main";
+    gap: 36px clamp(48px, 5vw, 88px);
   }
   .about__side {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    display: contents;
+  }
+  .about h2 {
+    grid-area: head;
   }
   .about__portrait {
-    width: min(30vw, 440px);
-    margin-inline: 0;
-    margin-top: 56px;
+    grid-area: photo;
+    align-self: end;
+    width: 100%;
+    margin: 0;
+    margin-bottom: calc(clamp(28px, 4vw, 56px) * -1 - 2px);
   }
   .about__main {
-    padding-top: 12px;
-    gap: 40px;
+    grid-area: main;
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
   }
   .about__cards {
+    flex: 1;
     grid-template-columns: 1.15fr 1fr;
-    grid-template-rows: auto auto;
+    grid-template-rows: 1fr 1fr;
+    min-height: 320px;
+  }
+  .about__card {
+    align-content: end;
   }
   .about__card:first-child {
     grid-row: span 2;
-    min-height: 300px;
   }
+  .about__card:first-child h3 {
+    font-size: var(--step-statement);
+    text-wrap: balance;
+  }
+  .about__card:first-child::before {
+    width: 220px;
+  }
+  .about__card:first-child::after {
+    inset-block-start: -30px;
+    inset-inline-end: -30px;
+    width: 140px;
+  }
+}
+/* the diploma card carries a quiet seal: two rings in the corner, like a stamp on a certificate */
+.about__card {
+  position: relative;
+  overflow: hidden;
+}
+.about__card:first-child::before,
+.about__card:first-child::after {
+  content: "";
+  position: absolute;
+  inset-block-start: -70px;
+  inset-inline-end: -70px;
+  width: 150px;
+  aspect-ratio: 1;
+  border: 2px solid rgb(13 13 13 / 0.14);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.about__card:first-child::after {
+  inset-block-start: -40px;
+  inset-inline-end: -40px;
+  width: 90px;
+}
+.about__card:first-child > * {
+  position: relative;
 }
 
 /* ---------- FAQ: tabbed index cards ---------- */
