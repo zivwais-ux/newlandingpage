@@ -1688,14 +1688,15 @@ p {
   height: 100%;
   object-fit: cover;
 }
-/* the real photo fills the frame edge to edge, framed on the face */
+/* the real photo is shown whole: the frame takes the photo's own proportions, nothing is cropped */
 .about__portrait--photo {
+  aspect-ratio: auto;
   padding: 0;
+  /* a round corner the size the square frame had, not a stretched oval */
+  border-start-end-radius: clamp(64px, 8vw, 115px);
 }
 .about__portrait--photo img {
   height: auto;
-  aspect-ratio: 1;
-  object-position: 62% 32%;
 }
 .about__main {
   display: grid;
