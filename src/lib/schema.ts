@@ -106,6 +106,27 @@ export const contentSchema = z.object({
       .length(3, "ב'עליי' יש בדיוק שלושה כרטיסי הכשרה")
       .refine((c) => c[0].title.startsWith("בעל דיפלומת מפתח AI"), "הכרטיס הראשון הוא הדיפלומה"),
   }),
+  plans: z.object({
+    title: text.max(48),
+    subtitle: text.max(80),
+    cta: text.max(24),
+    includesLabel: text.max(16),
+    forLabel: text.max(20),
+    closing: text.max(80),
+    items: z
+      .array(
+        z.object({
+          id: z.string().regex(/^[a-z]+$/),
+          name: text.max(24),
+          tag: text.max(24),
+          text: text.max(110),
+          includes: z.array(text.max(40)).length(3, "בכל מסלול שלוש שורות 'מה כלול'"),
+          forWho: text.max(60),
+        }),
+      )
+      .length(4, "יש ארבעה מסלולים")
+      .refine((items) => new Set(items.map((i) => i.id)).size === items.length, "מזהי המסלולים חייבים להיות ייחודיים"),
+  }),
   faq: z.object({ title: text, items: z.array(z.object({ tab: text.max(12), q: text, a: text })).min(1) }),
   contact: z.object({
     title: text,

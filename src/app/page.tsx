@@ -8,6 +8,7 @@ import { Hero } from "@/components/sections/Hero";
 import { How } from "@/components/sections/How";
 import { Intro } from "@/components/sections/Intro";
 import { Pain } from "@/components/sections/Pain";
+import { Plans } from "@/components/sections/Plans";
 import { Testimonials } from "@/components/sections/Testimonials";
 import { validateContent } from "@/lib/content";
 
@@ -23,6 +24,7 @@ export default function Home() {
         <Build />
         <How />
         <About />
+        <Plans />
         <Testimonials />
         <Faq />
         <Contact />

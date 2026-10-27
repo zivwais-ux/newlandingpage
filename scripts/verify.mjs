@@ -279,6 +279,36 @@ try {
     await hp.close();
   }
 
+  // "מסלולים": ארבעה צמתים בתהליך; כל כפתור שולח הודעה עם שם המסלול; הקו נמתח בגלילה
+  for (const [width, height] of [[390, 844], [1440, 900]]) {
+    const fp = await browser.newPage({ viewport: { width, height } });
+    await fp.goto(URL_, { waitUntil: "networkidle" });
+    const f = await fp.evaluate(() => ({
+      names: [...document.querySelectorAll(".flow__card h3")].map((h) => h.textContent.trim()),
+      links: [...document.querySelectorAll(".flow__card a[href*='wa.me']")].map((a) => new URL(a.href).searchParams.get("text") ?? ""),
+      wires: document.querySelectorAll(".flow__wire").length,
+      nav: !!document.querySelector(".nav__links a[href='#plans']"),
+      afterAbout: document.querySelector("#about").nextElementSibling?.id === "plans",
+      wireTop: document.querySelector(".flow__wire").getBoundingClientRect().top + scrollY,
+      overflow: document.documentElement.scrollWidth > innerWidth,
+    }));
+    check(
+      `${width}px: מסלולים: 4 צמתים אחרי "עליי", וכל כפתור פותח וואטסאפ עם שם המסלול`,
+      f.names.length === 4 && f.wires === 3 && f.afterAbout && f.links.length === 4 && f.links.every((t, i) => t.startsWith("היי זיו") && t.includes(f.names[i])),
+      JSON.stringify(f.links),
+    );
+    check(`${width}px: מסלולים: קישור בתפריט ובלי גלילה לרוחב`, f.nav && !f.overflow);
+    const wireAt = async (y) => {
+      await fp.evaluate((t) => window.scrollTo({ top: t, behavior: "instant" }), Math.round(y));
+      await fp.waitForTimeout(150);
+      return fp.evaluate(() => { const m = getComputedStyle(document.querySelector(".flow__wire")).transform; return m === "none" ? 1 : +m.slice(7).split(",")[3]; });
+    };
+    const early = await wireAt(f.wireTop - height * 1.05);
+    const drawn = await wireAt(f.wireTop - height * 0.3);
+    check(`${width}px: מסלולים: הקו לצומת הבא נמתח בגלילה`, early < 0.2 && drawn > 0.99, `${early} → ${drawn}`);
+    await fp.close();
+  }
+
   // "עוד ערב של עבודה?": MacBook שעולה והמכסה שלו נפתח לפני העצירה; ההתראות על המסך
   for (const [width, height] of [[390, 844], [375, 667], [1440, 900]]) {
     const mp = await browser.newPage({ viewport: { width, height } });

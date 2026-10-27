@@ -1825,6 +1825,237 @@ p {
   position: relative;
 }
 
+/* ---------- Plans: the four routes as an automation flow (n8n-style nodes on a dotted canvas) ---------- */
+.plans {
+  padding-top: clamp(96px, 9vw, 160px);
+}
+.plans__head {
+  display: grid;
+  gap: 14px;
+  justify-items: center;
+  text-align: center;
+}
+.plans__head h2 {
+  max-width: 16ch;
+  font-size: var(--step-head);
+  font-weight: 600;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+.plans__head p {
+  max-width: 40ch;
+  font-size: var(--step-lead);
+  line-height: 1.4;
+  color: var(--muted);
+}
+/* the canvas: a soft sage board with the editor's dot grid */
+.flow {
+  --wire: 64px;
+  margin-top: clamp(32px, 4vw, 56px);
+  padding: clamp(20px, 4vw, 56px) clamp(14px, 4vw, 56px);
+  background-color: #e8efe9;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22'%3E%3Ccircle cx='2' cy='2' r='1.4' fill='%230f3d24' fill-opacity='.16'/%3E%3C/svg%3E");
+  border-radius: var(--r);
+  border-start-start-radius: 0;
+}
+.flow__list {
+  display: grid;
+  justify-items: center;
+}
+.flow__node {
+  display: grid;
+  justify-items: center;
+  width: 100%;
+}
+/* the wire to the next node, with an arrowhead and a dot of data running down it */
+.flow__wire {
+  position: relative;
+  width: 3px;
+  height: var(--wire);
+  margin-bottom: 12px; /* the arrowhead stops short of the next node's handle */
+  background: var(--forest);
+  transform-origin: top;
+}
+.flow__wire::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  translate: -50% 0;
+  border: 7px solid transparent;
+  border-top: 9px solid var(--forest);
+  border-bottom: 0;
+}
+.flow__pulse {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 9px;
+  height: 9px;
+  margin-left: -4.5px;
+  border-radius: 50%;
+  background: var(--sage);
+  opacity: 0;
+}
+/* a node: a white card with the editor's square icon tile and the two connection handles */
+.flow__card {
+  position: relative;
+  width: min(100%, 920px);
+  display: grid;
+  gap: 18px;
+  padding: clamp(20px, 2.6vw, 34px);
+  background: var(--white);
+  border-radius: calc(var(--r) * 0.8);
+  border-start-start-radius: 0;
+}
+.flow__card::before,
+.flow__card::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  margin-left: -6px;
+  border: 3px solid var(--forest);
+  border-radius: 50%;
+  background: var(--white);
+}
+.flow__card::before {
+  top: -6px;
+}
+.flow__card::after {
+  bottom: -6px;
+}
+.flow__node:first-child .flow__card::before,
+.flow__node:last-child .flow__card::after {
+  display: none;
+}
+.flow__main {
+  display: grid;
+  gap: 16px;
+  align-content: start;
+  justify-items: start;
+}
+.flow__top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.flow__icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
+  background: var(--forest);
+  color: var(--sage);
+}
+/* the first node is the trigger, rounded on its leading side like the editor draws it */
+.flow__node--lesson .flow__icon {
+  border-start-start-radius: 30px;
+  border-end-start-radius: 30px;
+}
+.flow__icon svg {
+  width: 28px;
+  height: 28px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+/* the ring that lights when the wire reaches the node */
+.flow__icon::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border: 3px solid var(--sage);
+  border-radius: 20px;
+}
+.flow__node--lesson .flow__icon::after {
+  border-start-start-radius: 36px;
+  border-end-start-radius: 36px;
+}
+.flow__tag {
+  display: block;
+  margin-top: 4px;
+  font-size: var(--step-small);
+  color: var(--accent);
+  font-weight: 500;
+}
+.flow__card h3 {
+  font-size: var(--step-statement);
+  font-weight: 600;
+  line-height: 1.15;
+}
+.flow__text {
+  max-width: 38ch;
+  line-height: 1.5;
+}
+.flow__side {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  padding: 20px 22px;
+  background: #f1f5f2;
+  border-radius: 18px;
+}
+.flow__label {
+  font-size: var(--step-small);
+  font-weight: 600;
+  color: var(--forest);
+}
+.flow__includes {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.flow__includes li {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  line-height: 1.45;
+}
+.flow__includes svg {
+  width: 15px;
+  height: 15px;
+  flex: none;
+  translate: 0 2px;
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.flow__for {
+  color: var(--muted);
+  line-height: 1.45;
+}
+.plans__cta {
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+  margin-top: clamp(32px, 4vw, 56px);
+  text-align: center;
+}
+.plans__cta p {
+  max-width: 34ch;
+  font-size: var(--step-lead);
+  line-height: 1.4;
+}
+@media (min-width: 900px) {
+  .flow {
+    --wire: 88px;
+  }
+  .flow__card {
+    grid-template-columns: 1.1fr 1fr;
+    gap: clamp(28px, 3vw, 48px);
+    align-items: stretch;
+  }
+}
+
 /* ---------- FAQ: tabbed index cards ---------- */
 .faq {
   padding-block: clamp(96px, 9vw, 160px);
@@ -2732,6 +2963,31 @@ p {
       animation-range: entry 0% cover 28%;
     }
 
+    /* 6b. Plans: each wire draws down as it comes into view, then the node it reaches lights up
+       and opens its details. The data dot runs along the wires only while the flow is on screen. */
+    .flow__wire {
+      animation: wire-draw linear both;
+      animation-timeline: view();
+      animation-range: cover 8% cover 34%;
+    }
+    .flow__icon::after {
+      animation: node-ring linear both;
+      animation-timeline: view();
+      animation-range: entry 40% entry 90%;
+    }
+    .flow__more {
+      animation: node-open linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 70%;
+    }
+    .flow__pulse {
+      animation: pulse-run 1.8s var(--ease-in-out) infinite;
+      animation-play-state: paused;
+    }
+    .flow[data-on] .flow__pulse {
+      animation-play-state: running;
+    }
+
     /* 7. The question cards are dealt from the drawer, each settling on the one above. */
     .faq__card {
       animation: card-deal linear both;
@@ -3014,6 +3270,48 @@ p {
   }
   to {
     transform: scale(1.02);
+  }
+}
+@keyframes wire-draw {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+@keyframes node-ring {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes node-open {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes pulse-run {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  20%,
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(calc(var(--wire) - 14px));
   }
 }
 @media (prefers-reduced-motion: reduce) {
