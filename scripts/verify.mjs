@@ -279,38 +279,40 @@ try {
     await hp.close();
   }
 
-  // "מסלולים": ארבעה צמתים בתהליך; כל כפתור שולח הודעה עם שם המסלול; הקו נמתח בגלילה
+  // "מסלולים": ארבעה שמות בתיבות שצוירו בעט, עם חצים ביניהם; כל כפתור שולח הודעה עם שם המסלול
   for (const [width, height] of [[390, 844], [1440, 900]]) {
     const fp = await browser.newPage({ viewport: { width, height } });
     await fp.goto(URL_, { waitUntil: "networkidle" });
     const f = await fp.evaluate(() => ({
-      names: [...document.querySelectorAll(".flow__name b")].map((h) => h.textContent.trim()),
-      links: [...document.querySelectorAll(".flow__panel a[href*='wa.me']")].map((a) => new URL(a.href).searchParams.get("text") ?? ""),
-      wires: document.querySelectorAll(".flow__wire").length,
+      names: [...document.querySelectorAll(".sketch__name")].map((h) => h.textContent.trim()),
+      links: [...document.querySelectorAll(".plan a[href*='wa.me']")].map((a) => new URL(a.href).searchParams.get("text") ?? ""),
+      boxes: document.querySelectorAll(".sketch__box path").length,
+      arrows: document.querySelectorAll(".sketch__arrow path").length,
       nav: !!document.querySelector(".nav__links a[href='#plans']"),
       afterAbout: document.querySelector("#about").nextElementSibling?.id === "plans",
-      wireTop: document.querySelector(".flow__wire").getBoundingClientRect().top + scrollY,
+      arrowTop: document.querySelector(".sketch__arrow").getBoundingClientRect().top + scrollY,
       overflow: document.documentElement.scrollWidth > innerWidth,
     }));
     check(
-      `${width}px: מסלולים: 4 צמתים אחרי "עליי", וכל כפתור פותח וואטסאפ עם שם המסלול`,
-      f.names.length === 4 && f.wires === 3 && f.afterAbout && f.links.length === 4 && f.links.every((t, i) => t.startsWith("היי זיו") && t.includes(f.names[i])),
+      `${width}px: מסלולים: 4 שמות בתיבות עט עם 3 חצים, אחרי "עליי", וכל כפתור פותח וואטסאפ עם שם המסלול`,
+      f.names.length === 4 && f.boxes === 4 && f.arrows === 3 && f.afterAbout && f.links.length === 4 && f.links.every((t, i) => t.startsWith("היי זיו") && t.includes(f.names[i])),
       JSON.stringify(f.links),
     );
     check(`${width}px: מסלולים: קישור בתפריט ובלי גלילה לרוחב`, f.nav && !f.overflow);
-    const wireAt = async (y) => {
+    const inkAt = async (y) => {
       await fp.evaluate((t) => window.scrollTo({ top: t, behavior: "instant" }), Math.round(y));
       await fp.waitForTimeout(150);
-      return fp.evaluate(() => { const m = getComputedStyle(document.querySelector(".flow__wire")).transform; if (m === "none") return 1; const v = m.slice(7).split(",").map(Number); return Math.min(v[0], v[3]); });
+      return fp.evaluate(() => +getComputedStyle(document.querySelector(".sketch__arrow path")).strokeDashoffset.replace("px", ""));
     };
-    const early = await wireAt(f.wireTop - height * 1.05);
-    const drawn = await wireAt(f.wireTop - height * 0.3);
-    check(`${width}px: מסלולים: הקו לצומת הבא נמתח בגלילה`, early < 0.2 && drawn > 0.99, `${early} → ${drawn}`);
-    // צומת קטן ולא כרטיס ענק; לחיצה עליו פותחת את הפרטים שלו בחלון שמתחת
-    const tile = await fp.evaluate(() => document.querySelector(".flow__icon").getBoundingClientRect().height);
-    await fp.locator(".flow__btn").nth(2).click();
-    const shown = await fp.evaluate(() => [...document.querySelectorAll(".flow__panel")].map((p) => !p.hidden));
-    check(`${width}px: מסלולים: צמתים קטנים, ולחיצה על צומת פותחת את הפרטים שלו`, tile <= 90 && shown.join() === "false,false,true,false", `${tile}px ${shown}`);
+    const early = await inkAt(f.arrowTop - height * 1.05);
+    const drawn = await inkAt(f.arrowTop - height * 0.25);
+    check(`${width}px: מסלולים: העט מצייר את החץ לצומת הבא בגלילה`, early > 0.8 && drawn < 0.01, `${early} → ${drawn}`);
+    // לחיצה על שם פותחת את הפרטים שלו, והטוש עובר אליו
+    await fp.locator(".sketch__node").nth(2).click();
+    await fp.waitForTimeout(500);
+    const shown = await fp.evaluate(() => [...document.querySelectorAll(".plan")].map((p) => !p.hidden));
+    const marker = await fp.evaluate(() => getComputedStyle(document.querySelectorAll(".sketch__name")[2], "::before").transform);
+    check(`${width}px: מסלולים: לחיצה על מסלול פותחת את הפרטים שלו ומסמנת אותו בטוש`, shown.join() === "false,false,true,false" && /^matrix\(1,/.test(marker), `${shown} ${marker}`);
     await fp.close();
   }
 

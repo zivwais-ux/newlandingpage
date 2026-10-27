@@ -1825,15 +1825,15 @@ p {
   position: relative;
 }
 
-/* ---------- Plans: the four routes as an automation flow (small n8n-style nodes on a dotted canvas) ---------- */
+/* ---------- Plans: the four routes sketched like a flow in Ziv's notebook ---------- */
+/* Big names in pen-drawn boxes, pen arrows between them, a marker swipe on the chosen one,
+   and its details opened below on a forest field. No icons, no tiles, no cards. */
 .plans {
   padding-top: clamp(96px, 9vw, 160px);
 }
 .plans__head {
   display: grid;
   gap: 14px;
-  justify-items: center;
-  text-align: center;
 }
 .plans__head h2 {
   max-width: 16ch;
@@ -1846,298 +1846,220 @@ p {
   max-width: 40ch;
   font-size: var(--step-lead);
   line-height: 1.4;
+}
+.sketch {
+  --name: clamp(1.4rem, 0.85rem + 1.2vw, 1.95rem);
+  container-type: inline-size;
+  margin-top: clamp(40px, 5vw, 72px);
+  display: grid;
+  justify-items: center;
+  view-timeline: --sketch;
+}
+.sketch__step {
+  display: grid;
+  justify-items: center;
+  font-size: var(--name);
+}
+.sketch__arrow {
+  display: block;
+  width: 44px;
+  height: 58px;
+  margin-block: 2px 6px;
+  overflow: visible;
+}
+.sketch__arrow path,
+.sketch__box path {
+  fill: none;
+  stroke: var(--forest);
+  stroke-width: 2.4px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+.sketch__node {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  padding: 6px;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+}
+.sketch__name {
+  position: relative;
+  isolation: isolate;
+  padding: 0.55em 0.8em;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+.sketch__box {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+/* the marker: a sage swipe laid in by hand inside the chosen box, a little off the level */
+.sketch__name::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0.98em 0.38em 0.4em 0.46em;
+  background: var(--sage);
+  border-radius: 0.12em 0.35em 0.2em 0.4em;
+  rotate: -1.2deg;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 420ms var(--ease-out);
+}
+.sketch__node[aria-selected="true"] .sketch__name::before {
+  transform: scaleX(1);
+}
+@media (hover: hover) {
+  .sketch__node:hover .sketch__name::before {
+    transform: scaleX(0.18);
+  }
+  .sketch__node[aria-selected="true"]:hover .sketch__name::before {
+    transform: scaleX(1);
+  }
+}
+.sketch__node:active .sketch__name {
+  scale: 0.98;
+}
+.sketch__node:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 4px;
+  border-radius: 12px;
+}
+.sketch__tag {
+  font-size: var(--step-small);
   color: var(--muted);
 }
-/* the canvas: a soft sage board with the editor's dot grid */
-.flow {
-  --tile: 64px;
-  margin-top: clamp(32px, 4vw, 56px);
-  padding: clamp(24px, 4vw, 56px) clamp(16px, 4vw, 56px);
+/* the chosen route, opened on a forest field */
+.plan {
+  margin-top: clamp(40px, 5vw, 72px);
   display: grid;
-  gap: clamp(24px, 3vw, 40px);
-  justify-items: center;
-  background-color: #e8efe9;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22'%3E%3Ccircle cx='2' cy='2' r='1.4' fill='%230f3d24' fill-opacity='.16'/%3E%3C/svg%3E");
+  gap: 32px;
+  padding: clamp(28px, 4.5vw, 64px);
+  background: var(--forest);
+  color: var(--forest-ink);
   border-radius: var(--r);
   border-start-start-radius: 0;
 }
-/* phones: the nodes run down the canvas, each wire drawn from one tile to the next */
-.flow__list {
-  display: grid;
-  width: min(100%, 340px);
-  view-timeline: --flow;
-}
-.flow__node {
-  display: grid;
-}
-.flow__wire {
-  position: relative;
-  width: 3px;
-  height: 34px;
-  margin-block: 4px 10px;
-  margin-inline-start: calc(var(--tile) / 2 - 1.5px);
-  background: var(--forest);
-  transform-origin: top;
-}
-.flow__wire::after {
-  content: "";
-  position: absolute;
-  bottom: -2px;
-  left: 50%;
-  translate: -50% 0;
-  border: 6px solid transparent;
-  border-top: 8px solid var(--forest);
-  border-bottom: 0;
-}
-.flow__pulse {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-}
-.flow__pulse::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: 9px;
-  height: 9px;
-  margin-left: -4.5px;
-  border-radius: 50%;
-  background: var(--sage);
-}
-/* a node: the editor's square tile with its icon, the name beside it (below it on desktop) */
-.flow__btn {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: inherit;
-  font: inherit;
-  text-align: start;
-  cursor: pointer;
-}
-.flow__icon {
-  position: relative;
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: var(--tile);
-  height: var(--tile);
-  border-radius: 16px;
-  background: var(--white);
-  color: var(--forest);
-  transition:
-    background-color var(--t-hover) ease,
-    color var(--t-hover) ease,
-    transform var(--t-press) var(--ease-out);
-}
-.flow__btn:active .flow__icon {
-  transform: scale(0.95);
-}
-/* the first node is the trigger, rounded on its leading side like the editor draws it */
-.flow__node--lesson .flow__icon {
-  border-start-start-radius: calc(var(--tile) / 2);
-  border-end-start-radius: calc(var(--tile) / 2);
-}
-.flow__icon svg,
-.flow__mini svg {
-  width: 46%;
-  height: 46%;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-/* the ring that lights when the wire reaches the node */
-.flow__icon::after {
-  content: "";
-  position: absolute;
-  inset: -6px;
-  border: 3px solid var(--sage);
-  border-radius: 20px;
-}
-.flow__node--lesson .flow__icon::after {
-  border-start-start-radius: calc(var(--tile) / 2 + 6px);
-  border-end-start-radius: calc(var(--tile) / 2 + 6px);
-}
-.flow__btn[aria-selected="true"] .flow__icon {
-  background: var(--forest);
-  color: var(--sage);
-}
-@media (hover: hover) {
-  .flow__btn:hover .flow__icon {
-    transform: translateY(-2px);
-  }
-}
-.flow__btn:focus-visible {
-  outline: none;
-}
-.flow__btn:focus-visible .flow__icon {
-  outline: 3px solid var(--accent);
-  outline-offset: 8px;
-}
-.flow__name {
-  display: grid;
-  gap: 2px;
-}
-.flow__name b {
-  font-weight: 600;
-  line-height: 1.2;
-}
-.flow__tag {
-  font-size: var(--step-small);
-  color: var(--accent);
-}
-/* the node's details, like the settings window that opens in the editor */
-.flow__panel {
-  width: min(100%, 820px);
-  display: grid;
-  gap: 18px;
-  padding: clamp(20px, 2.4vw, 32px);
-  background: var(--white);
-  border-radius: calc(var(--r) * 0.7);
-  border-start-start-radius: 0;
-}
-.flow__panel[hidden] {
+.plan[hidden] {
   display: none;
 }
-.flow__main {
+.plan__main {
   display: grid;
-  gap: 14px;
+  gap: 18px;
   align-content: start;
   justify-items: start;
 }
-.flow__main h3 {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: var(--step-lead);
+.plan h3 {
+  font-size: var(--step-head);
   font-weight: 600;
-  line-height: 1.2;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
 }
-.flow__mini {
+.plan__text {
+  max-width: 30ch;
+  margin-bottom: 8px;
+  font-size: var(--step-lead);
+  line-height: 1.4;
+}
+.plan__side {
   display: grid;
-  place-items: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  background: var(--forest);
-  color: var(--sage);
-}
-.flow__mini svg {
-  width: 60%;
-  height: 60%;
-}
-.flow__text {
-  max-width: 40ch;
-  line-height: 1.5;
-}
-.flow__side {
-  display: grid;
-  gap: 8px;
+  gap: 10px;
   align-content: start;
-  padding: 18px 20px;
-  background: #f1f5f2;
-  border-radius: 16px;
 }
-.flow__label {
+.plan__label {
   font-size: var(--step-small);
   font-weight: 600;
-  color: var(--forest);
+  color: var(--sage);
 }
-.flow__includes {
+.plan__includes {
   display: grid;
-  gap: 6px;
-  margin-bottom: 8px;
+  gap: 10px;
+  margin-bottom: 18px;
 }
-.flow__includes li {
+.plan__includes li {
   display: flex;
   align-items: baseline;
-  gap: 8px;
-  line-height: 1.45;
+  gap: 12px;
+  line-height: 1.4;
 }
-.flow__includes svg {
-  width: 15px;
+.plan__includes svg {
+  width: 22px;
   height: 15px;
   flex: none;
   translate: 0 2px;
   fill: none;
-  stroke: var(--accent);
-  stroke-width: 2.2;
+  stroke: var(--sage);
+  stroke-width: 2.4;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.flow__for {
-  color: var(--muted);
+.plan__for {
+  max-width: 34ch;
   line-height: 1.45;
+  color: rgb(248 248 248 / 0.82);
 }
 .plans__cta {
   display: grid;
-  justify-items: center;
+  justify-items: start;
   gap: 18px;
   margin-top: clamp(32px, 4vw, 56px);
-  text-align: center;
 }
 .plans__cta p {
   max-width: 34ch;
   font-size: var(--step-lead);
   line-height: 1.4;
 }
-/* desktop: one row, read from the start side like the page, tiles above their names */
+/* desktop: the flow reads across, from the start side like the page */
 @media (min-width: 900px) {
-  .flow {
-    --tile: 84px;
+  /* the heading on the start side, its sentence answering it on the far side */
+  .plans__head {
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 48px;
   }
-  .flow__list {
-    width: min(100%, 1000px);
+  .plans__head p {
+    max-width: 26ch;
+    padding-bottom: 0.3em;
+  }
+  /* the row of four names always fits its width: the names scale with the container */
+  .sketch {
+    --name: clamp(1.15rem, 1.97cqi, 1.625rem);
     display: flex;
     align-items: flex-start;
+    justify-content: space-between;
   }
-  .flow__node {
+  .sketch__step {
     display: flex;
     align-items: flex-start;
-    flex: 1 1 0;
+    flex: 1 1 auto;
   }
-  .flow__node:first-child {
+  .sketch__step:first-child {
     flex: 0 0 auto;
   }
-  .flow__wire {
+  .sketch__arrow {
     flex: 1;
-    width: auto;
     min-width: 40px;
-    height: 3px;
-    /* the label column is wider than the tile, so the wire reaches back under it to meet the tiles */
-    margin: calc(var(--tile) / 2 - 1.5px) calc((var(--tile) - 170px) / 2 + 16px) 0 calc((var(--tile) - 170px) / 2 + 12px);
-    transform-origin: right;
+    height: 34px;
+    margin: calc(1.15em + 6px - 17px) 6px 0;
   }
-  .flow__wire::after {
-    bottom: auto;
-    left: -2px;
-    top: 50%;
-    translate: 0 -50%;
-    border: 6px solid transparent;
-    border-right: 8px solid var(--forest);
-    border-left: 0;
+  .plan {
+    grid-template-columns: 1.15fr 1fr;
+    gap: clamp(32px, 5vw, 80px);
   }
-  .flow__pulse::after {
-    top: 50%;
-    left: auto;
-    right: 0;
-    margin: -4.5px 0 0;
-  }
-  .flow__btn {
-    position: relative;
-    flex-direction: column;
-    width: 170px;
-    gap: 12px;
-    text-align: center;
-  }
-  .flow__panel {
-    grid-template-columns: 1.1fr 1fr;
-    gap: clamp(24px, 3vw, 40px);
+  .plan__side {
+    padding-top: 10px;
   }
 }
 
@@ -3048,55 +2970,33 @@ p {
       animation-range: entry 0% cover 28%;
     }
 
-    /* 6b. Plans: as the flow comes up the screen, each wire draws to the next node in turn and that
-       node's tile lights. The data dot runs along the wires only while the flow is on screen. */
-    .flow__wire,
-    .flow__icon::after {
-      animation-timeline: --flow;
-      animation-fill-mode: both;
-      animation-timing-function: linear;
+    /* 6b. Plans: the pen draws the flow as it comes up the screen, box, arrow, box, in reading order.
+       A newly chosen route's field settles in. */
+    .sketch__box path,
+    .sketch__arrow path {
+      animation: circle-draw linear both;
+      animation-timeline: --sketch;
     }
-    .flow__wire {
-      animation-name: wire-draw-y;
+    .sketch__step:nth-child(1) .sketch__box path {
+      animation-range: cover 10% cover 20%;
     }
-    .flow__icon::after {
-      animation-name: node-ring;
+    .sketch__step:nth-child(2) .sketch__arrow path {
+      animation-range: cover 18% cover 24%;
     }
-    .flow__node:nth-child(1) .flow__icon::after {
-      animation-range: cover 10% cover 18%;
+    .sketch__step:nth-child(2) .sketch__box path {
+      animation-range: cover 23% cover 32%;
     }
-    .flow__node:nth-child(2) .flow__wire {
-      animation-range: cover 16% cover 26%;
+    .sketch__step:nth-child(3) .sketch__arrow path {
+      animation-range: cover 30% cover 36%;
     }
-    .flow__node:nth-child(2) .flow__icon::after {
-      animation-range: cover 24% cover 30%;
+    .sketch__step:nth-child(3) .sketch__box path {
+      animation-range: cover 35% cover 44%;
     }
-    .flow__node:nth-child(3) .flow__wire {
-      animation-range: cover 28% cover 38%;
+    .sketch__step:nth-child(4) .sketch__arrow path {
+      animation-range: cover 42% cover 48%;
     }
-    .flow__node:nth-child(3) .flow__icon::after {
-      animation-range: cover 36% cover 42%;
-    }
-    .flow__node:nth-child(4) .flow__wire {
-      animation-range: cover 40% cover 50%;
-    }
-    .flow__node:nth-child(4) .flow__icon::after {
-      animation-range: cover 48% cover 54%;
-    }
-    .flow__pulse {
-      animation: pulse-run-y 1.8s var(--ease-in-out) infinite;
-      animation-play-state: paused;
-    }
-    .flow[data-on] .flow__pulse {
-      animation-play-state: running;
-    }
-    @media (min-width: 900px) {
-      .flow__wire {
-        animation-name: wire-draw-x;
-      }
-      .flow__pulse {
-        animation-name: pulse-run-x;
-      }
+    .sketch__step:nth-child(4) .sketch__box path {
+      animation-range: cover 47% cover 56%;
     }
 
     /* 7. The question cards are dealt from the drawer, each settling on the one above. */
@@ -3383,59 +3283,19 @@ p {
     transform: scale(1.02);
   }
 }
-@keyframes wire-draw-y {
-  from {
-    transform: scaleY(0);
-  }
-  to {
-    transform: scaleY(1);
-  }
-}
-@keyframes wire-draw-x {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
-}
-@keyframes node-ring {
+@keyframes plan-in {
   from {
     opacity: 0;
-    transform: scale(0.8);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: none;
   }
 }
-/* the dot rides a layer the size of the wire, so 100% is the wire's own length */
-@keyframes pulse-run-y {
-  0% {
-    opacity: 0;
-    transform: translateY(0);
-  }
-  20%,
-  70% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(85%);
-  }
-}
-@keyframes pulse-run-x {
-  0% {
-    opacity: 0;
-    transform: translateX(0);
-  }
-  20%,
-  70% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(-90%);
+@media (prefers-reduced-motion: no-preference) {
+  .plan:not([hidden]) {
+    animation: plan-in 420ms var(--ease-out);
   }
 }
 @media (prefers-reduced-motion: reduce) {

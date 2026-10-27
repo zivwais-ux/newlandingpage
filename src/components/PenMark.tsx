@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 // סימון בעט: עיגול או קו תחתון שנמתחים בקצב הגלילה (ה-CSS מצייר עם stroke-dashoffset).
 // ה-viewBox נקבע לגודל האמיתי בפיקסלים, כך שהקו נשאר באותו עובי בכל מסך ולא נמתח.
 
-type Kind = "circle" | "underline";
+type Kind = "circle" | "underline" | "box" | "arrow";
 
 const PAD = 4;
 const r = (n: number) => Math.round(n * 10) / 10;
@@ -57,7 +57,49 @@ export function underlinePath(w: number, h: number): string {
   return `M${r(w - PAD)} ${r(y)}C${r(w * 0.66)} ${r(y + h * 0.28)} ${r(w * 0.3)} ${r(y + h * 0.22)} ${r(PAD)} ${r(y - h * 0.18)}`;
 }
 
-const DEFAULT = { circle: [200, 60], underline: [200, 12] } as const;
+/** תיבה שצוירה ביד סביב שם: מלבן עם פינות רכות, קווים שלא ממש ישרים, וסגירה שעוברת קצת את ההתחלה.
+ *  הרעידות קבועות לכל גודל (לא אקראיות), כך שהשרת והדפדפן מציירים אותה תיבה. */
+export function boxPath(w: number, h: number): string {
+  const cx = w / 2;
+  const cy = h / 2;
+  const rx = w / 2 - PAD;
+  const ry = h / 2 - PAD;
+  const start = -40;
+  const end = start - 360 - 16;
+  const e = 2 / 9; // superellipse close to a rectangle, with soft corners
+  const seed = (w * 7 + h * 13) % 17;
+  const pts: [number, number][] = [];
+  for (let a = start; a >= end - 0.01; a -= 6) {
+    const t = (start - a) / (start - end);
+    const rad = (a * Math.PI) / 180;
+    const c = Math.cos(rad);
+    const s = Math.sin(rad);
+    // a hand that drifts a little: the sides bow by a pixel or two, and the closing stroke runs wide
+    const wob = Math.sin(a / 23 + seed) * 1.3 + Math.sin(a / 9 + seed * 2) * 0.5;
+    const grow = 1 + 0.025 * t;
+    pts.push([cx + (rx * grow + wob) * Math.sign(c) * Math.abs(c) ** e, cy + (ry * grow + wob) * Math.sign(s) * Math.abs(s) ** e]);
+  }
+  return smooth(pts);
+}
+
+/** חץ שצויר ביד: קשת קלה אל הצומת הבא וראש של שני קווים קצרים.
+ *  רחב משגבוה: מימין לשמאל (כיוון הקריאה); גבוה משרחב: מלמעלה למטה. */
+export function arrowPath(w: number, h: number): string {
+  if (w >= h) {
+    const y = h / 2;
+    const x0 = w - PAD;
+    const x1 = PAD + 2;
+    const shaft = `M${r(x0)} ${r(y + 2)}C${r(w * 0.68)} ${r(y - h * 0.32)} ${r(w * 0.34)} ${r(y - h * 0.3)} ${r(x1)} ${r(y)}`;
+    return `${shaft}M${r(x1 + 11)} ${r(y - 8)}L${r(x1)} ${r(y)}L${r(x1 + 12)} ${r(y + 6)}`;
+  }
+  const x = w / 2;
+  const y0 = PAD;
+  const y1 = h - PAD - 2;
+  const shaft = `M${r(x - 2)} ${r(y0)}C${r(x + w * 0.3)} ${r(h * 0.36)} ${r(x - w * 0.3)} ${r(h * 0.62)} ${r(x)} ${r(y1)}`;
+  return `${shaft}M${r(x - 8)} ${r(y1 - 11)}L${r(x)} ${r(y1)}L${r(x + 6)} ${r(y1 - 12)}`;
+}
+
+const DEFAULT = { circle: [200, 60], underline: [200, 12], box: [240, 70], arrow: [80, 30] } as const;
 
 export function PenMark({ kind, className }: { kind: Kind; className: string }) {
   const ref = useRef<SVGSVGElement>(null);
@@ -75,7 +117,7 @@ export function PenMark({ kind, className }: { kind: Kind; className: string }) 
   }, []);
 
   const [w, h] = size;
-  const d = kind === "circle" ? circlePath(w, h) : underlinePath(w, h);
+  const d = { circle: circlePath, underline: underlinePath, box: boxPath, arrow: arrowPath }[kind](w, h);
   return (
     <svg ref={ref} className={className} viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" aria-hidden="true">
       <path pathLength={1} d={d} />
