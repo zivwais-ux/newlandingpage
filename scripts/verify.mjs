@@ -284,8 +284,8 @@ try {
     const fp = await browser.newPage({ viewport: { width, height } });
     await fp.goto(URL_, { waitUntil: "networkidle" });
     const f = await fp.evaluate(() => ({
-      names: [...document.querySelectorAll(".flow__card h3")].map((h) => h.textContent.trim()),
-      links: [...document.querySelectorAll(".flow__card a[href*='wa.me']")].map((a) => new URL(a.href).searchParams.get("text") ?? ""),
+      names: [...document.querySelectorAll(".flow__name b")].map((h) => h.textContent.trim()),
+      links: [...document.querySelectorAll(".flow__panel a[href*='wa.me']")].map((a) => new URL(a.href).searchParams.get("text") ?? ""),
       wires: document.querySelectorAll(".flow__wire").length,
       nav: !!document.querySelector(".nav__links a[href='#plans']"),
       afterAbout: document.querySelector("#about").nextElementSibling?.id === "plans",
@@ -301,11 +301,16 @@ try {
     const wireAt = async (y) => {
       await fp.evaluate((t) => window.scrollTo({ top: t, behavior: "instant" }), Math.round(y));
       await fp.waitForTimeout(150);
-      return fp.evaluate(() => { const m = getComputedStyle(document.querySelector(".flow__wire")).transform; return m === "none" ? 1 : +m.slice(7).split(",")[3]; });
+      return fp.evaluate(() => { const m = getComputedStyle(document.querySelector(".flow__wire")).transform; if (m === "none") return 1; const v = m.slice(7).split(",").map(Number); return Math.min(v[0], v[3]); });
     };
     const early = await wireAt(f.wireTop - height * 1.05);
     const drawn = await wireAt(f.wireTop - height * 0.3);
     check(`${width}px: מסלולים: הקו לצומת הבא נמתח בגלילה`, early < 0.2 && drawn > 0.99, `${early} → ${drawn}`);
+    // צומת קטן ולא כרטיס ענק; לחיצה עליו פותחת את הפרטים שלו בחלון שמתחת
+    const tile = await fp.evaluate(() => document.querySelector(".flow__icon").getBoundingClientRect().height);
+    await fp.locator(".flow__btn").nth(2).click();
+    const shown = await fp.evaluate(() => [...document.querySelectorAll(".flow__panel")].map((p) => !p.hidden));
+    check(`${width}px: מסלולים: צמתים קטנים, ולחיצה על צומת פותחת את הפרטים שלו`, tile <= 90 && shown.join() === "false,false,true,false", `${tile}px ${shown}`);
     await fp.close();
   }
 

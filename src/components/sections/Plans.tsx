@@ -1,9 +1,11 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import { plans, primaryAction } from "@/content/site";
-import { FlowWatch } from "../FlowWatch";
 import { WhatsAppButton } from "../WhatsAppButton";
 
-// ארבעת המסלולים כתהליך אוטומציה (כמו n8n): צמתים שמחוברים בקו. בגלילה הקו נמתח לצומת הבא,
-// הצומת "נדלק" והפרטים שלו נפתחים (CSS בלבד; בלי תמיכה או עם הפחתת תנועה הכול פתוח).
+// ארבעת המסלולים כתהליך אוטומציה (כמו n8n): צמתים קטנים שמחוברים בקו. בגלילה הקווים נמתחים
+// מצומת לצומת והצמתים "נדלקים"; לחיצה על צומת פותחת את הפרטים שלו בחלון שמתחת, כמו בעורך.
 const icons: Record<string, React.ReactNode> = {
   lesson: <path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z" />,
   monthly: (
@@ -27,6 +29,32 @@ const icons: Record<string, React.ReactNode> = {
 const planMessage = (name: string) => `היי זיו, הגעתי מהאתר. אשמח לשמוע על ${name}`;
 
 export function Plans() {
+  const [active, setActive] = useState(0);
+  const flowRef = useRef<HTMLDivElement>(null);
+  const tabs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  // the data dot runs along the wires only while the flow is on screen
+  useEffect(() => {
+    const el = flowRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) el.dataset.on = "";
+      else delete el.dataset.on;
+    });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  const onKey = (e: React.KeyboardEvent, i: number) => {
+    const n = plans.items.length;
+    const step = { ArrowLeft: 1, ArrowDown: 1, ArrowRight: -1, ArrowUp: -1 }[e.key];
+    if (step === undefined) return;
+    e.preventDefault();
+    const next = (i + step + n) % n;
+    setActive(next);
+    tabs.current[next]?.focus();
+  };
+
   return (
     <section id="plans" className="plans wrap" aria-labelledby="plans-title">
       <div className="plans__head">
@@ -35,51 +63,77 @@ export function Plans() {
         </h2>
         <p>{plans.subtitle}</p>
       </div>
-      <FlowWatch>
-        <ol className="flow__list">
+      <div ref={flowRef} className="flow">
+        <ol className="flow__list" role="tablist" aria-label={plans.title}>
           {plans.items.map((p, i) => (
-            <li key={p.id} className={`flow__node flow__node--${p.id}`}>
+            <li key={p.id} className={`flow__node flow__node--${p.id}`} role="presentation">
               {i > 0 && (
                 <span className="flow__wire" aria-hidden="true">
                   <i className="flow__pulse" />
                 </span>
               )}
-              <article className="flow__card">
-                <div className="flow__main">
-                  <div className="flow__top">
-                    <span className="flow__icon" aria-hidden="true">
-                      <svg viewBox="0 0 24 24">{icons[p.id]}</svg>
-                    </span>
-                    <div>
-                      <h3>{p.name}</h3>
-                      <span className="flow__tag">{p.tag}</span>
-                    </div>
-                  </div>
-                  <p className="flow__text flow__more">{p.text}</p>
-                  <div className="flow__more">
-                    <WhatsAppButton label={plans.cta} location={`plans-${p.id}`} message={planMessage(p.name)} small />
-                  </div>
-                </div>
-                <div className="flow__side flow__more">
-                  <p className="flow__label">{plans.includesLabel}</p>
-                  <ul className="flow__includes">
-                    {p.includes.map((line) => (
-                      <li key={line}>
-                        <svg viewBox="0 0 16 16" aria-hidden="true">
-                          <path d="M3 8.5l3 3 7-7" />
-                        </svg>
-                        {line}
-                      </li>
-                    ))}
-                  </ul>
-                  <p className="flow__label">{plans.forLabel}</p>
-                  <p className="flow__for">{p.forWho}</p>
-                </div>
-              </article>
+              <button
+                ref={(b) => {
+                  tabs.current[i] = b;
+                }}
+                type="button"
+                role="tab"
+                id={`plan-tab-${p.id}`}
+                aria-selected={active === i}
+                aria-controls={`plan-panel-${p.id}`}
+                tabIndex={active === i ? 0 : -1}
+                className="flow__btn"
+                onClick={() => setActive(i)}
+                onKeyDown={(e) => onKey(e, i)}
+              >
+                <span className="flow__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">{icons[p.id]}</svg>
+                </span>
+                <span className="flow__name">
+                  <b>{p.name}</b>
+                  <span className="flow__tag">{p.tag}</span>
+                </span>
+              </button>
             </li>
           ))}
         </ol>
-      </FlowWatch>
+        {plans.items.map((p, i) => (
+          <div
+            key={p.id}
+            id={`plan-panel-${p.id}`}
+            role="tabpanel"
+            aria-labelledby={`plan-tab-${p.id}`}
+            className="flow__panel"
+            hidden={active !== i}
+          >
+            <div className="flow__main">
+              <h3>
+                <span className="flow__mini" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">{icons[p.id]}</svg>
+                </span>
+                {p.name}
+              </h3>
+              <p className="flow__text">{p.text}</p>
+              <WhatsAppButton label={plans.cta} location={`plans-${p.id}`} message={planMessage(p.name)} small />
+            </div>
+            <div className="flow__side">
+              <p className="flow__label">{plans.includesLabel}</p>
+              <ul className="flow__includes">
+                {p.includes.map((line) => (
+                  <li key={line}>
+                    <svg viewBox="0 0 16 16" aria-hidden="true">
+                      <path d="M3 8.5l3 3 7-7" />
+                    </svg>
+                    {line}
+                  </li>
+                ))}
+              </ul>
+              <p className="flow__label">{plans.forLabel}</p>
+              <p className="flow__for">{p.forWho}</p>
+            </div>
+          </div>
+        ))}
+      </div>
       <div className="plans__cta">
         <p>{plans.closing}</p>
         <WhatsAppButton label={primaryAction} location="plans" />
