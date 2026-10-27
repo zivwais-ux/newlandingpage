@@ -62,7 +62,7 @@ try {
         wa: [...document.querySelectorAll('a[href*="wa.me"]')].map((a) => a.href),
         floating: document.querySelector("[data-floating-whatsapp], .float-wa") !== null,
         pink: [...document.querySelectorAll("*")].some((el) => /248, 199, 201/.test(getComputedStyle(el).backgroundColor)),
-        prices: /₪|ש״ח|שקלים/.test(document.body.innerText),
+        prices: /₪|ש״ח|\d[\d,.]*\s*(אלף\s*)?שקלים/.test(document.body.innerText), // an amount, not the words "אלפי שקלים" about other courses
       };
     });
     check(`${width}px: אין גלילה הצידה`, info.overflow <= 0, `${info.overflow}px`);
