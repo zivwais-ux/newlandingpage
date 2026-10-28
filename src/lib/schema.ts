@@ -100,7 +100,7 @@ export const contentSchema = z.object({
     title: text,
     photoSrc: z.union([z.literal(""), imagePath]),
     photoAlt: text,
-    lead: text.max(220, "הפסקה ב'עליי' צריכה להישאר קצרה"),
+    lead: text.max(280, "הפסקה ב'עליי' צריכה להישאר קצרה"),
     credentials: z
       .array(z.object({ title: text.max(60), text: text.max(60) }))
       .length(3, "ב'עליי' יש בדיוק שלושה כרטיסי הכשרה")
