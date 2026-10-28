@@ -50,6 +50,11 @@ html {
 section[id] {
   scroll-margin-top: 76px;
 }
+/* a section focused by a menu link (so keyboards land there too) shows no ring of its own */
+section[id]:focus,
+main:focus {
+  outline: none;
+}
 
 body {
   background: var(--bg);

@@ -26,6 +26,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="he" dir="rtl" className={rubik.variable} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
+        {/* The page always opens at the top: a link that carries a section (#faq) from an earlier menu tap
+            loses it before the browser can jump there, and a reopened tab does not restore an old scroll. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "if('scrollRestoration' in history)history.scrollRestoration='manual';if(location.hash)history.replaceState(null,'',location.pathname+location.search)",
+          }}
+        />
       </head>
       <body>
         <a

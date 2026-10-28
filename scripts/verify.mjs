@@ -449,6 +449,26 @@ try {
   await page.goto(URL_);
   const anchors = await page.evaluate(() => [...document.querySelectorAll('a[href^="#"]')].map((a) => a.getAttribute("href")).filter((h) => h.length > 1 && !document.querySelector(h)));
   check("כל קישור פנימי (#) מוביל לחלק קיים", anchors.length === 0, anchors.join(", "));
+
+  // הדף תמיד נפתח בראש: קישור עם #faq (אחרי לחיצה בתפריט) לא קופץ לשאלות, וטעינה מחדש לא חוזרת לאמצע
+  for (const [width, height] of [[390, 844], [1440, 900]]) {
+    const sp = await browser.newPage({ viewport: { width, height } });
+    await sp.goto(URL_ + "#faq", { waitUntil: "networkidle" });
+    await sp.waitForTimeout(600);
+    const opened = await sp.evaluate(() => ({ y: Math.round(scrollY), url: location.href }));
+    await sp.evaluate(() => scrollTo(0, document.querySelector("#faq").getBoundingClientRect().top + scrollY));
+    await sp.waitForTimeout(300);
+    await sp.reload({ waitUntil: "networkidle" });
+    await sp.waitForTimeout(600);
+    const reloaded = await sp.evaluate(() => Math.round(scrollY));
+    check(`${width}px: הדף נפתח בראש גם מקישור עם #faq וגם אחרי טעינה מחדש`, opened.y < 10 && !opened.url.includes("#") && reloaded < 10, `${JSON.stringify(opened)} reload ${reloaded}`);
+    // the menu still takes you to the section, without writing it into the address
+    await sp.evaluate(() => document.querySelector(".nav__links a[href='#faq']").click());
+    await sp.waitForTimeout(1500);
+    const went = await sp.evaluate(() => ({ top: Math.round(document.querySelector("#faq").getBoundingClientRect().top), url: location.href }));
+    check(`${width}px: קישור בתפריט מגיע לחלק בלי לשנות את הכתובת`, Math.abs(went.top - 76) < 30 && !went.url.includes("#"), JSON.stringify(went));
+    await sp.close();
+  }
   const tel = await page.getAttribute('a[href^="tel:"]', "href");
   check("קישור טלפון בפוטר תקין", tel === `tel:+${NUMBER}`, tel);
 } finally {

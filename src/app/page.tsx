@@ -1,3 +1,4 @@
+import { InPageLinks } from "@/components/InPageLinks";
 import { Reveal } from "@/components/Reveal";
 import { About } from "@/components/sections/About";
 import { Build } from "@/components/sections/Build";
@@ -31,6 +32,7 @@ export default function Home() {
       </main>
       <Footer />
       <Reveal />
+      <InPageLinks />
     </>
   );
 }
