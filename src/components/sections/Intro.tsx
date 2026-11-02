@@ -1,7 +1,7 @@
 import { intro } from "@/content/site";
 import { PenMark } from "../PenMark";
 
-// משפט הפתיחה: כל מילה "מתמלאת בדיו" בזמן הגלילה, ואז קו בכתב-יד נמתח מתחת ל"כלי שעובד"
+// משפט הפתיחה: כל מילה "מתמלאת בדיו" בזמן הגלילה, ואז קו בכתב-יד נמתח מתחת ל"מערכת שעובדת"
 // (אותו עט כמו העיגול באזור ההתראות). CSS בלבד; בלי תמיכה או עם הפחתת תנועה הכול מוצג גמור.
 function Words({ text }: { text: string }) {
   return text
@@ -17,7 +17,7 @@ function Words({ text }: { text: string }) {
 
 export function Intro() {
   return (
-    <section className="intro wrap" aria-label="מה זה שיעור">
+    <section className="intro wrap" aria-label="מה אני עושה">
       <p data-reveal data-fill>
         <Words text={intro.before} />{" "}
         <span className="intro__mark">

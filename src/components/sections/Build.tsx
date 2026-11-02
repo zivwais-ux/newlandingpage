@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { build } from "@/content/site";
-import { AssistantChat, IPhone } from "../Chat";
+import { IPhone, WhatsAppChat } from "../Chat";
 import { WhatsAppButton } from "../WhatsAppButton";
 
-// הדבר החי בדף: בוחרים סוג עסק ורואים דוגמה לכלי שבונים בשיעור.
+// הדבר החי בדף: בוחרים סוג עסק ורואים מערכת שעובדת, כשיחת וואטסאפ בין לקוח למערכת של העסק.
 export function Build() {
   const [active, setActive] = useState(build.examples[0].id);
   const ex = build.examples.find((e) => e.id === active) ?? build.examples[0];
@@ -19,7 +19,7 @@ export function Build() {
             {/* המכשיר נשאר במקומו; בבחירת עסק מתחלף רק המסך */}
             <IPhone>
               <div className="build__screen swap" key={ex.id} aria-live="polite">
-                <AssistantChat ask={ex.ask} intro={ex.intro} tool={ex.tool} answer={ex.answer} asList={ex.answer.length > 2} bare />
+                <WhatsAppChat name={ex.chatName} status="מענה אוטומטי" messages={ex.chat} bare />
               </div>
             </IPhone>
           </div>
@@ -46,7 +46,7 @@ export function Build() {
             ))}
           </div>
           <p className="build__fact">
-            <b>{ex.tool}</b>
+            <b>{ex.system}</b>
             {ex.gives}
           </p>
           <div className="build__cta">

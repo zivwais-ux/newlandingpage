@@ -4,13 +4,13 @@ import { Fill } from "../Fill";
 import { FooterComposer } from "../FooterComposer";
 import { Logo } from "../Logo";
 
-// פס של הכלים שבונים בשיעור (מתוך הדוגמאות באתר), שנע לאט. העותק השני רק משלים את הלולאה.
+// פס של המערכות שבונים לעסקים (מתוך הדוגמאות באתר), שנע לאט. העותק השני רק משלים את הלולאה.
 function ToolStrip() {
-  const tools = build.examples.map((e) => e.tool);
+  const tools = build.examples.map((e) => e.system);
   return (
     <div className="strip">
       <div className="strip__track">
-        <ul className="strip__list" aria-label="דוגמאות לכלים שבונים בשיעור">
+        <ul className="strip__list" aria-label="דוגמאות למערכות שבונים לעסקים">
           {tools.map((t) => (
             <li key={t}>{t}</li>
           ))}

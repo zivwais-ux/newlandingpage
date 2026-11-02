@@ -31,10 +31,10 @@ const imagePath = z.string().regex(/^\/img\/[a-z0-9-]+\.webp$/, "נתיב תמו
 const buildExampleSchema = z.object({
   id: z.string().regex(/^[a-z]+$/),
   who: text,
-  tool: text,
-  ask: text,
-  intro: text.max(60),
-  answer: z.array(text).min(1).max(4),
+  system: text.max(24),
+  chatName: text.max(20),
+  // a real conversation between a customer and the business's system, short enough for the phone
+  chat: z.array(z.object({ from: z.enum(["client", "bot"]), text: text.max(90) })).min(3).max(5),
   gives: text,
   message: whatsappMessageSchema,
   field: z.enum(["sage", "forest"]),
@@ -65,7 +65,7 @@ export const contentSchema = z.object({
   }),
   hero: z.object({
     titleLines: z.tuple([text.max(18), text.max(20)]),
-    subtitle: text.includes("שיעורים פרטיים וייעוץ AI", { message: "תת-הכותרת בהירו חייבת לכלול 'שיעורים פרטיים וייעוץ AI'" }),
+    subtitle: text.includes("מערכות AI", { message: "תת-הכותרת בהירו חייבת לומר שזיו בונה מערכות AI" }),
     trust: z.array(text.max(36)).length(3, "שורת האמון בהירו כוללת שלושה פריטים"),
     photoAlt: text,
   }),

@@ -1,6 +1,5 @@
-// שני קטעי ממשק אמיתיים, כמו צילומי מסך מהטלפון:
-// AssistantChat – אפליקציית עוזר AI (בלי לוגו או שם של מוצר אמיתי).
-// WhatsAppChat – שיחת וואטסאפ עם זיו.
+// קטעי ממשק אמיתיים, כמו צילומי מסך מהטלפון:
+// WhatsAppChat – שיחת וואטסאפ: עם זיו, או בין לקוח למערכת של עסק.
 
 type IconProps = { d: string; className?: string; fill?: boolean };
 
@@ -22,16 +21,7 @@ function Glyph({ d, className = "ui-icon", fill = false }: IconProps) {
 }
 
 const ICON = {
-  menu: "M4 7h16M4 12h10M4 17h16",
-  edit: "M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4zM13.5 6.5l4 4",
-  chevron: "M7 10l5 5 5-5",
-  copy: "M9 9h10v10H9zM5 15V5h10",
-  like: "M7 10v10H4V10h3zm0 0 4-7a2 2 0 0 1 2 2v4h5a2 2 0 0 1 2 2.3l-1.2 6A2 2 0 0 1 16.8 20H7",
-  dislike: "M17 14V4h3v10h-3zm0 0-4 7a2 2 0 0 1-2-2v-4H6a2 2 0 0 1-2-2.3l1.2-6A2 2 0 0 1 7.2 4H17",
-  retry: "M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5",
-  plus: "M12 5v14M5 12h14",
   mic: "M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3zM5 11a7 7 0 0 0 14 0M12 18v3",
-  send: "M12 19V5M5 12l7-7 7 7",
   back: "M9 6l6 6-6 6",
   video: "M3 7h12v10H3zM15 10l6-3v10l-6-3",
   phone: "M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2",
@@ -60,68 +50,6 @@ function StatusBar({ time }: { time: string }) {
           <rect x="24.8" y="4" width="1.7" height="4" rx="0.8" opacity="0.4" />
         </svg>
       </span>
-    </div>
-  );
-}
-
-type AssistantProps = {
-  ask: string;
-  intro: string;
-  tool: string;
-  answer: string[];
-  asList?: boolean;
-  /** רק תוכן המסך, בלי כרטיס משלו: כשהשיחה מוצגת בתוך מכשיר (IPhone) */
-  bare?: boolean;
-};
-
-export function AssistantChat({ ask, intro, tool, answer, asList = true, bare = false }: AssistantProps) {
-  return (
-    <div className={`phone phone--ai ${bare ? "phone--bare" : ""}`} data-ui role="img" aria-label={`דוגמה לשיחה עם עוזר AI: ${ask}`}>
-      <StatusBar time="9:41" />
-      <div className="ai__bar" aria-hidden="true">
-        <Glyph d={ICON.menu} />
-        <span className="ai__model">
-          עוזר AI
-          <Glyph d={ICON.chevron} className="ui-icon ui-icon--sm" />
-        </span>
-        <Glyph d={ICON.edit} />
-      </div>
-      <div className="ai__body" aria-hidden="true">
-        <p className="ai__user">{ask}</p>
-        <div className="ai__answer">
-          <p>{intro}</p>
-          <p className="ai__tool">{tool}</p>
-          {asList ? (
-            <ul>
-              {answer.map((a) => (
-                <li key={a}>{a}</li>
-              ))}
-            </ul>
-          ) : (
-            <div className="ai__quote">
-              {answer.map((a) => (
-                <p key={a}>{a}</p>
-              ))}
-            </div>
-          )}
-          <div className="ai__actions">
-            <Glyph d={ICON.copy} className="ui-icon ui-icon--sm" />
-            <Glyph d={ICON.like} className="ui-icon ui-icon--sm" />
-            <Glyph d={ICON.dislike} className="ui-icon ui-icon--sm" />
-            <Glyph d={ICON.retry} className="ui-icon ui-icon--sm" />
-          </div>
-        </div>
-      </div>
-      <div className="ai__composer" aria-hidden="true">
-        <span className="ai__field">
-          <Glyph d={ICON.plus} className="ui-icon ui-icon--sm" />
-          <span className="ai__placeholder">שאלו כל דבר</span>
-          <Glyph d={ICON.mic} className="ui-icon ui-icon--sm" />
-        </span>
-        <span className="ai__send">
-          <Glyph d={ICON.send} className="ui-icon ui-icon--sm" />
-        </span>
-      </div>
     </div>
   );
 }
@@ -213,21 +141,39 @@ function ReadTicks() {
   );
 }
 
+type WhatsAppLine = { from: "client" | "bot"; text: string };
+
 type WhatsAppProps = {
   name: string;
-  sent: string;
-  reply: string;
+  /** שיחה קצרה: הודעה אחת ותשובה */
+  sent?: string;
+  reply?: string;
+  /** שיחה מלאה בין לקוח (הודעות יוצאות) לבין המערכת של העסק (נכנסות) */
+  messages?: WhatsAppLine[];
+  /** השורה שמתחת לשם, למשל "מענה אוטומטי" */
+  status?: string;
+  /** רק תוכן המסך, בלי כרטיס משלו: כשהשיחה מוצגת בתוך מכשיר (IPhone) */
+  bare?: boolean;
 };
 
-export function WhatsAppChat({ name, sent, reply }: WhatsAppProps) {
+/** שעה לכל הודעה, דקה אחרי הקודמת */
+const stamp = (i: number) => `10:${String(42 + i).padStart(2, "0")}`; // taste-skill-ignore: a clock time
+
+export function WhatsAppChat({ name, sent = "", reply = "", messages, status = "מחובר/ת", bare = false }: WhatsAppProps) {
+  const lines: WhatsAppLine[] = messages ?? [
+    { from: "client", text: sent },
+    { from: "bot", text: reply },
+  ];
+  const said = lines.map((m) => `${m.from === "client" ? "לקוח" : name}: ${m.text}`).join(" · ");
   return (
-    <div className="phone phone--wa" data-ui role="img" aria-label={`דוגמה לשיחת וואטסאפ עם ${name}: ${sent}`}>
+    <div className={`phone phone--wa ${bare ? "phone--bare" : ""}`} data-ui role="img" aria-label={`דוגמה לשיחת וואטסאפ עם ${name}. ${said}`}>
+      {bare && <StatusBar time="10:45" />}
       <div className="wa__bar" aria-hidden="true">
         <Glyph d={ICON.back} className="ui-icon ui-icon--sm" />
         <span className="wa__avatar">{name[0]}</span>
         <span className="wa__who">
           <b>{name}</b>
-          <span>מחובר/ת</span>
+          <span>{status}</span>
         </span>
         <span className="wa__calls">
           <Glyph d={ICON.video} className="ui-icon ui-icon--sm" />
@@ -236,17 +182,19 @@ export function WhatsAppChat({ name, sent, reply }: WhatsAppProps) {
       </div>
       <div className="wa__body" aria-hidden="true">
         <span className="wa__day">היום</span>
-        <p className="wa__msg wa__msg--out">
-          {sent}
-          <span className="wa__meta">
-            10:42
-            <ReadTicks />
-          </span>
-        </p>
-        <p className="wa__msg wa__msg--in">
-          {reply}
-          <span className="wa__meta">10:44</span>
-        </p>
+        {lines.map((m, i) => (
+          <p
+            key={i}
+            className={`wa__msg ${m.from === "client" ? "wa__msg--out" : "wa__msg--in"}`}
+            style={{ "--n": i } as React.CSSProperties}
+          >
+            {m.text}
+            <span className="wa__meta">
+              {stamp(i * 2)}
+              {m.from === "client" && <ReadTicks />}
+            </span>
+          </p>
+        ))}
       </div>
       <div className="wa__composer" aria-hidden="true">
         <span className="wa__field">

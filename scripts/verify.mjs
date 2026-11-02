@@ -59,6 +59,7 @@ try {
         h1: h1.innerText.replace(/\s+/g, " "),
         h1Lines: lines.reduce((a, b) => a + b, 0),
         heroText: document.querySelector(".hero").innerText,
+        allText: document.body.innerText + " " + [...document.querySelectorAll("[aria-label], [alt]")].map((e) => e.getAttribute("aria-label") ?? e.getAttribute("alt")).join(" ") + " " + document.title,
         wa: [...document.querySelectorAll('a[href*="wa.me"]')].map((a) => a.href),
         floating: document.querySelector("[data-floating-whatsapp], .float-wa") !== null,
         pink: [...document.querySelectorAll("*")].some((el) => /248, 199, 201/.test(getComputedStyle(el).backgroundColor)),
@@ -68,7 +69,8 @@ try {
     check(`${width}px: אין גלילה הצידה`, info.overflow <= 0, `${info.overflow}px`);
     check(`${width}px: הכותרת הראשית בשתי שורות לכל היותר`, info.h1Lines <= 2, `${info.h1Lines} שורות`);
     check(`${width}px: "בלי להיות טכנולוגי" בכותרת`, info.h1.includes("בלי להיות טכנולוגי"), info.h1);
-    check(`${width}px: "שיעורים פרטיים וייעוץ AI" בהירו`, info.heroText.includes("שיעורים פרטיים וייעוץ AI"));
+    check(`${width}px: "מערכות AI" בהירו`, info.heroText.includes("מערכות AI"));
+    check(`${width}px: אין יותר שיעורים פרטיים בדף`, !/שיעור|מורה פרטי/.test(info.allText), info.allText.match(/.{0,20}(שיעור|מורה פרטי).{0,20}/)?.[0]);
     check(
       `${width}px: כל ${info.wa.length} קישורי הוואטסאפ פותחים את 054-804-4345 עם הודעה מוכנה`,
       info.wa.length >= 6 && info.wa.every((h) => { const u = new URL(h); return u.pathname === `/${NUMBER}` && (u.searchParams.get("text") ?? "").startsWith("היי זיו"); }),
@@ -85,15 +87,16 @@ try {
   await page.goto(URL_, { waitUntil: "networkidle" });
   const ctaHref = () => page.getAttribute(".build__cta a", "href");
   const before = new URL(await ctaHref()).searchParams.get("text");
-  await page.getByRole("button", { name: "חנות קטנה" }).tap();
+  await page.getByRole("button", { name: "נותני שירות" }).tap();
   await page.waitForTimeout(350);
   const after = new URL(await ctaHref()).searchParams.get("text");
-  const title = await page.textContent(".build__object .ai__tool");
+  const title = await page.textContent(".build__fact b");
+  const chatName = await page.textContent(".build__object .wa__who b");
   const field = await page.getAttribute(".build__disc", "data-field");
-  check("בורר העסקים: הדוגמה מתחלפת", title === "תיאורי מוצרים", title);
-  check("בורר העסקים: ההודעה המוכנה מותאמת לסוג העסק", before.includes("מורה פרטי") && after.includes("חנות קטנה"), after);
+  check("בורר העסקים: המערכת והשיחה מתחלפות", title === "מענה מיידי לפניות" && chatName === "אבי שיפוצים", `${title} / ${chatName}`);
+  check("בורר העסקים: ההודעה המוכנה מותאמת לסוג העסק", before.includes("קליניקה") && after.includes("נותן/ת שירות"), after);
   check("בורר העסקים: הדיסק מחליף צבע לירוק כהה", field === "forest", field);
-  check("בורר העסקים: הכפתור הנבחר מסומן ל-aria", (await page.getAttribute('button.build__name[aria-pressed="true"]', "id")) === null && (await page.locator('button.build__name[aria-pressed="true"]').innerText()).includes("חנות קטנה"));
+  check("בורר העסקים: הכפתור הנבחר מסומן ל-aria", (await page.getAttribute('button.build__name[aria-pressed="true"]', "id")) === null && (await page.locator('button.build__name[aria-pressed="true"]').innerText()).includes("נותני שירות"));
 
   // 3. הטופס: שגיאות על קלט ריק/שגוי, ופתיחת וואטסאפ עם פרטים מנורמלים על קלט תקין
   await page.evaluate(() => {
@@ -119,12 +122,17 @@ try {
   check("טופס תקין: מוצגת הודעת תודה", (await page.textContent(".coupon__note")).includes("נפתחה שיחת וואטסאפ"));
 
   // 4. שיחות שנראות אמיתיות, אייקונים בפתיחה, ופוטר בלי בלוקים של אותיות
-  check("שיחת הוואטסאפ: שעה ווי כפול כחול", (await page.locator(".phone--wa .wa__meta").first().innerText()).includes("10:42") && (await page.locator(".phone--wa .wa__ticks").count()) === 1);
-  check("שיחת העוזר: שורת סטטוס, שורת פתיחה ותיבת 'שאלו כל דבר'", (await page.locator(".phone--ai .phone__status").count()) === 1 && (await page.locator(".phone--ai .ai__answer p").first().innerText()).length > 5 && (await page.locator(".phone--ai .ai__placeholder").innerText()) === "שאלו כל דבר");
+  check("שיחת הוואטסאפ: שעה ווי כפול כחול", (await page.locator(".how__card--1 .phone--wa .wa__meta").first().innerText()).includes("10:42") && (await page.locator(".how__card--1 .phone--wa .wa__ticks").count()) === 1);
+  // the system's conversation in the iPhone: status bar, "automatic reply", the customer and the business both talk
+  const sys = await page.evaluate(() => {
+    const ph = document.querySelector(".build__object .phone--wa");
+    return { status: !!ph?.querySelector(".phone__status"), sub: ph?.querySelector(".wa__who span")?.textContent, out: ph?.querySelectorAll(".wa__msg--out").length, in: ph?.querySelectorAll(".wa__msg--in").length };
+  });
+  check("מה בונים: שיחת וואטסאפ אמיתית בין לקוח למערכת של העסק", sys.status && sys.sub === "מענה אוטומטי" && sys.out >= 1 && sys.in >= 1 && sys.out + sys.in >= 3, JSON.stringify(sys));
   check(
-    "משפט הפתיחה: קו כתב-יד מתחת ל'כלי שעובד', בלי אייקונים ובלי תמונות",
+    "משפט הפתיחה: קו כתב-יד מתחת ל'מערכת שעובדת', בלי אייקונים ובלי תמונות",
     (await page.locator(".intro .intro__mark .intro__line").count()) === 1 &&
-      (await page.locator(".intro__mark").innerText()).trim() === "כלי שעובד" &&
+      (await page.locator(".intro__mark").innerText()).trim() === "מערכת שעובדת" &&
       (await page.locator(".intro svg:not(.intro__line), .intro img").count()) === 0,
   );
   check("הפוטר: אין יותר בלוקים של אותיות", (await page.locator("footer svg.mark, footer .mark").count()) === 0);
@@ -157,7 +165,7 @@ try {
   }
   await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
   const strip = await page.locator(".strip__list:not([aria-hidden]) li").allInnerTexts();
-  check("הפוטר: הפס הנע מציג את כל הכלים מהדוגמאות", strip.length === 6 && strip.includes("דפי עבודה בשלוש רמות"), strip.join(" | "));
+  check("הפוטר: הפס הנע מציג את כל המערכות מהדוגמאות", strip.length === 5 && strip.includes("בוט שקובע תורים"), strip.join(" | "));
   check("הפוטר: בלי השורה הכפולה 'או התקשרו'", !(await page.locator("footer").innerText()).includes("או התקשרו"));
   check(
     "המילים המסומנות בעט מודגשות (600)",
@@ -406,7 +414,7 @@ try {
     await ip.evaluate(() => (document.querySelector(".iphone").dataset.same = "1"));
     await ip.locator(".build__name").nth(3).click();
     await ip.waitForTimeout(350);
-    check(`${width}px: בחירת עסק מחליפה רק את המסך, המכשיר נשאר`, (await ip.locator('.iphone[data-same="1"]').count()) === 1 && (await ip.locator(".iphone .ai__tool").innerText()).length > 2);
+    check(`${width}px: בחירת עסק מחליפה רק את המסך, המכשיר נשאר`, (await ip.locator('.iphone[data-same="1"]').count()) === 1 && (await ip.locator(".iphone .wa__msg").count()) >= 3);
     await ip.close();
   }
 

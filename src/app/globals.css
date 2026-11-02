@@ -1065,7 +1065,7 @@ p {
 .build__screen {
   height: 100%;
 }
-/* The assistant screen inside the device: no card of its own; the time and icons flank the island,
+/* The chat screen inside the device: no card of its own; the time and icons flank the island,
    and the conversation sits at the bottom above the input, as in a real chat app. */
 .phone--bare {
   height: 100%;
@@ -1083,13 +1083,12 @@ p {
 .phone--bare .phone__sys svg {
   height: 3.6cqw;
 }
-.phone--bare .ai__body {
-  display: flex;
-  flex-direction: column;
+.phone--bare .wa__body {
+  flex: 1;
   justify-content: flex-end;
   overflow: clip;
 }
-.phone--bare .ai__composer {
+.phone--bare .wa__composer {
   padding-bottom: 8cqw;
 }
 .build__list h2 {
@@ -1205,92 +1204,6 @@ p {
   width: auto;
   fill: currentColor;
 }
-.ai__bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 16px 10px;
-  color: #3c3c3c;
-}
-.ai__model {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 16px;
-  font-weight: 500;
-  color: #0d0d0d;
-}
-.ai__model .ui-icon {
-  color: #8a8a8a;
-}
-.ai__body {
-  flex: 1;
-  padding: 8px 16px 14px;
-}
-.ai__user {
-  width: fit-content;
-  max-width: 84%;
-  margin-inline-start: auto;
-  padding: 9px 14px;
-  border-radius: 20px;
-  background: #f1f1f1;
-}
-.ai__answer {
-  margin-top: 16px;
-}
-.ai__tool {
-  margin-top: 10px;
-  font-weight: 500;
-}
-.ai__answer ul {
-  margin-top: 4px;
-  padding-inline-start: 20px;
-  list-style: disc;
-}
-.ai__answer li + li {
-  margin-top: 3px;
-}
-.ai__quote {
-  margin-top: 6px;
-  padding-inline-start: 12px;
-  border-inline-start: 3px solid #e3e3e3; /* taste-skill-ignore: quote bar inside a data-ui fragment */
-}
-.ai__actions {
-  display: flex;
-  gap: 14px;
-  margin-top: 12px;
-  color: #8a8a8a;
-}
-.ai__composer {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px 16px;
-}
-.ai__field {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 12px;
-  border-radius: 24px;
-  background: #f4f4f4;
-  color: #616161;
-}
-.ai__placeholder {
-  flex: 1;
-}
-.ai__send {
-  width: 36px;
-  height: 36px;
-  flex: none;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  background: #0d0d0d;
-  color: var(--white);
-}
-
 .phone--wa {
   border-radius: 22px;
   font-size: 13.5px;
@@ -2925,7 +2838,7 @@ p {
       animation-timeline: view();
       animation-range: entry 0% cover 42%;
     }
-    .phone--bare .ai__body > * {
+    .phone--bare .wa__body {
       animation: screen-scroll linear both;
       animation-timeline: view();
       animation-range: entry 30% cover 48%;
@@ -3301,6 +3214,23 @@ p {
 @media (prefers-reduced-motion: no-preference) {
   .plan:not([hidden]) {
     animation: plan-in 420ms var(--ease-out);
+  }
+}
+/* "What we build": the conversation plays out, one message after another, each time a business is chosen */
+@media (prefers-reduced-motion: no-preference) {
+  .build__screen .wa__msg {
+    animation: msg-in 380ms var(--ease-out) both;
+    animation-delay: calc(var(--n) * 650ms + 250ms);
+  }
+}
+@keyframes msg-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
   }
 }
 @media (prefers-reduced-motion: reduce) {

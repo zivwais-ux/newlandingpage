@@ -10,8 +10,8 @@ describe("התוכן של הדף (site.ts)", () => {
     expect(() => validateContent()).not.toThrow();
   });
 
-  it("שם העסק הוא ZIV ייעוץ ולימוד AI מעשי", () => {
-    expect(content.business.name).toBe("ZIV ייעוץ ולימוד AI מעשי");
+  it("שם העסק הוא ZIV מערכות AI וליווי לעסקים", () => {
+    expect(content.business.name).toBe("ZIV מערכות AI וליווי לעסקים");
   });
 
   it("מספר הוואטסאפ הוא 054-804-4345", () => {
@@ -19,10 +19,10 @@ describe("התוכן של הדף (site.ts)", () => {
     expect(toWhatsAppNumber(normalizeIsraeliPhone(content.business.phoneDisplay)!)).toBe(content.business.whatsappNumber);
   });
 
-  it("ההירו אומר 'בלי להיות טכנולוגי' ו'שיעורים פרטיים וייעוץ AI'", () => {
+  it("ההירו אומר 'בלי להיות טכנולוגי' ו'מערכות AI'", () => {
     expect(content.hero.titleLines.join(" ")).toContain("בלי להיות טכנולוגי");
     expect(content.hero.titleLines.join(" ")).not.toMatch(/טכנולוג(?!י)/);
-    expect(content.hero.subtitle).toContain("שיעורים פרטיים וייעוץ AI");
+    expect(content.hero.subtitle).toContain("מערכות AI");
   });
 
   it("אין טענות על לקוחות או על עסקים שזיו בנה עבורם", () => {
@@ -32,14 +32,21 @@ describe("התוכן של הדף (site.ts)", () => {
     expect(JSON.stringify(content)).not.toMatch(/בחברה גדולה|ז׳רגון|ז'רגון/);
   });
 
-  it("משפט הפתיחה: 'כלי שעובד' מסומן בקו, בלי אייקונים ובלי ניסוח 'לא X ולא Y'", () => {
-    expect(content.intro.mark).toBe("כלי שעובד");
+  it("משפט הפתיחה: 'מערכת שעובדת' מסומנת בקו, בלי אייקונים ובלי ניסוח 'לא X ולא Y'", () => {
+    expect(content.intro.mark).toBe("מערכת שעובדת");
     expect(content.intro.before).not.toMatch(/^לא /);
     expect(content.intro).not.toHaveProperty("icon");
   });
 
-  it("לכל דוגמה ב'מה בונים' יש שורת פתיחה לתשובה", () => {
-    for (const ex of content.build.examples) expect(ex.intro.length).toBeGreaterThan(5);
+  it("כל דוגמה ב'מה בונים' היא שיחה אמיתית: לקוח ומערכת, לפחות שלוש הודעות", () => {
+    for (const ex of content.build.examples) {
+      expect(ex.chat.length).toBeGreaterThanOrEqual(3);
+      expect(ex.chat.some((m) => m.from === "bot")).toBe(true);
+    }
+  });
+
+  it("אין יותר שיעורים פרטיים באתר", () => {
+    expect(JSON.stringify(content)).not.toMatch(/שיעור|מורה פרטי|המורה/);
   });
 
   it("אין מחירים בדף", () => {
@@ -65,7 +72,7 @@ describe("התוכן של הדף (site.ts)", () => {
     expect(broken((c) => ((c.business as { whatsappNumber: string }).whatsappNumber = "0548044345"))).toBe(false);
     expect(broken((c) => (((c.how as { steps: { img?: string }[] }).steps[1].img = "/images/x.jpg")))).toBe(false);
     expect(broken((c) => ((c.intro as { mark: string }).mark = ""))).toBe(false);
-    expect(broken((c) => ((c.hero as { subtitle: string }).subtitle = "שיעורים פרטיים בלבד"))).toBe(false);
+    expect(broken((c) => ((c.hero as { subtitle: string }).subtitle = "ייעוץ בלבד"))).toBe(false);
     expect(broken((c) => ((c.whatsappMessage as unknown) = "שלום"))).toBe(false);
     expect(
       broken((c) => {

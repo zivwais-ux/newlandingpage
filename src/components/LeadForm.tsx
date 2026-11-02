@@ -33,7 +33,7 @@ export function LeadForm() {
     setErrors({});
     const { name, phone, businessType } = parsed.data;
     const text = [
-      "היי זיו, השארתי פרטים באתר לשיחת ייעוץ חינם:",
+      "היי זיו, השארתי פרטים באתר לשיחת אפיון חינם:",
       `${f.name}: ${name}`,
       `${f.phone}: ${phone}`,
       `${f.businessType}: ${businessType}`,
