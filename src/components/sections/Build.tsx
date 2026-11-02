@@ -20,7 +20,7 @@ export function Build() {
             <IPhone>
               <div className="build__screen swap" key={ex.id} data-screen={ex.screen.kind} aria-live="polite">
                 {ex.screen.kind === "whatsapp" ? (
-                  <WhatsAppChat name={ex.screen.chatName} status="מענה אוטומטי" messages={ex.screen.chat} bare />
+                  <WhatsAppChat name={ex.screen.chatName} status="מענה אוטומטי" messages={ex.screen.chat} note={ex.screen.note} bare bot />
                 ) : (
                   <SystemScreen screen={ex.screen} />
                 )}

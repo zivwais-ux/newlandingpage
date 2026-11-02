@@ -1744,65 +1744,145 @@ p {
 }
 
 
-/* ---------- System screens in the "What we build" iPhone (data-ui fragments: an app's own look) ---------- */
+/* ---------- System screens in the "What we build" iPhone (data-ui fragments: an app's own look) ----------
+   One app language for all five: a large title, an AI bar, the app's content, a tab bar. Sizes are in em
+   on a base tied to the device's width (cqw), so every screen scales with the phone and always fits. */
 .app {
-  background: #f4f5f6;
+  font-size: 4.25cqw;
+  line-height: 1.35;
+  background: #f2f3f5;
   color: #111;
 }
-.app__bar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 14px 10px;
-  background: var(--white);
-  color: #5f6368;
-}
-.app__bar b {
-  color: #111;
-  font-size: 15px;
-  font-weight: 600;
-}
-.app__body {
-  position: relative;
+.app__main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 12px;
-  overflow: clip;
+  gap: 0.7em;
+  padding: 0.4em 0.95em 0;
+  min-height: 0;
 }
-.app__dot {
-  width: 8px;
-  height: 8px;
-  flex: none;
-  margin-top: 0.45em;
+.app__head {
+  display: grid;
+}
+.app__title {
+  font-size: 2em;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+.app__sub {
+  color: #6b7076;
+  font-size: 0.92em;
+}
+.app__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55em;
+  min-height: 0;
+  position: relative;
+}
+/* the AI at work */
+.ai-bar {
+  display: flex;
+  align-items: center;
+  min-height: 2.2em;
+  padding: 0.35em 0.75em;
+  border-radius: 999px;
+  background: #e3f0e7;
+  color: #17552d;
+  font-size: 0.9em;
+  font-weight: 500;
+}
+.ai-bar__now,
+.ai-bar__done {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+}
+.ai-bar__pulse {
+  width: 0.6em;
+  height: 0.6em;
   border-radius: 50%;
   background: var(--accent);
 }
+.ai-bar__icon {
+  width: 1.15em;
+  height: 1.15em;
+}
+/* tab bar */
+.tabbar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  justify-items: center;
+  padding: 0.6em 0.8em 2.3em;
+  background: rgb(255 255 255 / 0.92);
+  color: #9aa0a6;
+}
+.tabbar__icon {
+  width: 1.55em;
+  height: 1.55em;
+}
+.tabbar__on {
+  color: var(--accent);
+}
+/* shared pieces */
+.ava {
+  width: 2.3em;
+  height: 2.3em;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-weight: 600;
+  font-size: 0.95em;
+}
+.ava--0 {
+  background: #d7eedf;
+  color: #17552d;
+}
+.ava--1 {
+  background: #d3ecec;
+  color: #155e63;
+}
+.ava--2 {
+  background: #efe5d3;
+  color: #6b4f1d;
+}
+.ava--3 {
+  background: #e4e6ea;
+  color: #3c4043;
+}
 .chip {
-  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
   width: fit-content;
-  padding: 2px 9px;
+  padding: 0.15em 0.65em;
   border-radius: 999px;
-  font-size: 11.5px;
-  font-weight: 500;
+  font-size: 0.82em;
+  font-weight: 600;
   white-space: nowrap;
+}
+.chip__icon {
+  width: 1.1em;
+  height: 1.1em;
 }
 .chip--wait {
   background: #ececec;
   color: #5f6368;
 }
 .chip--open {
-  background: #e7eef9;
+  background: #e4ecf8;
   color: #24518f;
 }
 .chip--done {
-  background: #dff1e4;
+  background: #dcf0e2;
   color: #17552d;
 }
 /* a status that changes: both labels share one cell; the new one replaces the old at its turn */
 .chip-swap {
-  display: grid;
+  display: inline-grid;
   justify-items: start;
 }
 .chip-swap > * {
@@ -1811,143 +1891,338 @@ p {
 .chip-from {
   opacity: 0;
 }
-/* CRM */
-.crm__lead {
-  display: grid;
-  gap: 4px;
-  padding: 10px 12px;
+.task {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55em;
+  padding: 0.75em 0.85em;
+  border-radius: 0.95em;
   background: var(--white);
-  border-radius: 12px;
-}
-.crm__top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.crm__source {
-  font-size: 11.5px;
-  color: #6b7076;
-}
-.crm__need {
-  color: #3c4043;
-}
-.crm__task,
-.cal__note {
-  display: flex;
-  gap: 8px;
-  margin-top: 2px;
-  padding: 10px 12px;
-  background: #e9f3ec;
-  border-radius: 12px;
   color: #17552d;
-  line-height: 1.35;
+  font-weight: 500;
 }
-/* payroll */
-.pay__head,
-.pay__row,
-.pay__total {
+.task__icon {
+  width: 1.2em;
+  height: 1.2em;
+  flex: none;
+  margin-top: 0.05em;
+}
+/* CRM */
+.kpis {
   display: grid;
-  grid-template-columns: 1fr 1.1fr 0.9fr;
-  align-items: center;
-  gap: 6px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.45em;
 }
-.pay__head {
-  padding: 0 12px;
-  font-size: 11.5px;
-  color: #6b7076;
-}
-.pay__row,
-.pay__total {
-  padding: 10px 12px;
+.kpi {
+  display: grid;
+  padding: 0.5em 0.65em;
+  border-radius: 0.85em;
   background: var(--white);
-  border-radius: 12px;
+  color: #6b7076;
+  font-size: 0.8em;
 }
-.pay__total {
-  grid-template-columns: 2.1fr 0.9fr;
-  background: var(--forest);
-  color: var(--white);
-}
-.pay__sum {
+.kpi b {
+  color: #111;
+  font-size: 1.6em;
+  line-height: 1.15;
   font-variant-numeric: tabular-nums;
+}
+.kpi:first-child b {
+  color: var(--accent);
+}
+.seg {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding: 0.2em;
+  border-radius: 0.7em;
+  background: #e4e6e9;
+  font-size: 0.85em;
+  text-align: center;
+  color: #5f6368;
+}
+.seg span {
+  padding: 0.25em 0;
+  border-radius: 0.55em;
+}
+.seg__on {
+  background: var(--white);
+  color: #111;
   font-weight: 600;
-  text-align: end;
 }
-.pay__done {
-  align-self: flex-start;
-}
-/* invoices in the mail, and the agent's note dropping in from the top */
-.mail {
+.lead,
+.mail,
+.pay-row {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
+  gap: 0.65em;
+  padding: 0.6em 0.75em;
+  border-radius: 0.95em;
   background: var(--white);
-  border-radius: 12px;
 }
-.mail__avatar {
-  width: 30px;
-  height: 30px;
-  flex: none;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  background: #e6e8eb;
-  color: #3c4043;
-  font-weight: 600;
+.lead--new {
+  box-shadow: inset 0 0 0 1.5px #b8dcc4; /* taste-skill-ignore: the new lead's highlight inside a data-ui fragment */
 }
-.mail__text {
+.lead__text,
+.mail__text,
+.pay-row__text {
   flex: 1;
+  min-width: 0;
   display: grid;
   line-height: 1.3;
 }
+.lead__text span,
 .mail__text span {
+  overflow: hidden;
   color: #5f6368;
+  font-size: 0.9em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
+.lead__side,
+.mail__side {
+  display: grid;
+  justify-items: end;
+  gap: 0.3em;
+}
+.lead__source {
+  width: 1.1em;
+  height: 1.1em;
+  color: #8a9096;
+}
+/* payroll */
+.pay-card {
+  display: grid;
+  gap: 0.3em;
+  padding: 0.85em 1em;
+  border-radius: 1.1em;
+  background: var(--forest);
+  color: var(--white);
+}
+.pay-card__label {
+  color: rgb(255 255 255 / 0.75);
+  font-size: 0.82em;
+}
+.pay-card__sum {
+  font-size: 1.85em;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.pay-card__meter,
+.hours-bar {
+  display: block;
+  height: 0.35em;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.22);
+  overflow: hidden;
+}
+.pay-card__meter {
+  margin-top: 0.3em;
+}
+.pay-card__fill,
+.hours-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--sage);
+  transform-origin: right;
+}
+.hours-bar {
+  width: 3.4em;
+  height: 0.3em;
+  background: #e8eaed;
+}
+.hours-bar span {
+  background: var(--accent);
+}
+.pay-row__hours {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  color: #5f6368;
+  font-size: 0.85em;
+}
+.pay-row__sum,
 .mail__amount {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.pay-done {
+  align-self: flex-start;
+}
+/* mail and the invoice agent */
+.search {
+  display: flex;
+  align-items: center;
+  gap: 0.45em;
+  padding: 0.45em 0.75em;
+  border-radius: 0.7em;
+  background: #e4e6e9;
+  color: #80868b;
+  font-size: 0.92em;
+}
+.search__icon {
+  width: 1.05em;
+  height: 1.05em;
+}
+.agent {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0.7em;
+  z-index: 1;
+  display: grid;
+  gap: 0.35em;
+  padding: 0.85em 0.95em;
+  border-radius: 1.1em;
+  background: var(--forest);
+  color: var(--white);
+  box-shadow: 0 0.6em 1.6em rgb(0 0 0 / 0.2); /* taste-skill-ignore: the agent's floating card inside a data-ui fragment */
+  line-height: 1.35;
+}
+.agent__head {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  color: var(--sage);
+  font-size: 0.88em;
+}
+.ai-bar__pulse--still {
+  background: var(--sage);
+}
+.agent__action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  width: fit-content;
+  margin-top: 0.2em;
+  padding: 0.3em 0.8em;
+  border-radius: 999px;
+  background: var(--sage);
+  color: var(--ink);
+  font-size: 0.88em;
+  font-weight: 600;
+}
+/* calendar */
+.week {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  text-align: center;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
-/* the agent's note: a banner that rises into the free space under the mail when the agent is done */
-.mail__alert {
+.week span {
+  display: grid;
+  justify-items: center;
+  gap: 0.1em;
+}
+.week small {
+  color: #80868b;
+  font-size: 0.75em;
+  font-weight: 500;
+}
+.week__on {
+  color: var(--white);
+  position: relative;
+  z-index: 0;
+}
+.week__on::after {
+  content: "";
   position: absolute;
-  bottom: 26px;
-  inset-inline: 10px;
-  z-index: 1;
+  z-index: -1;
+  bottom: -0.2em;
+  width: 1.9em;
+  height: 1.9em;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.week__on small {
+  color: #80868b;
+}
+.slot {
   display: grid;
-  gap: 2px;
-  padding: 11px 13px;
-  background: rgb(255 255 255 / 0.96);
-  border-radius: 16px;
-  box-shadow: 0 6px 20px rgb(0 0 0 / 0.14); /* taste-skill-ignore: an iOS notification inside a data-ui fragment */
-  line-height: 1.35;
+  grid-template-columns: 2.9em 1fr;
+  gap: 0.5em;
+  align-items: center;
 }
-.mail__alert b {
-  font-size: 12px;
-  color: var(--accent);
-}
-/* calendar */
-.cal__slot {
-  display: grid;
-  grid-template-columns: 44px 1fr;
-  gap: 8px;
-  align-items: start;
-}
-.cal__time {
-  padding-top: 10px;
-  font-size: 12px;
+.slot__time {
   color: #6b7076;
+  font-size: 0.85em;
   font-variant-numeric: tabular-nums;
 }
-.cal__event {
-  display: grid;
-  gap: 5px;
-  padding: 9px 12px;
+.slot__event {
+  display: flex;
+  align-items: center;
+  gap: 0.55em;
+  padding: 0.5em 0.7em;
+  border-radius: 0.95em;
   background: var(--white);
-  border-radius: 12px;
-  border-inline-start: 3px solid var(--accent); /* taste-skill-ignore: a calendar event's colour bar inside a data-ui fragment */
+  border-inline-start: 0.25em solid var(--accent); /* taste-skill-ignore: a calendar event's colour bar inside a data-ui fragment */
 }
-.cal__slot--wait .cal__event {
+.slot__event b {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.slot--wait .slot__event {
   border-inline-start-color: #8ab0e0;
+}
+/* the booking bot: a "bot" tag, typing dots before each reply, and the system's note at the end */
+.phone--bare .wa__who b {
+  white-space: nowrap;
+}
+.wa__bot {
+  margin-inline-start: 6px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #dcf0e2;
+  color: #17552d;
+  font-size: 10.5px;
+  font-weight: 600;
+  vertical-align: 1px;
+}
+.wa__slot {
+  position: relative;
+  align-self: flex-start;
+  max-width: 80%;
+}
+.wa__slot .wa__msg {
+  max-width: none;
+}
+.wa__dots {
+  position: absolute;
+  top: 0;
+  inset-inline-start: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 11px 13px;
+  border-radius: 8px;
+  border-start-start-radius: 0;
+  background: var(--white);
+  opacity: 0;
+}
+.wa__dots i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #9aa5ab;
+}
+.wa__note {
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: #e6f4ea;
+  color: #17552d;
+  font-size: 12px;
+  font-weight: 500;
+}
+.wa__note-icon {
+  width: 14px;
+  height: 14px;
 }
 
 /* ---------- Plans: the four routes sketched like a flow in Ziv's notebook ---------- */
@@ -3432,12 +3707,29 @@ p {
   }
 }
 /* "What we build": the system plays out, one item after another, each time a business is chosen:
-   messages arrive, leads and rows come in, a status turns to done, the agent's note drops in. */
+   messages arrive (the bot types first), leads and rows come in, bars fill, statuses turn to done,
+   the agent's card rises in, and the AI bar turns from what it is doing to what it has done. */
 @media (prefers-reduced-motion: no-preference) {
   .build__screen .wa__msg,
   .build__screen .sys-in {
     animation: msg-in 380ms var(--ease-out) both;
     animation-delay: calc(var(--n) * 520ms + 250ms);
+  }
+  /* before each bot reply a small bubble of dots shows it typing; the reply then opens in its place */
+  .build__screen .wa__dots {
+    animation: dots-life 600ms ease both;
+    animation-delay: calc(var(--n) * 520ms - 300ms);
+  }
+  /* the dots bounce only while their bubble shows (each takes its slot's turn, --n) */
+  .build__screen .wa__dots i {
+    animation: typing 240ms ease-in-out 2 alternate both;
+    animation-delay: calc(var(--n) * 520ms - 260ms);
+  }
+  .build__screen .wa__dots i:nth-child(2) {
+    animation-delay: calc(var(--n) * 520ms - 180ms);
+  }
+  .build__screen .wa__dots i:nth-child(3) {
+    animation-delay: calc(var(--n) * 520ms - 100ms);
   }
   .build__screen .sys-drop {
     animation: rise-in 520ms var(--ease-out) both;
@@ -3450,6 +3742,51 @@ p {
   .build__screen .chip-to {
     animation: chip-in 300ms var(--ease-out) both;
     animation-delay: calc(var(--n) * 520ms + 700ms);
+  }
+  .build__screen .ai-bar__now .ai-bar__pulse {
+    animation: pulse-dot 700ms ease-in-out 6 alternate;
+  }
+  .build__screen .pay-card__fill {
+    animation: bar-fill 1600ms var(--ease-out) both;
+    animation-delay: 500ms;
+  }
+}
+@keyframes pulse-dot {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0.35;
+    transform: scale(0.7);
+  }
+}
+@keyframes bar-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@keyframes dots-life {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  12%,
+  88% {
+    opacity: 1;
+  }
+}
+@keyframes typing {
+  from {
+    opacity: 0.35;
+    transform: translateY(1px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-2px);
   }
 }
 @keyframes rise-in {

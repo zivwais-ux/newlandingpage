@@ -109,6 +109,17 @@ try {
     screens.push(await page.evaluate(() => ({ kind: document.querySelector(".build__screen").dataset.screen, items: document.querySelectorAll(".build__screen .wa__msg, .build__screen .sys-in").length })));
   }
   check("מה בונים: חמש מערכות שונות, בכל אחת לפחות 3 פריטים", new Set(screens.map((x) => x.kind)).size === 5 && screens.every((x) => x.items >= 3), JSON.stringify(screens));
+  // the AI bar on each app screen ends in its "done" state once the screen has played out
+  const aiDone = [];
+  for (let i = 1; i < 5; i++) {
+    await page.locator(".build__name").nth(i).tap();
+    await page.waitForTimeout(4500);
+    aiDone.push(await page.evaluate(() => {
+      const done = document.querySelector(".build__screen .ai-bar .chip-to");
+      return !!done && +getComputedStyle(done).opacity > 0.95;
+    }));
+  }
+  check("מה בונים: בכל מערכת פס ה-AI מגיע למצב 'בוצע'", aiDone.every(Boolean), JSON.stringify(aiDone));
   await page.getByRole("button", { name: "נותני שירות" }).tap();
   await page.waitForTimeout(150);
   check("בורר העסקים: הדיסק מחליף צבע לירוק כהה", field === "forest", field);
@@ -144,7 +155,7 @@ try {
   await page.waitForTimeout(150);
   const sys = await page.evaluate(() => {
     const ph = document.querySelector(".build__object .phone--wa");
-    return { status: !!ph?.querySelector(".phone__status"), sub: ph?.querySelector(".wa__who span")?.textContent, out: ph?.querySelectorAll(".wa__msg--out").length, in: ph?.querySelectorAll(".wa__msg--in").length };
+    return { status: !!ph?.querySelector(".phone__status"), sub: ph?.querySelector(".wa__who > span")?.textContent, out: ph?.querySelectorAll(".wa__msg--out").length, in: ph?.querySelectorAll(".wa__msg--in").length };
   });
   check("מה בונים: שיחת וואטסאפ אמיתית בין לקוח למערכת של העסק", sys.status && sys.sub === "מענה אוטומטי" && sys.out >= 1 && sys.in >= 1 && sys.out + sys.in >= 3, JSON.stringify(sys));
   check(

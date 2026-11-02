@@ -30,30 +30,39 @@ const imagePath = z.string().regex(/^\/img\/[a-z0-9-]+\.webp$/, "נתיב תמו
 
 // each example shows a different system on the iPhone screen: three to five items, short enough to fit
 const items = <T extends z.ZodTypeAny>(item: T) => z.array(item).min(3).max(5);
+const ai = z.object({ working: text.max(26), done: text.max(22) });
 const screenSchema = z.discriminatedUnion("kind", [
-  z.object({ kind: z.literal("whatsapp"), chatName: text.max(20), chat: items(z.object({ from: z.enum(["client", "bot"]), text: text.max(90) })) }),
+  z.object({ kind: z.literal("whatsapp"), chatName: text.max(20), chat: items(z.object({ from: z.enum(["client", "bot"]), text: text.max(90) })), note: text.max(32) }),
   z.object({
     kind: z.literal("crm"),
-    title: text.max(28),
-    leads: items(z.object({ name: text.max(16), need: text.max(28), source: text.max(10), status: text.max(14), next: text.max(14).optional() })),
+    title: text.max(14),
+    sub: text.max(20),
+    ai,
+    kpis: z.array(z.object({ label: text.max(12), value: text.max(4) })).length(3),
+    leads: items(z.object({ name: text.max(16), need: text.max(28), source: z.enum(["site", "whatsapp", "facebook"]), status: text.max(14), next: text.max(14).optional() })),
     task: text.max(40),
   }),
   z.object({
     kind: z.literal("payroll"),
-    title: text.max(20),
-    rows: items(z.object({ name: text.max(12), hours: text.max(12), pay: text.max(10) })),
+    title: text.max(14),
+    sub: text.max(16),
+    ai,
+    rows: items(z.object({ name: text.max(12), hours: z.number().int().min(1).max(186), pay: text.max(10) })),
     total: text.max(12),
     done: text.max(24),
   }),
   z.object({
     kind: z.literal("inbox"),
     title: text.max(16),
+    ai,
     mails: items(z.object({ from: text.max(16), subject: text.max(24), amount: text.max(10) })),
-    alert: z.object({ app: text.max(20), text: text.max(90) }),
+    alert: z.object({ app: text.max(20), text: text.max(90), action: text.max(14) }),
   }),
   z.object({
     kind: z.literal("calendar"),
+    title: text.max(14),
     day: text.max(26),
+    ai,
     appts: items(z.object({ time: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/), name: text.max(20), status: z.enum(["confirmed", "waitlist"]) })),
     note: text.max(70),
   }),

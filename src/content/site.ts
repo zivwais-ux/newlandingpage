@@ -68,7 +68,7 @@ export const pain = {
     { app: "קבוצת בעלי עסקים", icon: "people", time: "22:31", text: "כולם כבר משתמשים ב-AI, ואתם עוד לא יודעים מאיפה להתחיל." },
     { app: "הערות", icon: "note", time: "23:02", text: "יש תחושה שזה טכני מדי בשבילכם." },
   ] satisfies { app: string; icon: PainIcon; time: string; text: string }[],
-  answer: "אתם לא אשמים. פשוט עוד אין לכם מערכות שמקלות עליכם את העבודה. אני בונה אותן איתכם, כדי שתמשיכו לעבוד כמו שאתם אוהבים, רק בקלות ובנוחות.",
+  answer: "אתם לא אשמים. עוד אין לכם מערכות שמקלות על העבודה. אני בונה אותן איתכם, כדי שתעבדו כמו שאתם אוהבים, רק בקלות.",
   cta: "ספרו לי מה גוזל לכם הכי הרבה זמן",
 };
 
@@ -76,12 +76,29 @@ export const pain = {
 // וואטסאפ, CRM, חישוב שכר, סוכן חשבוניות במייל ויומן. כל התוכן הוא דוגמה בלבד, לאישור זיו.
 // סכומים מופיעים רק בתוך המסכים (קטעי ממשק לדוגמה), לעולם לא כמחיר של זיו.
 export type ChatLine = { from: "client" | "bot"; text: string };
+/** the AI layer on each screen: what the system is doing, then what it has done */
+export type AiActivity = { working: string; done: string };
 export type SystemScreen =
-  | { kind: "whatsapp"; chatName: string; chat: ChatLine[] }
-  | { kind: "crm"; title: string; leads: { name: string; need: string; source: string; status: string; next?: string }[]; task: string }
-  | { kind: "payroll"; title: string; rows: { name: string; hours: string; pay: string }[]; total: string; done: string }
-  | { kind: "inbox"; title: string; mails: { from: string; subject: string; amount: string }[]; alert: { app: string; text: string } }
-  | { kind: "calendar"; day: string; appts: { time: string; name: string; status: "confirmed" | "waitlist" }[]; note: string };
+  | { kind: "whatsapp"; chatName: string; chat: ChatLine[]; note: string }
+  | {
+      kind: "crm";
+      title: string;
+      sub: string;
+      ai: AiActivity;
+      kpis: { label: string; value: string }[];
+      leads: { name: string; need: string; source: "site" | "whatsapp" | "facebook"; status: string; next?: string }[];
+      task: string;
+    }
+  | { kind: "payroll"; title: string; sub: string; ai: AiActivity; rows: { name: string; hours: number; pay: string }[]; total: string; done: string }
+  | { kind: "inbox"; title: string; ai: AiActivity; mails: { from: string; subject: string; amount: string }[]; alert: { app: string; text: string; action: string } }
+  | {
+      kind: "calendar";
+      title: string;
+      day: string;
+      ai: AiActivity;
+      appts: { time: string; name: string; status: "confirmed" | "waitlist" }[];
+      note: string;
+    };
 export type BuildExample = {
   id: string;
   who: string;
@@ -111,6 +128,7 @@ export const build = {
           { from: "client", text: "16:00 מעולה" },
           { from: "bot", text: "קבעתי לך פן ביום חמישי ב-16:00. תזכורת תגיע יום לפני." },
         ],
+        note: "התור נוסף ליומן של נועה",
       },
       gives: "התורים נקבעים לבד, גם כשאתם באמצע טיפול.",
       message: "היי זיו, הגעתי מהאתר. יש לי קליניקה או מספרה ואשמח לשמוע על בוט שקובע תורים",
@@ -122,11 +140,18 @@ export const build = {
       system: "CRM שמסדר פניות",
       screen: {
         kind: "crm",
-        title: "לידים · אבי שיפוצים",
+        title: "לידים",
+        sub: "אבי שיפוצים",
+        ai: { working: "ממיין פניות חדשות…", done: "3 פניות סודרו" },
+        kpis: [
+          { label: "חדשות", value: "3" },
+          { label: "בטיפול", value: "1" },
+          { label: "נסגרו החודש", value: "12" },
+        ],
         leads: [
-          { name: "דנה כהן", need: "צביעת דירת 4 חדרים", source: "מהאתר", status: "חדש", next: "נשלחה תשובה" },
-          { name: "יוסי לוי", need: "החלפת ריצוף במטבח", source: "וואטסאפ", status: "נשלחה הצעה" },
-          { name: "מיכל אברהם", need: "שיפוץ חדר רחצה", source: "פייסבוק", status: "נסגר" },
+          { name: "דנה כהן", need: "צביעת דירת 4 חדרים", source: "site", status: "חדש", next: "נשלחה תשובה" },
+          { name: "יוסי לוי", need: "החלפת ריצוף במטבח", source: "whatsapp", status: "נשלחה הצעה" },
+          { name: "מיכל אברהם", need: "שיפוץ חדר רחצה", source: "facebook", status: "נסגר" },
         ],
         task: "לחזור לדנה מחר ב-10:00",
       },
@@ -140,12 +165,14 @@ export const build = {
       system: "חישוב שכר אוטומטי",
       screen: {
         kind: "payroll",
-        title: "שכר · נובמבר",
+        title: "שכר נובמבר",
+        sub: "4 עובדים",
+        ai: { working: "מושך שעות מהשעון…", done: "השכר חושב" },
         rows: [
-          { name: "שרון", hours: "142 שעות", pay: "7,810 ₪" },
-          { name: "אלון", hours: "96 שעות", pay: "4,992 ₪" },
-          { name: "רותם", hours: "118 שעות", pay: "6,372 ₪" },
-          { name: "נועם", hours: "64 שעות", pay: "3,328 ₪" },
+          { name: "שרון", hours: 142, pay: "7,810 ₪" },
+          { name: "אלון", hours: 96, pay: "4,992 ₪" },
+          { name: "רותם", hours: 118, pay: "6,372 ₪" },
+          { name: "נועם", hours: 64, pay: "3,328 ₪" },
         ],
         total: "22,502 ₪",
         done: "נשלח לרואה החשבון",
@@ -161,12 +188,13 @@ export const build = {
       screen: {
         kind: "inbox",
         title: "דואר נכנס",
+        ai: { working: "הסוכן סורק את המייל…", done: "נמצאו 3 חשבוניות" },
         mails: [
           { from: "בזק", subject: "חשבונית חודשית", amount: "189 ₪" },
           { from: "דפוס המרכז", subject: "חשבונית מס 2041", amount: "1,240 ₪" },
           { from: "Wix", subject: "קבלה על חידוש מנוי", amount: "485 ₪" },
         ],
-        alert: { app: "סוכן החשבוניות", text: "3 חשבוניות חדשות נשמרו בתיקייה. אחת עוד לא שולמה, תזכורת ב-15 לחודש." },
+        alert: { app: "סוכן החשבוניות", text: "3 חשבוניות חדשות נשמרו בתיקייה. אחת עוד לא שולמה, תזכורת ב-15 לחודש.", action: "פתח תיקייה" },
       },
       gives: "החשבוניות נאספות מהמייל ומחכות מסודרות לרואה החשבון.",
       message: "היי זיו, הגעתי מהאתר. אני עצמאי/ת ואשמח לשמוע על סוכן שמסדר חשבוניות מהמייל",
@@ -178,7 +206,9 @@ export const build = {
       system: "יומן שמאשר לבד",
       screen: {
         kind: "calendar",
+        title: "נובמבר",
         day: "יום שלישי, 12 בנובמבר",
+        ai: { working: "שולח תזכורות…", done: "3 אישרו הגעה" },
         appts: [
           { time: "09:00", name: "דנה ל.", status: "confirmed" },
           { time: "10:30", name: "עומר ש.", status: "confirmed" },
