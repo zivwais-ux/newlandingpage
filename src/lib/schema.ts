@@ -28,13 +28,42 @@ export const whatsappMessageSchema = text.max(300, "הודעה מוכנה ארו
 
 const imagePath = z.string().regex(/^\/img\/[a-z0-9-]+\.webp$/, "נתיב תמונה צריך להיות /img/<name>.webp");
 
+// each example shows a different system on the iPhone screen: three to five items, short enough to fit
+const items = <T extends z.ZodTypeAny>(item: T) => z.array(item).min(3).max(5);
+const screenSchema = z.discriminatedUnion("kind", [
+  z.object({ kind: z.literal("whatsapp"), chatName: text.max(20), chat: items(z.object({ from: z.enum(["client", "bot"]), text: text.max(90) })) }),
+  z.object({
+    kind: z.literal("crm"),
+    title: text.max(28),
+    leads: items(z.object({ name: text.max(16), need: text.max(28), source: text.max(10), status: text.max(14), next: text.max(14).optional() })),
+    task: text.max(40),
+  }),
+  z.object({
+    kind: z.literal("payroll"),
+    title: text.max(20),
+    rows: items(z.object({ name: text.max(12), hours: text.max(12), pay: text.max(10) })),
+    total: text.max(12),
+    done: text.max(24),
+  }),
+  z.object({
+    kind: z.literal("inbox"),
+    title: text.max(16),
+    mails: items(z.object({ from: text.max(16), subject: text.max(24), amount: text.max(10) })),
+    alert: z.object({ app: text.max(20), text: text.max(90) }),
+  }),
+  z.object({
+    kind: z.literal("calendar"),
+    day: text.max(26),
+    appts: items(z.object({ time: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/), name: text.max(20), status: z.enum(["confirmed", "waitlist"]) })),
+    note: text.max(70),
+  }),
+]);
+
 const buildExampleSchema = z.object({
   id: z.string().regex(/^[a-z]+$/),
   who: text,
   system: text.max(24),
-  chatName: text.max(20),
-  // a real conversation between a customer and the business's system, short enough for the phone
-  chat: z.array(z.object({ from: z.enum(["client", "bot"]), text: text.max(90) })).min(3).max(5),
+  screen: screenSchema,
   gives: text,
   message: whatsappMessageSchema,
   field: z.enum(["sage", "forest"]),
@@ -91,6 +120,8 @@ export const contentSchema = z.object({
     .superRefine((b, ctx) => {
       const ids = b.examples.map((e) => e.id);
       if (new Set(ids).size !== ids.length) ctx.addIssue({ code: "custom", message: "מזהי הדוגמאות ב'מה בונים' חייבים להיות ייחודיים" });
+      const kinds = b.examples.map((e) => e.screen.kind);
+      if (new Set(kinds).size !== kinds.length) ctx.addIssue({ code: "custom", message: "כל דוגמה ב'מה בונים' מציגה מערכת מסוג אחר" });
     }),
   how: z.object({
     title: text,

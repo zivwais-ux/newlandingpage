@@ -38,11 +38,10 @@ describe("התוכן של הדף (site.ts)", () => {
     expect(content.intro).not.toHaveProperty("icon");
   });
 
-  it("כל דוגמה ב'מה בונים' היא שיחה אמיתית: לקוח ומערכת, לפחות שלוש הודעות", () => {
-    for (const ex of content.build.examples) {
-      expect(ex.chat.length).toBeGreaterThanOrEqual(3);
-      expect(ex.chat.some((m) => m.from === "bot")).toBe(true);
-    }
+  it("כל דוגמה ב'מה בונים' מציגה מערכת מסוג אחר", () => {
+    const kinds = content.build.examples.map((ex) => ex.screen.kind);
+    expect(new Set(kinds).size).toBe(kinds.length);
+    expect(kinds).toEqual(expect.arrayContaining(["whatsapp", "crm", "payroll", "inbox", "calendar"]));
   });
 
   it("אין יותר שיעורים פרטיים באתר", () => {
@@ -50,7 +49,9 @@ describe("התוכן של הדף (site.ts)", () => {
   });
 
   it("אין מחירים בדף", () => {
-    expect(JSON.stringify(content)).not.toMatch(/₪|\bש״ח\b|\bשקל/);
+    // amounts may appear only inside the example screens on the iPhone (payroll, invoices), never as Ziv's price
+    const withoutScreens = { ...content, build: { ...content.build, examples: content.build.examples.map((ex) => ({ ...ex, screen: undefined })) } };
+    expect(JSON.stringify(withoutScreens)).not.toMatch(/₪|\bש״ח\b|\bשקל/);
   });
 
   it("כל תמונה שהתוכן מפנה אליה קיימת ב-public", () => {

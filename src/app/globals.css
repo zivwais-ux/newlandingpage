@@ -1743,6 +1743,213 @@ p {
   position: relative;
 }
 
+
+/* ---------- System screens in the "What we build" iPhone (data-ui fragments: an app's own look) ---------- */
+.app {
+  background: #f4f5f6;
+  color: #111;
+}
+.app__bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px 10px;
+  background: var(--white);
+  color: #5f6368;
+}
+.app__bar b {
+  color: #111;
+  font-size: 15px;
+  font-weight: 600;
+}
+.app__body {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  overflow: clip;
+}
+.app__dot {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  margin-top: 0.45em;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.chip {
+  justify-self: start;
+  width: fit-content;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.chip--wait {
+  background: #ececec;
+  color: #5f6368;
+}
+.chip--open {
+  background: #e7eef9;
+  color: #24518f;
+}
+.chip--done {
+  background: #dff1e4;
+  color: #17552d;
+}
+/* a status that changes: both labels share one cell; the new one replaces the old at its turn */
+.chip-swap {
+  display: grid;
+  justify-items: start;
+}
+.chip-swap > * {
+  grid-area: 1 / 1;
+}
+.chip-from {
+  opacity: 0;
+}
+/* CRM */
+.crm__lead {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  background: var(--white);
+  border-radius: 12px;
+}
+.crm__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.crm__source {
+  font-size: 11.5px;
+  color: #6b7076;
+}
+.crm__need {
+  color: #3c4043;
+}
+.crm__task,
+.cal__note {
+  display: flex;
+  gap: 8px;
+  margin-top: 2px;
+  padding: 10px 12px;
+  background: #e9f3ec;
+  border-radius: 12px;
+  color: #17552d;
+  line-height: 1.35;
+}
+/* payroll */
+.pay__head,
+.pay__row,
+.pay__total {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr 0.9fr;
+  align-items: center;
+  gap: 6px;
+}
+.pay__head {
+  padding: 0 12px;
+  font-size: 11.5px;
+  color: #6b7076;
+}
+.pay__row,
+.pay__total {
+  padding: 10px 12px;
+  background: var(--white);
+  border-radius: 12px;
+}
+.pay__total {
+  grid-template-columns: 2.1fr 0.9fr;
+  background: var(--forest);
+  color: var(--white);
+}
+.pay__sum {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  text-align: end;
+}
+.pay__done {
+  align-self: flex-start;
+}
+/* invoices in the mail, and the agent's note dropping in from the top */
+.mail {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--white);
+  border-radius: 12px;
+}
+.mail__avatar {
+  width: 30px;
+  height: 30px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #e6e8eb;
+  color: #3c4043;
+  font-weight: 600;
+}
+.mail__text {
+  flex: 1;
+  display: grid;
+  line-height: 1.3;
+}
+.mail__text span {
+  color: #5f6368;
+}
+.mail__amount {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+/* the agent's note: a banner that rises into the free space under the mail when the agent is done */
+.mail__alert {
+  position: absolute;
+  bottom: 26px;
+  inset-inline: 10px;
+  z-index: 1;
+  display: grid;
+  gap: 2px;
+  padding: 11px 13px;
+  background: rgb(255 255 255 / 0.96);
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgb(0 0 0 / 0.14); /* taste-skill-ignore: an iOS notification inside a data-ui fragment */
+  line-height: 1.35;
+}
+.mail__alert b {
+  font-size: 12px;
+  color: var(--accent);
+}
+/* calendar */
+.cal__slot {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 8px;
+  align-items: start;
+}
+.cal__time {
+  padding-top: 10px;
+  font-size: 12px;
+  color: #6b7076;
+  font-variant-numeric: tabular-nums;
+}
+.cal__event {
+  display: grid;
+  gap: 5px;
+  padding: 9px 12px;
+  background: var(--white);
+  border-radius: 12px;
+  border-inline-start: 3px solid var(--accent); /* taste-skill-ignore: a calendar event's colour bar inside a data-ui fragment */
+}
+.cal__slot--wait .cal__event {
+  border-inline-start-color: #8ab0e0;
+}
+
 /* ---------- Plans: the four routes sketched like a flow in Ziv's notebook ---------- */
 /* Big names in pen-drawn boxes, pen arrows between them, a marker swipe on the chosen one,
    and its details opened below on a forest field. No icons, no tiles, no cards. */
@@ -2403,7 +2610,7 @@ p {
 
   /* Pains: a size that lets the whole section sit on one screen while it is held. */
   .pain__stage {
-    padding-block: 56px;
+    padding-block: 56px 32px;
   }
 
   /* order on a phone: heading, answer, the notifications, then the circled line */
@@ -2416,6 +2623,9 @@ p {
   .pain__answer {
     order: 2;
     margin-top: 0;
+    /* the full width of the phone at body size, so the answer stays short enough for the held screen */
+    max-width: none;
+    font-size: var(--step-body);
   }
   .pain__device {
     order: 3;
@@ -2483,7 +2693,10 @@ p {
       margin-top: 4px;
     }
     .pain__grid {
-      gap: 8px;
+      gap: 5px;
+    }
+    .pain__answer {
+      line-height: 1.35;
     }
     .pain__stack {
       gap: 6px;
@@ -2502,6 +2715,8 @@ p {
       margin-inline: 0;
     }
     .laptop > .pain__stack {
+      /* always narrower than the machine, whose body is capped at 262px here */
+      width: min(78%, 236px);
       margin-bottom: -70px;
     }
   }
@@ -3216,11 +3431,53 @@ p {
     animation: plan-in 420ms var(--ease-out);
   }
 }
-/* "What we build": the conversation plays out, one message after another, each time a business is chosen */
+/* "What we build": the system plays out, one item after another, each time a business is chosen:
+   messages arrive, leads and rows come in, a status turns to done, the agent's note drops in. */
 @media (prefers-reduced-motion: no-preference) {
-  .build__screen .wa__msg {
+  .build__screen .wa__msg,
+  .build__screen .sys-in {
     animation: msg-in 380ms var(--ease-out) both;
-    animation-delay: calc(var(--n) * 650ms + 250ms);
+    animation-delay: calc(var(--n) * 520ms + 250ms);
+  }
+  .build__screen .sys-drop {
+    animation: rise-in 520ms var(--ease-out) both;
+    animation-delay: calc(var(--n) * 520ms + 450ms);
+  }
+  .build__screen .chip-from {
+    animation: chip-out 260ms ease both;
+    animation-delay: calc(var(--n) * 520ms + 700ms);
+  }
+  .build__screen .chip-to {
+    animation: chip-in 300ms var(--ease-out) both;
+    animation-delay: calc(var(--n) * 520ms + 700ms);
+  }
+}
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes chip-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes chip-in {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: none;
   }
 }
 @keyframes msg-in {

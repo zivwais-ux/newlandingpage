@@ -224,3 +224,145 @@ export function HeroBubble({ text }: { text: string }) {
     </div>
   );
 }
+
+// ---------- system screens for "What we build": each business sees a different system at work ----------
+// Every item carries --n, its turn: on each choice the items arrive one after another, as if the
+// system is working right now. A status that changes shows both labels; CSS crossfades them in turn.
+
+type Screen =
+  | { kind: "crm"; title: string; leads: { name: string; need: string; source: string; status: string; next?: string }[]; task: string }
+  | { kind: "payroll"; title: string; rows: { name: string; hours: string; pay: string }[]; total: string; done: string }
+  | { kind: "inbox"; title: string; mails: { from: string; subject: string; amount: string }[]; alert: { app: string; text: string } }
+  | { kind: "calendar"; day: string; appts: { time: string; name: string; status: "confirmed" | "waitlist" }[]; note: string };
+
+const turn = (n: number) => ({ "--n": n }) as React.CSSProperties;
+
+/** a status label that changes from one value to the next at its turn */
+function StatusSwap({ from, to, n, tone }: { from: string; to: string; n: number; tone: string }) {
+  return (
+    <span className="chip-swap" style={turn(n)}>
+      <span className="chip chip--wait chip-from">{from}</span>
+      <span className={`chip chip--${tone} chip-to`}>{to}</span>
+    </span>
+  );
+}
+
+function AppShell({ kind, title, label, children }: { kind: string; title: string; label: string; children: React.ReactNode }) {
+  return (
+    <div className={`phone phone--bare app app--${kind}`} data-ui role="img" aria-label={label}>
+      <StatusBar time="10:45" />
+      <div className="app__bar" aria-hidden="true">
+        <Glyph d={ICON.back} className="ui-icon ui-icon--sm" />
+        <b>{title}</b>
+      </div>
+      <div className="app__body" aria-hidden="true">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+export function SystemScreen({ screen }: { screen: Screen }) {
+  if (screen.kind === "crm") {
+    // the newest lead sits on top but arrives last, after the ones already in the list
+    const [fresh, ...rest] = screen.leads;
+    const label = `דוגמה למערכת CRM: ${screen.leads.map((l) => `${l.name}, ${l.need}, ${l.next ?? l.status}`).join(" · ")}. ${screen.task}`;
+    return (
+      <AppShell kind="crm" title={screen.title} label={label}>
+        {[fresh, ...rest].map((l, i) => {
+          const n = i === 0 ? rest.length : i - 1;
+          return (
+            <div key={l.name} className="crm__lead sys-in" style={turn(n)}>
+              <span className="crm__top">
+                <b>{l.name}</b>
+                <span className="crm__source">{l.source}</span>
+              </span>
+              <span className="crm__need">{l.need}</span>
+              {l.next ? (
+                <StatusSwap from={l.status} to={l.next} n={n + 1} tone="done" />
+              ) : (
+                <span className={`chip ${l.status === "נסגר" ? "chip--done" : "chip--open"}`}>{l.status}</span>
+              )}
+            </div>
+          );
+        })}
+        <p className="crm__task sys-in" style={turn(rest.length + 2)}>
+          <span className="app__dot" />
+          {screen.task}
+        </p>
+      </AppShell>
+    );
+  }
+
+  if (screen.kind === "payroll") {
+    const label = `דוגמה למערכת חישוב שכר: ${screen.rows.map((r) => `${r.name} ${r.hours}, ${r.pay}`).join(" · ")}. סה״כ ${screen.total}, ${screen.done}`;
+    return (
+      <AppShell kind="payroll" title={screen.title} label={label}>
+        <div className="pay__head">
+          <span>עובד</span>
+          <span>שעות מהשעון</span>
+          <span>שכר</span>
+        </div>
+        {screen.rows.map((r, i) => (
+          <div key={r.name} className="pay__row sys-in" style={turn(i)}>
+            <b>{r.name}</b>
+            <span>{r.hours}</span>
+            <span className="pay__sum">{r.pay}</span>
+          </div>
+        ))}
+        <div className="pay__total sys-in" style={turn(screen.rows.length)}>
+          <b>סה״כ לתשלום</b>
+          <span className="pay__sum">{screen.total}</span>
+        </div>
+        <span className="chip chip--done pay__done sys-in" style={turn(screen.rows.length + 1)}>
+          {screen.done}
+        </span>
+      </AppShell>
+    );
+  }
+
+  if (screen.kind === "inbox") {
+    const label = `דוגמה לסוכן חשבוניות במייל: ${screen.mails.map((m) => `${m.from}, ${m.subject}, ${m.amount}`).join(" · ")}. ${screen.alert.app}: ${screen.alert.text}`;
+    return (
+      <AppShell kind="inbox" title={screen.title} label={label}>
+        {screen.mails.map((m, i) => (
+          <div key={m.subject} className="mail sys-in" style={turn(i)}>
+            <span className="mail__avatar">{m.from[0]}</span>
+            <span className="mail__text">
+              <b>{m.from}</b>
+              <span>{m.subject}</span>
+            </span>
+            <span className="mail__amount">{m.amount}</span>
+          </div>
+        ))}
+        <div className="mail__alert sys-drop" style={turn(screen.mails.length)}>
+          <b>{screen.alert.app}</b>
+          <span>{screen.alert.text}</span>
+        </div>
+      </AppShell>
+    );
+  }
+
+  const label = `דוגמה ליומן שמאשר לבד, ${screen.day}: ${screen.appts.map((a) => `${a.time} ${a.name}`).join(" · ")}. ${screen.note}`;
+  return (
+    <AppShell kind="calendar" title={screen.day} label={label}>
+      {screen.appts.map((a, i) => (
+        <div key={a.time} className={`cal__slot sys-in ${a.status === "waitlist" ? "cal__slot--wait" : ""}`} style={turn(i)}>
+          <span className="cal__time">{a.time}</span>
+          <span className="cal__event">
+            <b>{a.name}</b>
+            {a.status === "confirmed" ? (
+              <StatusSwap from="ממתין לאישור" to="אישר/ה" n={i + 1} tone="done" />
+            ) : (
+              <span className="chip chip--open">הוצע מרשימת ההמתנה</span>
+            )}
+          </span>
+        </div>
+      ))}
+      <p className="cal__note sys-in" style={turn(screen.appts.length + 1)}>
+        <span className="app__dot" />
+        {screen.note}
+      </p>
+    </AppShell>
+  );
+}

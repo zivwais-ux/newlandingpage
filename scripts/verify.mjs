@@ -63,7 +63,13 @@ try {
         wa: [...document.querySelectorAll('a[href*="wa.me"]')].map((a) => a.href),
         floating: document.querySelector("[data-floating-whatsapp], .float-wa") !== null,
         pink: [...document.querySelectorAll("*")].some((el) => /248, 199, 201/.test(getComputedStyle(el).backgroundColor)),
-        prices: /₪|ש״ח|\d[\d,.]*\s*(אלף\s*)?שקלים/.test(document.body.innerText), // an amount, not the words "אלפי שקלים" about other courses
+        // an amount, not the words "אלפי שקלים" about other courses; the example systems on the iPhone
+        // ([data-ui]: a payroll, an invoice) may show amounts, Ziv's own prices never appear
+        prices: (() => {
+          const copy = document.body.cloneNode(true);
+          copy.querySelectorAll("[data-ui]").forEach((el) => el.remove());
+          return /₪|ש״ח|\d[\d,.]*\s*(אלף\s*)?שקלים/.test(copy.textContent);
+        })(),
       };
     });
     check(`${width}px: אין גלילה הצידה`, info.overflow <= 0, `${info.overflow}px`);
@@ -91,10 +97,20 @@ try {
   await page.waitForTimeout(350);
   const after = new URL(await ctaHref()).searchParams.get("text");
   const title = await page.textContent(".build__fact b");
-  const chatName = await page.textContent(".build__object .wa__who b");
+  const shown = await page.getAttribute(".build__screen", "data-screen");
   const field = await page.getAttribute(".build__disc", "data-field");
-  check("בורר העסקים: המערכת והשיחה מתחלפות", title === "מענה מיידי לפניות" && chatName === "אבי שיפוצים", `${title} / ${chatName}`);
+  check("בורר העסקים: המערכת והמסך מתחלפים", title === "CRM שמסדר פניות" && shown === "crm", `${title} / ${shown}`);
   check("בורר העסקים: ההודעה המוכנה מותאמת לסוג העסק", before.includes("קליניקה") && after.includes("נותן/ת שירות"), after);
+  // every business shows a different system, each with something happening in it
+  const screens = [];
+  for (let i = 0; i < 5; i++) {
+    await page.locator(".build__name").nth(i).tap();
+    await page.waitForTimeout(150);
+    screens.push(await page.evaluate(() => ({ kind: document.querySelector(".build__screen").dataset.screen, items: document.querySelectorAll(".build__screen .wa__msg, .build__screen .sys-in").length })));
+  }
+  check("מה בונים: חמש מערכות שונות, בכל אחת לפחות 3 פריטים", new Set(screens.map((x) => x.kind)).size === 5 && screens.every((x) => x.items >= 3), JSON.stringify(screens));
+  await page.getByRole("button", { name: "נותני שירות" }).tap();
+  await page.waitForTimeout(150);
   check("בורר העסקים: הדיסק מחליף צבע לירוק כהה", field === "forest", field);
   check("בורר העסקים: הכפתור הנבחר מסומן ל-aria", (await page.getAttribute('button.build__name[aria-pressed="true"]', "id")) === null && (await page.locator('button.build__name[aria-pressed="true"]').innerText()).includes("נותני שירות"));
 
@@ -124,6 +140,8 @@ try {
   // 4. שיחות שנראות אמיתיות, אייקונים בפתיחה, ופוטר בלי בלוקים של אותיות
   check("שיחת הוואטסאפ: שעה ווי כפול כחול", (await page.locator(".how__card--1 .phone--wa .wa__meta").first().innerText()).includes("10:42") && (await page.locator(".how__card--1 .phone--wa .wa__ticks").count()) === 1);
   // the system's conversation in the iPhone: status bar, "automatic reply", the customer and the business both talk
+  await page.getByRole("button", { name: "קליניקה או מספרה" }).tap();
+  await page.waitForTimeout(150);
   const sys = await page.evaluate(() => {
     const ph = document.querySelector(".build__object .phone--wa");
     return { status: !!ph?.querySelector(".phone__status"), sub: ph?.querySelector(".wa__who span")?.textContent, out: ph?.querySelectorAll(".wa__msg--out").length, in: ph?.querySelectorAll(".wa__msg--in").length };
@@ -414,7 +432,7 @@ try {
     await ip.evaluate(() => (document.querySelector(".iphone").dataset.same = "1"));
     await ip.locator(".build__name").nth(3).click();
     await ip.waitForTimeout(350);
-    check(`${width}px: בחירת עסק מחליפה רק את המסך, המכשיר נשאר`, (await ip.locator('.iphone[data-same="1"]').count()) === 1 && (await ip.locator(".iphone .wa__msg").count()) >= 3);
+    check(`${width}px: בחירת עסק מחליפה רק את המסך, המכשיר נשאר`, (await ip.locator('.iphone[data-same="1"]').count()) === 1 && (await ip.locator(".iphone .wa__msg, .iphone .sys-in").count()) >= 3);
     await ip.close();
   }
 

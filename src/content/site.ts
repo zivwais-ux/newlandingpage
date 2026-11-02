@@ -68,20 +68,25 @@ export const pain = {
     { app: "קבוצת בעלי עסקים", icon: "people", time: "22:31", text: "כולם כבר משתמשים ב-AI, ואתם עוד לא יודעים מאיפה להתחיל." },
     { app: "הערות", icon: "note", time: "23:02", text: "יש תחושה שזה טכני מדי בשבילכם." },
   ] satisfies { app: string; icon: PainIcon; time: string; text: string }[],
-  answer: "זה לא אתם. פשוט אף אחד עוד לא בנה לכם מערכת שעושה את זה במקומכם. בשביל זה אני כאן.",
+  answer: "אתם לא אשמים. פשוט עוד אין לכם מערכות שמקלות עליכם את העבודה. אני בונה אותן איתכם, כדי שתמשיכו לעבוד כמו שאתם אוהבים, רק בקלות ובנוחות.",
   cta: "ספרו לי מה גוזל לכם הכי הרבה זמן",
 };
 
-// "מה בונים" – בוחרים סוג עסק ורואים מערכת שעובדת: שיחת וואטסאפ בין לקוח לבין המערכת של העסק.
-// הדוגמאות הן תוכן לדוגמה בלבד, לאישור זיו. message היא ההודעה שנפתחת בוואטסאפ אחרי הבחירה.
+// "מה בונים" – בוחרים סוג עסק ורואים מערכת שעובדת. לכל סוג עסק מסך של מערכת אחרת באייפון:
+// וואטסאפ, CRM, חישוב שכר, סוכן חשבוניות במייל ויומן. כל התוכן הוא דוגמה בלבד, לאישור זיו.
+// סכומים מופיעים רק בתוך המסכים (קטעי ממשק לדוגמה), לעולם לא כמחיר של זיו.
 export type ChatLine = { from: "client" | "bot"; text: string };
+export type SystemScreen =
+  | { kind: "whatsapp"; chatName: string; chat: ChatLine[] }
+  | { kind: "crm"; title: string; leads: { name: string; need: string; source: string; status: string; next?: string }[]; task: string }
+  | { kind: "payroll"; title: string; rows: { name: string; hours: string; pay: string }[]; total: string; done: string }
+  | { kind: "inbox"; title: string; mails: { from: string; subject: string; amount: string }[]; alert: { app: string; text: string } }
+  | { kind: "calendar"; day: string; appts: { time: string; name: string; status: "confirmed" | "waitlist" }[]; note: string };
 export type BuildExample = {
   id: string;
   who: string;
   system: string;
-  /** שם העסק בראש השיחה */
-  chatName: string;
-  chat: ChatLine[];
+  screen: SystemScreen;
   gives: string;
   message: string;
   field: "sage" | "forest";
@@ -97,13 +102,16 @@ export const build = {
       id: "salon",
       who: "קליניקה או מספרה",
       system: "בוט שקובע תורים",
-      chatName: "סטודיו נועה",
-      chat: [
-        { from: "client", text: "היי, יש תור לפן ביום חמישי?" },
-        { from: "bot", text: "היי! ביום חמישי פנוי ב-10:30 או ב-16:00. איזו שעה מתאימה לך?" },
-        { from: "client", text: "16:00 מעולה" },
-        { from: "bot", text: "קבעתי לך פן ביום חמישי ב-16:00. תזכורת תגיע יום לפני." },
-      ],
+      screen: {
+        kind: "whatsapp",
+        chatName: "סטודיו נועה",
+        chat: [
+          { from: "client", text: "היי, יש תור לפן ביום חמישי?" },
+          { from: "bot", text: "היי! ביום חמישי פנוי ב-10:30 או ב-16:00. איזו שעה מתאימה לך?" },
+          { from: "client", text: "16:00 מעולה" },
+          { from: "bot", text: "קבעתי לך פן ביום חמישי ב-16:00. תזכורת תגיע יום לפני." },
+        ],
+      },
       gives: "התורים נקבעים לבד, גם כשאתם באמצע טיפול.",
       message: "היי זיו, הגעתי מהאתר. יש לי קליניקה או מספרה ואשמח לשמוע על בוט שקובע תורים",
       field: "sage",
@@ -111,58 +119,76 @@ export const build = {
     {
       id: "service",
       who: "נותני שירות",
-      system: "מענה מיידי לפניות",
-      chatName: "אבי שיפוצים",
-      chat: [
-        { from: "client", text: "ראיתי את האתר. כמה עולה לצבוע דירת 4 חדרים?" },
-        { from: "bot", text: "תודה שפנית! כדי לתת הצעה מדויקת: באיזו עיר, ומתי תרצו להתחיל?" },
-        { from: "client", text: "במודיעין, בעוד שבועיים" },
-        { from: "bot", text: "רשמתי. אבי יחזור אליך היום עם הצעת מחיר." },
-      ],
-      gives: "כל פנייה נענית ונרשמת בטבלה, גם בלילה.",
-      message: "היי זיו, הגעתי מהאתר. אני נותן/ת שירות ואשמח לשמוע על מענה אוטומטי לפניות",
+      system: "CRM שמסדר פניות",
+      screen: {
+        kind: "crm",
+        title: "לידים · אבי שיפוצים",
+        leads: [
+          { name: "דנה כהן", need: "צביעת דירת 4 חדרים", source: "מהאתר", status: "חדש", next: "נשלחה תשובה" },
+          { name: "יוסי לוי", need: "החלפת ריצוף במטבח", source: "וואטסאפ", status: "נשלחה הצעה" },
+          { name: "מיכל אברהם", need: "שיפוץ חדר רחצה", source: "פייסבוק", status: "נסגר" },
+        ],
+        task: "לחזור לדנה מחר ב-10:00",
+      },
+      gives: "כל פנייה נכנסת למקום אחד, עם סטטוס ותזכורת לחזור.",
+      message: "היי זיו, הגעתי מהאתר. אני נותן/ת שירות ואשמח לשמוע על CRM שמסדר פניות",
       field: "forest",
     },
     {
-      id: "shop",
-      who: "חנות אונליין",
-      system: "עוזר ללקוחות",
-      chatName: "קרמיקה של מיה",
-      chat: [
-        { from: "client", text: "תוך כמה זמן מגיע משלוח לחיפה?" },
-        { from: "bot", text: "משלוח לחיפה מגיע תוך 2–3 ימי עסקים." },
-        { from: "bot", text: "רוצה שאשלח לך קישור ישיר להזמנה?" },
-      ],
-      gives: "שאלות חוזרות נענות לבד, ואתם מקבלים רק את מה שבאמת צריך אתכם.",
-      message: "היי זיו, הגעתי מהאתר. יש לי חנות ואשמח לשמוע על עוזר שעונה ללקוחות",
+      id: "staff",
+      who: "עסק עם עובדים",
+      system: "חישוב שכר אוטומטי",
+      screen: {
+        kind: "payroll",
+        title: "שכר · נובמבר",
+        rows: [
+          { name: "שרון", hours: "142 שעות", pay: "7,810 ₪" },
+          { name: "אלון", hours: "96 שעות", pay: "4,992 ₪" },
+          { name: "רותם", hours: "118 שעות", pay: "6,372 ₪" },
+          { name: "נועם", hours: "64 שעות", pay: "3,328 ₪" },
+        ],
+        total: "22,502 ₪",
+        done: "נשלח לרואה החשבון",
+      },
+      gives: "השעות נמשכות מהשעון, והשכר מחושב בלי אקסל ובלי טעויות.",
+      message: "היי זיו, הגעתי מהאתר. יש לי עסק עם עובדים ואשמח לשמוע על מערכת לחישוב שכר",
       field: "sage",
+    },
+    {
+      id: "freelance",
+      who: "עצמאים",
+      system: "סוכן חשבוניות במייל",
+      screen: {
+        kind: "inbox",
+        title: "דואר נכנס",
+        mails: [
+          { from: "בזק", subject: "חשבונית חודשית", amount: "189 ₪" },
+          { from: "דפוס המרכז", subject: "חשבונית מס 2041", amount: "1,240 ₪" },
+          { from: "Wix", subject: "קבלה על חידוש מנוי", amount: "485 ₪" },
+        ],
+        alert: { app: "סוכן החשבוניות", text: "3 חשבוניות חדשות נשמרו בתיקייה. אחת עוד לא שולמה, תזכורת ב-15 לחודש." },
+      },
+      gives: "החשבוניות נאספות מהמייל ומחכות מסודרות לרואה החשבון.",
+      message: "היי זיו, הגעתי מהאתר. אני עצמאי/ת ואשמח לשמוע על סוכן שמסדר חשבוניות מהמייל",
+      field: "forest",
     },
     {
       id: "therapist",
       who: "מטפל או מאמן",
-      system: "תזכורות ואישורים",
-      chatName: "רון, אימון אישי",
-      chat: [
-        { from: "bot", text: "היי דנה, תזכורת: הפגישה שלנו מחר ב-18:00. מאשרת?" },
-        { from: "client", text: "כן, מאשרת" },
-        { from: "bot", text: "מעולה, נתראה מחר. אם משהו משתנה, אפשר לכתוב כאן." },
-      ],
-      gives: "פחות ביטולים ברגע האחרון, בלי לשלוח תזכורות ביד.",
-      message: "היי זיו, הגעתי מהאתר. אני מטפל/ת או מאמן/ת ואשמח לשמוע על תזכורות אוטומטיות",
-      field: "forest",
-    },
-    {
-      id: "team",
-      who: "עסק עם צוות",
-      system: "סיכום ישיבה לצוות",
-      chatName: "צוות המשרד",
-      chat: [
-        { from: "bot", text: "סיכום ישיבת הבוקר:" },
-        { from: "bot", text: "הוחלט: מבצע חורף יוצא ביום ראשון." },
-        { from: "bot", text: "שרון: עיצוב עד חמישי. אלון: מחירון עד רביעי." },
-      ],
-      gives: "כולם יוצאים מהישיבה עם אותה רשימה.",
-      message: "היי זיו, הגעתי מהאתר. יש לי עסק עם צוות ואשמח לשמוע איך להכניס AI לעבודה שלנו",
+      system: "יומן שמאשר לבד",
+      screen: {
+        kind: "calendar",
+        day: "יום שלישי, 12 בנובמבר",
+        appts: [
+          { time: "09:00", name: "דנה ל.", status: "confirmed" },
+          { time: "10:30", name: "עומר ש.", status: "confirmed" },
+          { time: "12:00", name: "רשימת המתנה: גלית", status: "waitlist" },
+          { time: "17:00", name: "נעמה ב.", status: "confirmed" },
+        ],
+        note: "הפגישה של 12:00 בוטלה, והוצעה אוטומטית לגלית.",
+      },
+      gives: "הלקוחות מאשרים בעצמם, ואתם רואים מי מגיע.",
+      message: "היי זיו, הגעתי מהאתר. אני מטפל/ת או מאמן/ת ואשמח לשמוע על יומן שמאשר לבד",
       field: "sage",
     },
   ] satisfies BuildExample[],
