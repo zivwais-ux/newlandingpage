@@ -479,10 +479,62 @@ try {
   await rm.close();
 
   // 8. עמודי משנה וקישורים פנימיים
-  for (const path of ["accessibility", "privacy"]) {
+  for (const path of ["accessibility", "privacy", "terms"]) {
     const res = await page.goto(URL_ + path);
-    check(`/${path} נטען`, res.status() === 200);
+    const doc = await page.evaluate(() => ({
+      h1: document.querySelector("h1")?.textContent ?? "",
+      sections: document.querySelectorAll(".legal__body h2").length,
+      todo: /\[למלא/.test(document.body.innerText),
+      canonical: document.querySelector('link[rel="canonical"]')?.href ?? "",
+    }));
+    check(`/${path} נטען, עם כותרת, סעיפים ובלי "[למלא"`, res.status() === 200 && doc.h1.length > 3 && doc.sections >= 4 && !doc.todo && doc.canonical.endsWith(`/${path}`), JSON.stringify(doc));
   }
+  check("הצהרת הנגישות: תקן 5568 ופרטי רכז הנגישות", await page.goto(URL_ + "accessibility").then(() => page.evaluate(() => /5568/.test(document.body.innerText) && /054-804-4345/.test(document.body.innerText))));
+
+  // SEO: canonical, keywords, structured data for the business and the FAQ, sitemap and robots
+  await page.goto(URL_);
+  const seo = await page.evaluate(() => {
+    const ld = [...document.querySelectorAll('script[type="application/ld+json"]')].map((x) => JSON.parse(x.textContent));
+    const types = ld.flatMap((d) => (d["@graph"] ?? [d]).map((n) => n["@type"]));
+    const faq = ld.flatMap((d) => d["@graph"] ?? [d]).find((n) => n["@type"] === "FAQPage");
+    return {
+      canonical: document.querySelector('link[rel="canonical"]')?.href ?? "",
+      keywords: document.querySelector('meta[name="keywords"]')?.content ?? "",
+      ogUrl: document.querySelector('meta[property="og:url"]')?.content ?? "",
+      types,
+      faq: faq?.mainEntity?.length ?? 0,
+      faqOnPage: document.querySelectorAll(".faq__card").length,
+    };
+  });
+  check("SEO: כתובת קנונית, מילות מפתח ושיתוף ברשתות על הכתובת האמיתית", seo.canonical.startsWith("https://ziv-ai-lessons.vercel.app") && seo.keywords.includes("אוטומציה לעסקים") && seo.ogUrl.startsWith("https://ziv-ai-lessons.vercel.app"), JSON.stringify(seo));
+  check("SEO: נתונים מובנים לעסק ולשאלות הנפוצות", seo.types.includes("ProfessionalService") && seo.types.includes("FAQPage") && seo.faq === seo.faqOnPage, JSON.stringify(seo.types));
+  const seoFiles = await Promise.all(["robots.txt", "sitemap.xml"].map((f) => fetch(URL_ + f).then((r) => r.text())));
+  check("SEO: robots.txt ומפת אתר עם ארבעת הדפים", seoFiles[0].includes("Sitemap:") && ["/terms", "/privacy", "/accessibility"].every((x) => seoFiles[1].includes(x)));
+
+  // the accessibility widget: opens by keyboard, each setting puts its class on <html>, survives a reload, Esc closes
+  const aw = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  await aw.goto(URL_, { waitUntil: "networkidle" });
+  await aw.focus(".a11y__toggle");
+  await aw.keyboard.press("Enter");
+  const awOpen = await aw.evaluate(() => ({ open: document.querySelector(".a11y__toggle").getAttribute("aria-expanded"), focus: document.activeElement?.closest(".a11y__panel") !== null }));
+  await aw.locator(".a11y__sizes button").nth(2).click();
+  for (const label of ["ניגודיות גבוהה", "הדגשת קישורים", "עצירת אנימציות", "גופן קריא", "סמן גדול"]) await aw.getByRole("button", { name: label }).click();
+  const awClasses = await aw.evaluate(() => document.documentElement.className);
+  const awFont = await aw.evaluate(() => parseFloat(getComputedStyle(document.documentElement).fontSize));
+  const awStill = await aw.evaluate(() => getComputedStyle(document.querySelector(".pain__stage")).position);
+  await aw.reload({ waitUntil: "networkidle" });
+  const awKept = await aw.evaluate(() => document.documentElement.className);
+  await aw.locator(".a11y__toggle").click();
+  await aw.keyboard.press("Escape");
+  const awClosed = await aw.evaluate(() => ({ open: document.querySelector(".a11y__toggle").getAttribute("aria-expanded"), back: document.activeElement?.classList.contains("a11y__toggle") }));
+  await aw.locator(".a11y__toggle").click();
+  await aw.getByRole("button", { name: "איפוס" }).click();
+  const awReset = await aw.evaluate(() => /a11y-/.test(document.documentElement.className));
+  const awAll = ["a11y-text-2", "a11y-contrast", "a11y-links", "a11y-still", "a11y-font", "a11y-cursor"];
+  check("תוסף נגישות: נפתח במקלדת והפוקוס עובר לחלון", awOpen.open === "true" && awOpen.focus, JSON.stringify(awOpen));
+  check("תוסף נגישות: כל הגדרה פועלת (טקסט 125%, ניגודיות, קישורים, עצירה, גופן, סמן)", awAll.every((c) => awClasses.includes(c)) && awFont >= 19.9 && awStill === "static", `${awClasses} ${awFont}px ${awStill}`);
+  check("תוסף נגישות: ההגדרות נשמרות אחרי רענון, Esc סוגר וחוזר לכפתור, ואיפוס מנקה", awAll.every((c) => awKept.includes(c)) && awClosed.open === "false" && awClosed.back && !awReset, JSON.stringify({ awKept, awClosed, awReset }));
+  await aw.close();
   await page.goto(URL_);
   const anchors = await page.evaluate(() => [...document.querySelectorAll('a[href^="#"]')].map((a) => a.getAttribute("href")).filter((h) => h.length > 1 && !document.querySelector(h)));
   check("כל קישור פנימי (#) מוביל לחלק קיים", anchors.length === 0, anchors.join(", "));

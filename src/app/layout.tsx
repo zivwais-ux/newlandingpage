@@ -1,22 +1,33 @@
 import type { Metadata, Viewport } from "next";
 import { Rubik } from "next/font/google";
 import Script from "next/script";
-import { analytics, business, seo } from "@/content/site";
+import { A11yWidget } from "@/components/A11yWidget";
+import { analytics, business, nav, seo } from "@/content/site";
 import "./globals.css";
 
 const rubik = Rubik({ subsets: ["hebrew", "latin"], weight: ["400", "500", "600"], variable: "--font-rubik", display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(business.siteUrl),
-  title: seo.title,
+  title: { default: seo.title, template: `%s | ${nav.wordmark}` },
   description: seo.description,
+  keywords: seo.keywords,
+  applicationName: nav.wordmark,
+  authors: [{ name: `${business.teacher} ויסמן` }],
+  creator: `${business.teacher} ויסמן`,
+  category: "business",
+  alternates: { canonical: "/" },
+  robots: { index: true, follow: true },
   openGraph: {
     title: seo.title,
     description: seo.description,
+    url: "/",
+    siteName: nav.wordmark,
     locale: "he_IL",
     type: "website",
     images: [{ url: "/og.png", width: 1200, height: 630, alt: seo.title }],
   },
+  twitter: { card: "summary_large_image", title: seo.title, description: seo.description, images: ["/og.png"] },
 };
 
 export const viewport: Viewport = { themeColor: "#f8f8f8" };
@@ -26,6 +37,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="he" dir="rtl" className={rubik.variable} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
+        {/* The accessibility settings a visitor chose last time, applied before the first paint (A11yWidget.tsx). */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{var p=JSON.parse(localStorage.getItem('zs-a11y')||'{}'),c=document.documentElement.classList;if(p.text===1)c.add('a11y-text-1');if(p.text===2)c.add('a11y-text-2');['contrast','links','still','font','cursor'].forEach(function(k){if(p[k])c.add('a11y-'+k)})}catch(e){}",
+          }}
+        />
         {/* The page always opens at the top: a link that carries a section (#faq) from an earlier menu tap
             loses it before the browser can jump there, and a reopened tab does not restore an old scroll. */}
         <script
@@ -43,6 +61,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           דילוג לתוכן
         </a>
         {children}
+        <A11yWidget />
         {analytics.gaId && (
           <>
             <Script src={`https://www.googletagmanager.com/gtag/js?id=${analytics.gaId}`} strategy="afterInteractive" />

@@ -70,6 +70,11 @@ export function Footer() {
               {footer.privacy}
             </Link>
           </li>
+          <li>
+            <Link href="/terms" className="link">
+              {footer.terms}
+            </Link>
+          </li>
         </ul>
         <p className="footer__bottom">
           © {new Date().getFullYear()} {nav.wordmark}

@@ -95,7 +95,7 @@ export const contentSchema = z.object({
   whatsappMessage: whatsappMessageSchema,
   primaryAction: text.max(32),
   navAction: text.max(20),
-  seo: z.object({ title: text.max(70), description: text.max(170) }),
+  seo: z.object({ title: text.max(70), description: text.max(170), keywords: z.array(text.max(40)).min(5).max(20) }),
   nav: z.object({
     wordmark: z.literal("ZIV solutions"),
     tagline: text,
@@ -194,6 +194,7 @@ export const contentSchema = z.object({
     composerSend: text.max(24),
     accessibility: text,
     privacy: text,
+    terms: text,
   }),
 });
 

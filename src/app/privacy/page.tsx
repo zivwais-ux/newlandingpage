@@ -1,15 +1,13 @@
 import type { Metadata } from "next";
-import { Fill } from "@/components/Fill";
 import { LegalPage } from "@/components/LegalPage";
+import { privacy } from "@/content/legal";
 
-export const metadata: Metadata = { title: "מדיניות פרטיות", robots: { index: false } };
+export const metadata: Metadata = {
+  title: privacy.title,
+  description: privacy.description,
+  alternates: { canonical: "/privacy" },
+};
 
 export default function PrivacyPage() {
-  return (
-    <LegalPage title="מדיניות פרטיות">
-      <p>
-        <Fill value="[למלא – נוסח מדיניות פרטיות: אילו פרטים נאספים בטופס, לאן הם נשלחים ולכמה זמן נשמרים. יש לבדוק מול גורם מוסמך]" />
-      </p>
-    </LegalPage>
-  );
+  return <LegalPage doc={privacy} />;
 }

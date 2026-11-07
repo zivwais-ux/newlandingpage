@@ -1,18 +1,13 @@
 import type { Metadata } from "next";
-import { Fill } from "@/components/Fill";
 import { LegalPage } from "@/components/LegalPage";
+import { accessibility } from "@/content/legal";
 
-export const metadata: Metadata = { title: "הצהרת נגישות", robots: { index: false } };
+export const metadata: Metadata = {
+  title: accessibility.title,
+  description: accessibility.description,
+  alternates: { canonical: "/accessibility" },
+};
 
 export default function AccessibilityPage() {
-  return (
-    <LegalPage title="הצהרת נגישות">
-      <p>
-        <Fill value="[למלא – נוסח הצהרת נגישות. יש לבדוק מול גורם מוסמך לפני פרסום]" />
-      </p>
-      <p>
-        <Fill value="[למלא – פרטי רכז/ת נגישות ודרכי פנייה]" />
-      </p>
-    </LegalPage>
-  );
+  return <LegalPage doc={accessibility} />;
 }

@@ -1,5 +1,6 @@
 import { InPageLinks } from "@/components/InPageLinks";
 import { Reveal } from "@/components/Reveal";
+import { StructuredData } from "@/components/StructuredData";
 import { About } from "@/components/sections/About";
 import { Build } from "@/components/sections/Build";
 import { Contact } from "@/components/sections/Contact";
@@ -33,6 +34,7 @@ export default function Home() {
       <Footer />
       <Reveal />
       <InPageLinks />
+      <StructuredData />
     </>
   );
 }
