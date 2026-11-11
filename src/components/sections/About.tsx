@@ -3,7 +3,7 @@ import { about, primaryAction } from "@/content/site";
 import { Fill } from "../Fill";
 import { WhatsAppButton } from "../WhatsAppButton";
 
-// עליי: כותרת גדולה, פסקה אחת קצרה ושלושה כרטיסי הכשרה. הדיפלומה היא הכרטיס הגדול.
+// עליי: כותרת גדולה, פסקה אחת קצרה ושלושה כרטיסי הכשרה. התעודה היא הכרטיס הגדול.
 export function About() {
   return (
     <section id="about" className="about" aria-labelledby="about-title">
@@ -34,7 +34,7 @@ export function About() {
                 </a>
               )}
               <h3>{c.title}</h3>
-              <p>{c.text}</p>
+              {c.text && <p>{c.text}</p>}
             </li>
           ))}
         </ul>

@@ -166,7 +166,7 @@ try {
   );
   check("הפוטר: אין יותר בלוקים של אותיות", (await page.locator("footer svg.mark, footer .mark").count()) === 0);
   const cards = await page.locator(".about__card h3").allInnerTexts();
-  check("עליי: שלושה כרטיסי הכשרה, הראשון הוא הדיפלומה", cards.length === 3 && cards[0].startsWith("בעל דיפלומת מפתח AI מהאוניברסיטה העברית"), cards.join(" | "));
+  check("עליי: שלושה כרטיסי הכשרה, הראשון הוא התעודה", cards.length === 3 && cards[0].startsWith("בוגר קורס מפתחי AI באוניברסיטה העברית"), cards.join(" | "));
   check("עליי: פסקה אחת קצרה", (await page.locator(".about__lead").count()) === 1 && (await page.locator(".about__lead").innerText()).length <= 280);
   check(
     "הירו: הודעת הוואטסאפ הצפה היא ההודעה המוכנה, ושורת אמון של שלושה פריטים",

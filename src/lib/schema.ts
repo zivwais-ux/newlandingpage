@@ -143,9 +143,9 @@ export const contentSchema = z.object({
     lead: text.max(280, "הפסקה ב'עליי' צריכה להישאר קצרה"),
     diploma: z.object({ src: imagePath, alt: text }),
     credentials: z
-      .array(z.object({ title: text.max(60), text: text.max(60) }))
+      .array(z.object({ title: text.max(60), text: text.max(60).optional() }))
       .length(3, "ב'עליי' יש בדיוק שלושה כרטיסי הכשרה")
-      .refine((c) => c[0].title.startsWith("בעל דיפלומת מפתח AI"), "הכרטיס הראשון הוא הדיפלומה"),
+      .refine((c) => c[0].title.startsWith("בוגר קורס מפתחי AI באוניברסיטה העברית"), "הכרטיס הראשון הוא התעודה מהאוניברסיטה העברית"),
   }),
   plans: z.object({
     title: text.max(48),
