@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { about, primaryAction } from "@/content/site";
 import { Fill } from "../Fill";
 import { WhatsAppButton } from "../WhatsAppButton";
@@ -24,8 +25,14 @@ export function About() {
           {about.lead}
         </p>
         <ul className="about__cards" aria-label="ניסיון והכשרה">
-          {about.credentials.map((c) => (
-            <li key={c.title} className="about__card" data-reveal>
+          {about.credentials.map((c, i) => (
+            <li key={c.title} className={`about__card ${i === 0 ? "about__card--diploma" : ""}`} data-reveal>
+              {/* the first card shows the real certificate; it opens full size */}
+              {i === 0 && (
+                <a href={about.diploma.src} target="_blank" rel="noopener" className="about__diploma" aria-label="פתיחת התעודה בגודל מלא">
+                  <Image src={about.diploma.src} alt={about.diploma.alt} width={1400} height={991} loading="lazy" sizes="(min-width: 900px) 30vw, 90vw" />
+                </a>
+              )}
               <h3>{c.title}</h3>
               <p>{c.text}</p>
             </li>

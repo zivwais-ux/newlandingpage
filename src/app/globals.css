@@ -1651,9 +1651,36 @@ p {
   line-height: 1.5;
   color: rgb(248 248 248 / 0.72);
 }
+/* the diploma card: the real certificate on white paper, its heading and line under it */
 .about__card:first-child {
-  background: var(--sage);
-  align-content: end;
+  background: var(--white);
+  align-content: start;
+  gap: 12px;
+}
+.about__diploma {
+  display: block;
+  margin: calc(clamp(20px, 2vw, 28px) * -1 + 8px);
+  margin-bottom: 4px;
+  border-radius: calc(var(--r) * 0.55);
+  border-start-start-radius: 0;
+  overflow: hidden;
+  background: var(--white);
+  box-shadow: inset 0 0 0 1px #e6e6e6; /* taste-skill-ignore: the paper edge of a certificate */
+  transition: transform var(--t-hover) var(--ease-out);
+}
+.about__diploma img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+@media (hover: hover) {
+  .about__diploma:hover {
+    transform: scale(1.015);
+  }
+}
+.about__diploma:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
 }
 .about__card:first-child h3 {
   line-height: 1.2;
@@ -1705,44 +1732,12 @@ p {
     grid-row: span 2;
   }
   .about__card:first-child h3 {
-    font-size: var(--step-statement);
     text-wrap: balance;
   }
-  .about__card:first-child::before {
-    width: 220px;
-  }
-  .about__card:first-child::after {
-    inset-block-start: -30px;
-    inset-inline-end: -30px;
-    width: 140px;
-  }
 }
-/* the diploma card carries a quiet seal: two rings in the corner, like a stamp on a certificate */
 .about__card {
   position: relative;
-  overflow: hidden;
 }
-.about__card:first-child::before,
-.about__card:first-child::after {
-  content: "";
-  position: absolute;
-  inset-block-start: -70px;
-  inset-inline-end: -70px;
-  width: 150px;
-  aspect-ratio: 1;
-  border: 2px solid rgb(13 13 13 / 0.14);
-  border-radius: 50%;
-  pointer-events: none;
-}
-.about__card:first-child::after {
-  inset-block-start: -40px;
-  inset-inline-end: -40px;
-  width: 90px;
-}
-.about__card:first-child > * {
-  position: relative;
-}
-
 
 /* ---------- System screens in the "What we build" iPhone (data-ui fragments: an app's own look) ----------
    One app language for all five: a large title, an AI bar, the app's content, a tab bar. Sizes are in em
