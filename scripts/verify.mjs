@@ -498,7 +498,7 @@ try {
     const names = [...sec.querySelectorAll(".clients__list:not([aria-hidden]) .client b")].map((b) => b.textContent);
     return { afterHero: sec.previousElementSibling === null && document.querySelector("header").nextElementSibling?.id === "main", first: document.querySelector("main").firstElementChild === sec, names, quotes: sec.querySelectorAll("q").length };
   });
-  check("עסקים שעבדתי איתם: ארבעה עסקים ממש מתחת להירו, בלי ציטוטים מומצאים", cl.first && cl.names.length === 4 && new Set(cl.names).size === 4 && cl.quotes === 0, JSON.stringify(cl));
+  check("עסקים שעבדתי איתם: ארבעה עסקים ממש מתחת להירו, עם המלצה מכל אחד", cl.first && cl.names.length === 4 && new Set(cl.names).size === 4 && cl.quotes === 8, JSON.stringify(cl));
 
   // SEO: canonical, keywords, structured data for the business and the FAQ, sitemap and robots
   await page.goto(URL_);

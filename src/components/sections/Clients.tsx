@@ -2,7 +2,7 @@ import Image from "next/image";
 import { clients } from "@/content/site";
 
 // "עסקים שעבדתי איתם": פס שנע לאט מתחת להירו. כל כרטיס: הלוגו (או האות הראשונה), שם העסק, ומה נבנה בשבילו;
-// ציטוט מופיע רק כשיש ציטוט אמיתי בתוכן. העותק השני רק משלים את הלולאה ומוסתר מקוראי מסך.
+// ההמלצה מופיעה במקום התיאור כשיש המלצה מאושרת בתוכן. העותק השני רק משלים את הלולאה ומוסתר מקוראי מסך.
 function Cards({ hidden = false }: { hidden?: boolean }) {
   return (
     <ul className="clients__list" aria-hidden={hidden || undefined}>
