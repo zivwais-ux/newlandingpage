@@ -183,6 +183,12 @@ export const contentSchema = z.object({
       sent: text,
     }),
   }),
+  clients: z.object({
+    title: text.max(30),
+    items: z
+      .array(z.object({ name: text.max(24), built: text.max(100), quote: text.max(160).optional() }))
+      .length(4, "בפס יש ארבעה עסקים"),
+  }),
   testimonials: z.object({
     show: z.boolean(),
     title: text,

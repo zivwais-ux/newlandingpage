@@ -3,6 +3,7 @@ import { Reveal } from "@/components/Reveal";
 import { StructuredData } from "@/components/StructuredData";
 import { About } from "@/components/sections/About";
 import { Build } from "@/components/sections/Build";
+import { Clients } from "@/components/sections/Clients";
 import { Contact } from "@/components/sections/Contact";
 import { Faq } from "@/components/sections/Faq";
 import { Footer } from "@/components/sections/Footer";
@@ -21,6 +22,7 @@ export default function Home() {
     <>
       <Hero />
       <main id="main">
+        <Clients />
         <Intro />
         <Pain />
         <Build />

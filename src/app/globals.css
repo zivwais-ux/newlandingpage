@@ -2220,6 +2220,76 @@ p {
   height: 14px;
 }
 
+/* ---------- Clients: the businesses Ziv worked with, a slow moving row right under the hero ---------- */
+.clients {
+  padding-block: clamp(40px, 5vw, 64px) 0;
+  overflow: hidden;
+}
+.clients__title {
+  padding-inline: var(--margin);
+  font-size: var(--step-lead);
+  font-weight: 600;
+  text-align: center;
+}
+.clients__view {
+  margin-top: 20px;
+  /* the row fades in and out at both edges of the screen */
+  mask-image: linear-gradient(to left, transparent, #000 8%, #000 92%, transparent); /* taste-skill-ignore: an edge mask, not a fill */
+}
+.clients__track {
+  display: flex;
+  width: max-content;
+}
+/* with motion off (the device setting or the accessibility widget), the row scrolls sideways instead */
+@media (prefers-reduced-motion: reduce) {
+  .clients__view {
+    overflow-x: auto;
+  }
+}
+html.a11y-still .clients__view {
+  overflow-x: auto;
+}
+.clients__list {
+  display: flex;
+  gap: 14px;
+  padding-inline-end: 14px;
+}
+.client {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: clamp(280px, 26vw, 360px);
+  padding: 16px 18px;
+  background: var(--white);
+  border-radius: calc(var(--r) * 0.6);
+  border-start-start-radius: 0;
+}
+.client__mark {
+  width: 48px;
+  height: 48px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: var(--forest);
+  color: var(--sage);
+  font-size: 20px;
+  font-weight: 600;
+}
+.client__text {
+  display: grid;
+  gap: 2px;
+  line-height: 1.4;
+}
+.client__text b {
+  font-weight: 600;
+}
+.client__text span,
+.client__text q {
+  color: var(--muted);
+  font-size: var(--step-small);
+}
+
 /* ---------- Plans: the four routes sketched like a flow in Ziv's notebook ---------- */
 /* Big names in pen-drawn boxes, pen arrows between them, a marker swipe on the chosen one,
    and its details opened below on a forest field. No icons, no tiles, no cards. */
@@ -3340,6 +3410,14 @@ html.a11y-cursor * {
   .strip__track {
     animation: strip-move 46s linear infinite;
   }
+    .clients__track {
+      animation: clients-move 40s linear infinite;
+    }
+    @media (hover: hover) {
+      .clients:hover .clients__track {
+        animation-play-state: paused;
+      }
+    }
   @media (hover: hover) {
     .strip:hover .strip__track {
       animation-play-state: paused;
@@ -3358,6 +3436,11 @@ html.a11y-cursor * {
   }
 }
 /* RTL: the copy sits to the left of the original, so the track moves right by one copy */
+@keyframes clients-move {
+  to {
+    transform: translateX(50%);
+  }
+}
 @keyframes strip-move {
   to {
     transform: translateX(50%);
