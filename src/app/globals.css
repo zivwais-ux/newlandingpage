@@ -2283,32 +2283,6 @@ html.a11y-still .clients__view {
   color: var(--sage);
   pointer-events: none;
 }
-/* every second card is set in forest, so the row reads with a rhythm instead of a wall of white */
-.client:nth-child(even) {
-  background: var(--forest);
-  border-color: var(--forest);
-  color: var(--forest-ink);
-}
-.client:nth-child(even) .client__quote {
-  color: var(--forest-ink);
-}
-.client:nth-child(even)::before {
-  color: var(--forest-field);
-}
-.client:nth-child(even) .client__result {
-  background: var(--sage);
-  color: var(--forest);
-}
-.client:nth-child(even) .client__result svg {
-  stroke: var(--forest);
-}
-.client:nth-child(even) .client__who {
-  border-top-color: var(--forest-field);
-}
-.client:nth-child(even) .client__mark:not(.client__mark--logo) {
-  background: var(--sage);
-  color: var(--forest);
-}
 .client__quote {
   position: relative;
   color: var(--ink);
