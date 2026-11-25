@@ -491,14 +491,14 @@ try {
   }
   check("הצהרת הנגישות: תקן 5568 ופרטי רכז הנגישות", await page.goto(URL_ + "accessibility").then(() => page.evaluate(() => /5568/.test(document.body.innerText) && /054-804-4345/.test(document.body.innerText))));
 
-  // "עסקים שעבדתי איתם": ארבעה עסקים מתחת להירו; ציטוט מופיע רק כשיש ציטוט אמיתי בתוכן
+  // "הוכחות מהשטח": ארבעה עסקים מתחת להירו, עם המלצה מאושרת מכל אחד
   await page.goto(URL_);
   const cl = await page.evaluate(() => {
     const sec = document.querySelector(".clients");
     const names = [...sec.querySelectorAll(".clients__list:not([aria-hidden]) .client b")].map((b) => b.textContent);
     return { afterHero: sec.previousElementSibling === null && document.querySelector("header").nextElementSibling?.id === "main", first: document.querySelector("main").firstElementChild === sec, names, quotes: sec.querySelectorAll("q").length };
   });
-  check("עסקים שעבדתי איתם: ארבעה עסקים ממש מתחת להירו, עם המלצה מכל אחד", cl.first && cl.names.length === 4 && new Set(cl.names).size === 4 && cl.quotes === 8, JSON.stringify(cl));
+  check("הוכחות מהשטח: ארבעה עסקים ממש מתחת להירו, עם המלצה מכל אחד", cl.first && cl.names.length === 4 && new Set(cl.names).size === 4 && cl.quotes === 8, JSON.stringify(cl));
 
   // SEO: canonical, keywords, structured data for the business and the FAQ, sitemap and robots
   await page.goto(URL_);
