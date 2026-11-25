@@ -376,27 +376,30 @@ export const contact = {
 };
 
 // "עסקים שעבדתי איתם": פס רץ מתחת להירו. העובדות מזיו עצמו: שם העסק ומה נבנה בשבילו.
-// quote: ציטוט אמיתי מהעסק, רק אם קיים. כרטיס בלי quote מציג רק את מה שנבנה; לעולם לא ממציאים ציטוט.
+// logo: הלוגו של העסק (ריבוע); בלי לוגו מוצגת האות הראשונה. quote: ציטוט אמיתי מהעסק, רק אם קיים. כרטיס בלי quote מציג רק את מה שנבנה; לעולם לא ממציאים ציטוט.
 export const clients = {
   title: "עסקים שעבדתי איתם",
   items: [
     {
       name: "Elements Israel",
+      logo: "/img/client-elements.webp",
       built: "מערכת גדולה לניהול לקוחות ולידים, שליחת וואטסאפ אוטומטית ובוט שירות לקוחות.",
     },
     {
       name: "דרך הורד",
+      logo: "/img/client-derech-havered.webp",
       built: "משחק אינטראקטיבי שמבוסס על משחק ידני מורכב מסדנאות לחיילים. בשימוש רציף מאז.",
     },
     {
       name: "Baile de Bola",
+      logo: "/img/client-baile-de-bola.webp",
       built: "פיתוח AI לחנות: חיבור החנות, עיצוב שלה מול AI והכנת תמונות.",
     },
     {
       name: "בני, מנהל עסקי",
       built: "מערכת לקוחות חיה עם נתונים וגרפים שמתעדכנים כל הזמן.",
     },
-  ] as { name: string; built: string; quote?: string }[],
+  ] as { name: string; logo?: string; built: string; quote?: string }[],
 };
 
 export const testimonials = {
