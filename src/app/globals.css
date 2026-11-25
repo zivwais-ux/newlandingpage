@@ -2227,8 +2227,9 @@ p {
 }
 .clients__title {
   padding-inline: var(--margin);
-  font-size: var(--step-lead);
-  font-weight: 600;
+  font-size: var(--step-statement);
+  font-weight: 700;
+  letter-spacing: -0.01em;
   text-align: center;
 }
 .clients__view {
@@ -2254,26 +2255,112 @@ html.a11y-still .clients__view {
   gap: 14px;
   padding-inline-end: 14px;
 }
+/* each card reads top to bottom: what they said, the result on the ground, and who said it.
+   A big sage quote mark sits in the corner, the result is a forest stamp, and the
+   signature line is cut off by a hairline, like the foot of a letter. */
 .client {
+  position: relative;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 14px;
-  width: clamp(280px, 26vw, 360px);
-  padding: 16px 18px;
+  width: clamp(290px, 28vw, 400px);
+  padding: 64px 24px 18px;
   background: var(--white);
+  border: 1px solid #e4e6e4; /* taste-skill-ignore: a hairline around a card on the near-white page */
   border-radius: calc(var(--r) * 0.6);
   border-start-start-radius: 0;
+  overflow: hidden;
+}
+/* the quote mark, drawn whole in sage in the top corner */
+.client::before {
+  content: "\201D";
+  position: absolute;
+  inset-block-start: 14px;
+  inset-inline-end: 18px;
+  font-size: 84px;
+  line-height: 0.8;
+  font-weight: 700;
+  color: var(--sage);
+  pointer-events: none;
+}
+/* every second card is set in forest, so the row reads with a rhythm instead of a wall of white */
+.client:nth-child(even) {
+  background: var(--forest);
+  border-color: var(--forest);
+  color: var(--forest-ink);
+}
+.client:nth-child(even) .client__quote {
+  color: var(--forest-ink);
+}
+.client:nth-child(even)::before {
+  color: var(--forest-field);
+}
+.client:nth-child(even) .client__result {
+  background: var(--sage);
+  color: var(--forest);
+}
+.client:nth-child(even) .client__result svg {
+  stroke: var(--forest);
+}
+.client:nth-child(even) .client__who {
+  border-top-color: var(--forest-field);
+}
+.client:nth-child(even) .client__mark:not(.client__mark--logo) {
+  background: var(--sage);
+  color: var(--forest);
+}
+.client__quote {
+  position: relative;
+  color: var(--ink);
+  font-size: var(--step-body);
+  line-height: 1.5;
+  quotes: none;
+  text-wrap: pretty;
+}
+.client__result {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  align-self: flex-start;
+  padding: 6px 12px 6px 14px;
+  border-radius: 999px;
+  background: var(--forest);
+  color: var(--forest-ink);
+  font-size: var(--step-small);
+  font-weight: 500;
+  white-space: nowrap;
+}
+.client__result svg {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  fill: none;
+  stroke: var(--sage);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.client__who {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid #eceeec; /* taste-skill-ignore: the hairline above the signature */
+}
+.client__who b {
+  font-weight: 600;
 }
 .client__mark {
-  width: 56px;
-  height: 56px;
+  width: 44px;
+  height: 44px;
   flex: none;
   display: grid;
   place-items: center;
-  border-radius: 14px;
+  border-radius: 12px;
   background: var(--forest);
   color: var(--sage);
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
 }
 /* a logo fills its tile; a white logo gets a soft edge so it does not melt into the white card */
@@ -2281,19 +2368,6 @@ html.a11y-still .clients__view {
   object-fit: cover;
   background: var(--white);
   box-shadow: inset 0 0 0 1px #e4e6e4; /* taste-skill-ignore: the edge of a white logo tile */
-}
-.client__text {
-  display: grid;
-  gap: 2px;
-  line-height: 1.4;
-}
-.client__text b {
-  font-weight: 600;
-}
-.client__text span,
-.client__text q {
-  color: var(--muted);
-  font-size: var(--step-small);
 }
 
 /* ---------- Plans: the four routes sketched like a flow in Ziv's notebook ---------- */
