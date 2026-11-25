@@ -4,6 +4,7 @@
     "client-baile-de-bola.webp": "de927475afbc367f85728603c7f8ebadbbcb0132f091a87e25dfd0c22eccc9fd",
     "client-derech-havered.webp": "789fcef23b628978897e337d3583ea62bf3973f4794864a91f17506ee345e087",
     "client-elements.webp": "91391621934d8fc1cebc674e4ecf0eccaed61f33de61f54559c47da039b030e3",
+    "client-venus.webp": "2a52f7eb206752c3add2accb9d14ded424ddd7ffdb3d264923ace9b23b3df336",
     "coffee.webp": "ec97daf3150474829f8a9e1821211997537cd3541cd7fca19a81d28107bf3852",
     "diploma.webp": "6f739e87fcd57db0f917c28ec7a52319353b6fab4538557e8c8bcc2962bb60ed",
     "lesson.webp": "54eeb226863b229647cf16581cc638c105fbe4fb035fbf5a0709657ff0ce116b",
@@ -35,6 +36,11 @@
         "section": "clients"
       },
       {
+        "file": "/img/client-venus.webp",
+        "alt": "הלוגו של Venus Israel",
+        "section": "clients"
+      },
+      {
         "file": "/img/client-elements.webp",
         "alt": "",
         "section": "clients"
@@ -46,6 +52,11 @@
       },
       {
         "file": "/img/client-baile-de-bola.webp",
+        "alt": "",
+        "section": "clients"
+      },
+      {
+        "file": "/img/client-venus.webp",
         "alt": "",
         "section": "clients"
       },
@@ -92,6 +103,11 @@
         "section": "clients"
       },
       {
+        "file": "/img/client-venus.webp",
+        "alt": "הלוגו של Venus Israel",
+        "section": "clients"
+      },
+      {
         "file": "/img/client-elements.webp",
         "alt": "",
         "section": "clients"
@@ -103,6 +119,11 @@
       },
       {
         "file": "/img/client-baile-de-bola.webp",
+        "alt": "",
+        "section": "clients"
+      },
+      {
+        "file": "/img/client-venus.webp",
         "alt": "",
         "section": "clients"
       },

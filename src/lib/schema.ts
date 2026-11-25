@@ -187,7 +187,7 @@ export const contentSchema = z.object({
     title: text.max(30),
     items: z
       .array(z.object({ name: text.max(24), result: text.max(24), logo: imagePath.optional(), built: text.max(100), quote: text.max(160).optional() }))
-      .length(4, "בפס יש ארבעה עסקים"),
+      .length(5, "בפס יש חמישה עסקים"),
   }),
   testimonials: z.object({
     show: z.boolean(),
